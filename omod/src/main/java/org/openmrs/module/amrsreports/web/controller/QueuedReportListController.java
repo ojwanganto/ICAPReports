@@ -62,4 +62,32 @@ public class QueuedReportListController {
 		FileCopyUtils.copy(new FileInputStream(amrsFileToDownload), response.getOutputStream());
 	}
 
+    @RequestMapping(value = "/module/amrsreports/downloadcsv")
+    public void downloadCSV(HttpServletResponse response,
+                            @RequestParam(required = true, value = "reportId") Integer reportId) throws IOException {
+
+        if (reportId == null) {
+            // TODO say something ...
+            return;
+        }
+
+        QueuedReport report = Context.getService(QueuedReportService.class).getQueuedReport(reportId);
+
+        if (report == null) {
+            // TODO say something ...
+            return;
+        }
+
+        String folderName = Context.getAdministrationService().getGlobalProperty("amrsreports.file_dir");
+
+        File fileDir = OpenmrsUtil.getDirectoryInApplicationDataDirectory(folderName);
+        File amrsFileToDownload = new File(fileDir, report.getCsvFilename());
+
+        response.setContentType("text/csv");
+        response.setHeader("Content-Disposition", "attachment; filename=" + report.getCsvFilename());
+        response.setContentLength((int) amrsFileToDownload.length());
+
+        FileCopyUtils.copy(new FileInputStream(amrsFileToDownload), response.getOutputStream());
+    }
+
 }

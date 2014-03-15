@@ -127,6 +127,7 @@ public class MOH361BReportProvider_0_1 extends ReportProvider {
 		cccColumn.setIncludeFirstNonNullOnly(true);
 		dsd.addColumn("Unique Patient Number", cccColumn, nullString, identifierConverter);
 
+
 		// AMRS Universal ID
 		PatientIdentifierDataDefinition uidColumn = new PatientIdentifierDataDefinition(
 				"AMRS Universal ID", Context.getPatientService().getPatientIdentifierType(8));

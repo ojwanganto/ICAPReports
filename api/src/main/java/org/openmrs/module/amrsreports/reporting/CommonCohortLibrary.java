@@ -74,6 +74,19 @@ public class CommonCohortLibrary {
 		return cd;
 	}
 
+    /**
+     * Patients who are between x and y years old on ${effectiveDate}
+     * @return the cohort definition
+     */
+    public CohortDefinition agedBetween(int minAge,int maxAge) {
+        AgeCohortDefinition cd = new AgeCohortDefinition();
+        cd.setName("aged Between");
+        //cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.setMaxAge(maxAge);
+        cd.setMinAge(minAge);
+        return cd;
+    }
+
 	/**
 	 * Patients who are at least minAge years old on ${effectiveDate}
 	 * @return the cohort definition
@@ -87,7 +100,7 @@ public class CommonCohortLibrary {
 	}
 
 	/**
-	 * Patients who are female and at least 18 years old on ${effectiveDate}
+	 * Patients who are female and at least X years old on ${effectiveDate}
 	 * @return the cohort definition
 	 */
 	public CohortDefinition femalesAgedAtLeastX(Integer minAge) {
@@ -139,6 +152,34 @@ public class CommonCohortLibrary {
         cd.addSearch("males", ReportUtils.map(males()));
         cd.addSearch("agedAtMostSomeAge", ReportUtils.map(agedAtMost(maxAge), ""));
         cd.setCompositionString("males AND agedAtMostSomeAge");
+        return cd;
+    }
+
+    /**
+     * Patients who are male and between x and y years old on ${effectiveDate}
+     * @return the cohort definition
+     */
+    public CohortDefinition malesAgedBetween(Integer minAge,Integer maxAge) {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.setName("females aged at most some age");
+        // cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.addSearch("males", ReportUtils.map(males()));
+        cd.addSearch("agedBetween", ReportUtils.map(agedBetween(minAge,maxAge), ""));
+        cd.setCompositionString("males AND agedBetween");
+        return cd;
+    }
+
+    /**
+     * Patients who are female and between x and y years old on ${effectiveDate}
+     * @return the cohort definition
+     */
+    public CohortDefinition femalesAgedBetween(Integer minAge,Integer maxAge) {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.setName("females aged at most some age");
+        // cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.addSearch("females", ReportUtils.map(females()));
+        cd.addSearch("agedBetween", ReportUtils.map(agedBetween(minAge,maxAge), ""));
+        cd.setCompositionString("females AND agedBetween");
         return cd;
     }
 	/**

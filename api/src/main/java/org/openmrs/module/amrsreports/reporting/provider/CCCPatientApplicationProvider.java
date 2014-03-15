@@ -57,7 +57,7 @@ public class CCCPatientApplicationProvider extends ReportProvider {
         effectiveDate.setName("facility");
         effectiveDate.setType(MOHFacility.class);
 
-        //define cohorts
+        //define general cohorts
         /*Males (0-14 cohort)*/
 
         CohortDefinition malesZeroTo14 = commonCohorts.malesAgedAtMostX(14);
@@ -73,12 +73,41 @@ public class CCCPatientApplicationProvider extends ReportProvider {
 
         CohortDefinition femalesAbove15 = commonCohorts.femalesAgedAtLeastX(15);
 
+        //define cohorts for peds
+
+        /**
+         * cohort for peds up to one year old
+        */
+        CohortDefinition pedsMalesZeroTo1 = commonCohorts.malesAgedAtMostX(1);
+        CohortDefinition pedsFemalesZeroTo1 = commonCohorts.femalesAgedAtMostX(1);
+
+        /**
+         * Peds aged between 2 and 4
+         */
+        CohortDefinition pedsmales2To4 = commonCohorts.malesAgedBetween(2,4);
+        CohortDefinition pedsFemales2To4 = commonCohorts.femalesAgedBetween(2,4);
+
+        /**
+         * Peds aged between 5 and 14
+         */
+        CohortDefinition pedsmales5To14 = commonCohorts.malesAgedBetween(5,14);
+        CohortDefinition pedsFemales5To14 = commonCohorts.femalesAgedBetween(5,14);
+
         CohortDefinitionDimension compositionDimension = new CohortDefinitionDimension();
         compositionDimension.setName("compositionDimension");
         compositionDimension.addCohortDefinition("malesZeroTo14CohortDimension", malesZeroTo14, null);
         compositionDimension.addCohortDefinition("malesAbove15CohortDimension", malesAbove15, null);
         compositionDimension.addCohortDefinition("femalesZeroTo14CohortDimension",femalesZeroTo14,null);
         compositionDimension.addCohortDefinition("femalesAbove15CohortDimension",femalesAbove15,null);
+
+        //add cohort dimension for peds
+        compositionDimension.addCohortDefinition("pedsMalesZeroTo1CohortDimension",pedsMalesZeroTo1,null);
+        compositionDimension.addCohortDefinition("pedsFemalesZeroTo1CohortDimension",pedsFemalesZeroTo1,null);
+        compositionDimension.addCohortDefinition("pedsmales2To4CohortDimension",pedsmales2To4,null);
+        compositionDimension.addCohortDefinition("pedsFemales2To4CohortDimension",pedsFemales2To4,null);
+        compositionDimension.addCohortDefinition("pedsmales5To14CohortDimension",pedsmales5To14,null);
+        compositionDimension.addCohortDefinition("pedsFemales5To14CohortDimension",pedsFemales5To14,null);
+
 
 
         CohortIndicator malesZeroTo14ind = CohortIndicator.newCountIndicator("malesZeroTo14CohortIndicator", new Mapped<CohortDefinition>(malesZeroTo14, null), null);
@@ -92,6 +121,16 @@ public class CCCPatientApplicationProvider extends ReportProvider {
 
         CohortIndicator femalesAbove15ind = CohortIndicator.newCountIndicator("femalesAbove15CohortIndicator", new Mapped<CohortDefinition>(femalesAbove15, null), null);
         //femalesAbove15ind.setParameters(IndicatorUtil.getDefaultParameters());
+
+        /**
+         * Add indicators for peds
+         */
+        CohortIndicator pedsMalesZeroTo1ind = CohortIndicator.newCountIndicator("pedsMalesZeroTo1CohortIndicator", new Mapped<CohortDefinition>(pedsMalesZeroTo1, null), null);
+        CohortIndicator pedsFemalesZeroTo1ind = CohortIndicator.newCountIndicator("pedsFemalesZeroTo1CohortIndicator", new Mapped<CohortDefinition>(pedsFemalesZeroTo1, null), null);
+        CohortIndicator pedsmales2To4ind = CohortIndicator.newCountIndicator("pedsmales2To4CohortIndicator", new Mapped<CohortDefinition>(pedsmales2To4, null), null);
+        CohortIndicator pedsFemales2To4ind = CohortIndicator.newCountIndicator("pedsFemales2To4CohortIndicator", new Mapped<CohortDefinition>(pedsFemales2To4, null), null);
+        CohortIndicator pedsmales5To14ind = CohortIndicator.newCountIndicator("pedsmales5To14CohortIndicator", new Mapped<CohortDefinition>(pedsmales5To14, null), null);
+        CohortIndicator pedsFemales5To14ind = CohortIndicator.newCountIndicator("pedsFemales5To14CohortIndicator", new Mapped<CohortDefinition>(pedsFemales5To14, null), null);
 
 
         CohortIndicatorDataSetDefinition dsd = new CohortIndicatorDataSetDefinition();
@@ -107,6 +146,28 @@ public class CCCPatientApplicationProvider extends ReportProvider {
         dsd.addColumn("NEWmalesAbove15", "Males 15 or more", new Mapped<CohortIndicator>(malesAbove15ind, null), "");
         dsd.addColumn("NEWfemalesBelow15", "Females Below 15", new Mapped<CohortIndicator>(femalesZeroTo14ind, null), "");
         dsd.addColumn("NEWfemalesAbove15", "Females 15 or more", new Mapped<CohortIndicator>(femalesAbove15ind, null), "");
+
+        /**
+         * Add columns for peds
+         */
+        dsd.addColumn("malesPedsAt1", "Male Peds up to one year", new Mapped<CohortIndicator>(pedsMalesZeroTo1ind, null), "");
+        dsd.addColumn("malesPedsBtw2n4", "Males peds between 2 and 4", new Mapped<CohortIndicator>(pedsmales2To4ind, null), "");
+        dsd.addColumn("malesPedsBtw5n14", "Male Ped btw 5 and 14", new Mapped<CohortIndicator>(pedsmales5To14ind, null), "");
+        dsd.addColumn("femalesPedsAt1", "Female peds at one ", new Mapped<CohortIndicator>(pedsFemalesZeroTo1ind, null), "");
+        dsd.addColumn("femalesPedsBtw2n4", "Female peds  btw 2 and 4", new Mapped<CohortIndicator>(pedsFemales2To4ind, null), "");
+        dsd.addColumn("femalesPedsBtw5n14", "Female peds between 5 and 14", new Mapped<CohortIndicator>(pedsFemales5To14ind, null), "");
+
+
+        /**
+         * Fill second column for peds
+         */
+        dsd.addColumn("NEWmalesPedsAt1", "Male Peds up to one year", new Mapped<CohortIndicator>(pedsMalesZeroTo1ind, null), "");
+        dsd.addColumn("NEWmalesPedsBtw2n4", "Males peds between 2 and 4", new Mapped<CohortIndicator>(pedsmales2To4ind, null), "");
+        dsd.addColumn("NEWmalesPedsBtw5n14", "Male Ped btw 5 and 14", new Mapped<CohortIndicator>(pedsmales5To14ind, null), "");
+        dsd.addColumn("NEWfemalesPedsAt1", "Female peds at one ", new Mapped<CohortIndicator>(pedsFemalesZeroTo1ind, null), "");
+        dsd.addColumn("NEWfemalesPedsBtw2n4", "Female peds  btw 2 and 4", new Mapped<CohortIndicator>(pedsFemales2To4ind, null), "");
+        dsd.addColumn("NEWfemalesPedsBtw5n14", "Female peds between 5 and 14", new Mapped<CohortIndicator>(pedsFemales5To14ind, null), "");
+
 
       /*  EvaluationContext context = new EvaluationContext();
         context.addParameterValue(ReportingConstants.START_DATE_PARAMETER.getName(), DateUtil.getDateTime(1980, 1, 1));

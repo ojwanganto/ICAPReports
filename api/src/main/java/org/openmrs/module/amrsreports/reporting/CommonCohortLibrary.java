@@ -69,7 +69,7 @@ public class CommonCohortLibrary {
 	public CohortDefinition agedAtMost(int maxAge) {
 		AgeCohortDefinition cd = new AgeCohortDefinition();
 		cd.setName("aged at most");
-		//cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+		cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
 		cd.setMaxAge(maxAge);
 		return cd;
 	}
@@ -81,7 +81,7 @@ public class CommonCohortLibrary {
     public CohortDefinition agedBetween(int minAge,int maxAge) {
         AgeCohortDefinition cd = new AgeCohortDefinition();
         cd.setName("aged Between");
-        //cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
         cd.setMaxAge(maxAge);
         cd.setMinAge(minAge);
         return cd;
@@ -94,7 +94,7 @@ public class CommonCohortLibrary {
 	public CohortDefinition agedAtLeast(int minAge) {
 		AgeCohortDefinition cd = new AgeCohortDefinition();
 		cd.setName("aged at least");
-		//cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+		cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
 		cd.setMinAge(minAge);
 		return cd;
 	}
@@ -106,9 +106,9 @@ public class CommonCohortLibrary {
 	public CohortDefinition femalesAgedAtLeastX(Integer minAge) {
 		CompositionCohortDefinition cd = new CompositionCohortDefinition();
 		cd.setName("females aged at least Some age");
-		//cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+		cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
         cd.addSearch("females", ReportUtils.map(females()));
-		cd.addSearch("agedAtLeastSomeAge", ReportUtils.map(agedAtLeast(minAge), ""));
+		cd.addSearch("agedAtLeastSomeAge", ReportUtils.map(agedAtLeast(minAge), "effectiveDate=${effectiveDate}"));
 		cd.setCompositionString("females AND agedAtLeastSomeAge");
 		return cd;
 	}
@@ -120,9 +120,9 @@ public class CommonCohortLibrary {
     public CohortDefinition femalesAgedAtMostX(Integer maxAge) {
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
         cd.setName("females aged at most some age");
-       // cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
         cd.addSearch("females", ReportUtils.map(females()));
-        cd.addSearch("agedAtMostSomeAge", ReportUtils.map(agedAtMost(maxAge), ""));
+        cd.addSearch("agedAtMostSomeAge", ReportUtils.map(agedAtMost(maxAge), "effectiveDate=${effectiveDate}"));
         cd.setCompositionString("females AND agedAtMostSomeAge");
         return cd;
     }
@@ -134,9 +134,9 @@ public class CommonCohortLibrary {
     public CohortDefinition malesAgedAtLeastX(Integer minAge) {
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
         cd.setName("females aged at least Some age");
-        //cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
         cd.addSearch("males", ReportUtils.map(males()));
-        cd.addSearch("agedAtLeastSomeAge", ReportUtils.map(agedAtLeast(minAge), ""));
+        cd.addSearch("agedAtLeastSomeAge", ReportUtils.map(agedAtLeast(minAge), "effectiveDate=${effectiveDate}"));
         cd.setCompositionString("males AND agedAtLeastSomeAge");
         return cd;
     }
@@ -148,9 +148,9 @@ public class CommonCohortLibrary {
     public CohortDefinition malesAgedAtMostX(Integer maxAge) {
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
         cd.setName("females aged at most some age");
-       // cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
         cd.addSearch("males", ReportUtils.map(males()));
-        cd.addSearch("agedAtMostSomeAge", ReportUtils.map(agedAtMost(maxAge), ""));
+        cd.addSearch("agedAtMostSomeAge", ReportUtils.map(agedAtMost(maxAge), "effectiveDate=${effectiveDate}"));
         cd.setCompositionString("males AND agedAtMostSomeAge");
         return cd;
     }
@@ -162,9 +162,9 @@ public class CommonCohortLibrary {
     public CohortDefinition malesAgedBetween(Integer minAge,Integer maxAge) {
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
         cd.setName("females aged at most some age");
-        // cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
         cd.addSearch("males", ReportUtils.map(males()));
-        cd.addSearch("agedBetween", ReportUtils.map(agedBetween(minAge,maxAge), ""));
+        cd.addSearch("agedBetween", ReportUtils.map(agedBetween(minAge,maxAge), "effectiveDate=${effectiveDate}"));
         cd.setCompositionString("males AND agedBetween");
         return cd;
     }
@@ -176,9 +176,9 @@ public class CommonCohortLibrary {
     public CohortDefinition femalesAgedBetween(Integer minAge,Integer maxAge) {
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
         cd.setName("females aged at most some age");
-        // cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
         cd.addSearch("females", ReportUtils.map(females()));
-        cd.addSearch("agedBetween", ReportUtils.map(agedBetween(minAge,maxAge), ""));
+        cd.addSearch("agedBetween", ReportUtils.map(agedBetween(minAge,maxAge), "effectiveDate=${effectiveDate}"));
         cd.setCompositionString("females AND agedBetween");
         return cd;
     }

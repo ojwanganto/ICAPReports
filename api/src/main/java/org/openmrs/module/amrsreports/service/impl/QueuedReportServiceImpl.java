@@ -17,8 +17,10 @@ import org.openmrs.module.amrsreports.service.QueuedReportService;
 import org.openmrs.module.amrsreports.service.ReportProviderRegistrar;
 import org.openmrs.module.amrsreports.service.UserFacilityService;
 import org.openmrs.module.amrsreports.util.MOHReportUtil;
+import org.openmrs.module.reporting.ReportingConstants;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
+import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
@@ -72,15 +74,17 @@ public class QueuedReportServiceImpl implements QueuedReportService {
             ReportProvider reportProvider = ReportProviderRegistrar.getInstance().getReportProviderByName(queuedReport.getReportName());
 
             CohortDefinition cohortDefinition = reportProvider.getCohortDefinition();
-           // cohortDefinition.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+            cohortDefinition.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
 
             ReportDefinition reportDefinition = reportProvider.getReportDefinition();
-           // reportDefinition.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+            reportDefinition.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
 
             // try rendering the report
             EvaluationContext evaluationContext = new EvaluationContext();
 
             // set up evaluation context values
+            evaluationContext.addParameterValue(ReportingConstants.START_DATE_PARAMETER.getName(), DateUtil.getDateTime(1980, 1, 1));
+            evaluationContext.addParameterValue(ReportingConstants.END_DATE_PARAMETER.getName(), DateUtil.getDateTime(2000, 1, 1));
            // evaluationContext.addParameterValue("startDate", queuedReport.getEvaluationDate());
             evaluationContext.setEvaluationDate(queuedReport.getEvaluationDate());
 

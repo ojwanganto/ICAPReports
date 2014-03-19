@@ -16,10 +16,8 @@ package org.openmrs.module.amrsreports;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.Activator;
-import org.openmrs.module.amrsreports.reporting.provider.CCCPatientApplicationProvider;
-import org.openmrs.module.amrsreports.reporting.provider.MOH361AReportProvider_0_1;
-import org.openmrs.module.amrsreports.reporting.provider.MOH361AReportProvider_0_2;
-import org.openmrs.module.amrsreports.reporting.provider.MOH361BReportProvider_0_1;
+import org.openmrs.module.amrsreports.reporting.provider.ARTCareProvider;
+import org.openmrs.module.amrsreports.reporting.provider.HIVPalliativeCareProvider;
 import org.openmrs.module.amrsreports.service.ReportProviderRegistrar;
 import org.openmrs.module.amrsreports.util.TaskRunnerThread;
 
@@ -38,7 +36,8 @@ public class AmrsReportModuleActivator implements Activator {
 		log.info("Starting AMRS Reporting Module");
 
 		// TODO use some classpath or Spring magic to acquire these automatically
-		ReportProviderRegistrar.getInstance().registerReportProvider(new CCCPatientApplicationProvider());
+		ReportProviderRegistrar.getInstance().registerReportProvider(new HIVPalliativeCareProvider());
+        ReportProviderRegistrar.getInstance().registerReportProvider(new ARTCareProvider());
 
 	}
 

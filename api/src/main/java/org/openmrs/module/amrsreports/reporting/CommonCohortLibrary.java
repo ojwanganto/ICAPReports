@@ -16,6 +16,7 @@ package org.openmrs.module.amrsreports.reporting;
 
 import org.openmrs.Concept;
 import org.openmrs.EncounterType;
+import org.openmrs.Location;
 import org.openmrs.Program;
 import org.openmrs.api.PatientSetService;
 import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
@@ -218,6 +219,28 @@ public class CommonCohortLibrary {
 		}
 		return cd;
 	}
+
+    /**
+     * patients who had encounters at a given facility
+     */
+    public CohortDefinition hasEncountersAtAfacility(Concept question, Concept... answers) {
+
+        EncounterCohortDefinition atSite = new EncounterCohortDefinition();
+        atSite.setName("At Site");
+        atSite.addParameter(new Parameter("locationList", "List of Locations", Location.class));
+        CodedObsCohortDefinition cd = new CodedObsCohortDefinition();
+        cd.setName("has obs between dates");
+        cd.setQuestion(question);
+        cd.setOperator(SetComparator.IN);
+        cd.setTimeModifier(PatientSetService.TimeModifier.ANY);
+        cd.addParameter(new Parameter("onOrBefore", "Before Date", Date.class));
+        cd.addParameter(new Parameter("onOrAfter", "After Date", Date.class));
+        if (answers.length > 0) {
+            cd.setValueList(Arrays.asList(answers));
+        }
+        return cd;
+    }
+
 
 	/**
 	 * Patients who transferred in between ${onOrAfter} and ${onOrBefore}

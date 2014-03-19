@@ -432,6 +432,20 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="amrsreports-2014-03-13a" author="aojwang">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="amrsreports_queued_report" columnName="reporting_end_date"/>
+            </not>
+        </preConditions>
+        <comment>
+            Adding reporting_end_date to the amrsreports_queued_report table
+        </comment>
+        <addColumn tableName="amrsreports_queued_report">
+            <column name="reporting_end_date" type="datetime"/>
+        </addColumn>
+    </changeSet>
+
     <changeSet id="amrsreports-2013-04-05-a" author="jkeiper">
         <preConditions onFail="MARK_RAN">
             <tableExists tableName="amrsreports_userlocation"/>

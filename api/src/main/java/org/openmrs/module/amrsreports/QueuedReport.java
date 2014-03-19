@@ -14,6 +14,7 @@ public class QueuedReport extends BaseOpenmrsObject {
 	private MOHFacility facility;
 	private Date evaluationDate = new Date();
 	private Date dateScheduled = new Date();
+    private Date reportingEndDate = new Date();
 	private String status = STATUS_NEW;
     private Integer repeatInterval = 0;
 	private String csvFilename;
@@ -104,5 +105,13 @@ public class QueuedReport extends BaseOpenmrsObject {
 
     public void setRepeatInterval(Integer repeatInterval) {
         this.repeatInterval = repeatInterval;
+    }
+
+    public Date getReportingEndDate() {
+        return reportingEndDate;
+    }
+
+    public void setReportingEndDate(Date reportingEndDate) {
+        this.reportingEndDate = reportingEndDate;
     }
 }

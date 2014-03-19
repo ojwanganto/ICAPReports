@@ -38,6 +38,7 @@
 
     var reportDate;
     var scheduleDate;
+    var evaluationEndDate;
 
     $j(document).ready(function () {
 
@@ -51,7 +52,10 @@
             minuteGrid: 10,
             stepMinute: 5
         });
-
+        evaluationEndDate = new DatePicker("<openmrs:datePattern/>", "reportingEndDate", {
+//
+        });
+        evaluationEndDate.setDate(new Date());
     });
 
 </script>
@@ -72,11 +76,27 @@
             <table cellspacing="0" cellpadding="2">
                 <tr>
                     <td class="right">
-                        <label for="evaluationDate">Report date (as of):</label>
+                        <label for="evaluationDate">Report date (as of/from):</label>
                     </td>
                     <td>
                         <spring:bind path="queuedReports.evaluationDate">
                             <input type="text" id="evaluationDate" name="${status.expression}" value="${status.value}"/>
+                            <c:if test="${status.error}">
+                                Error codes:
+                                <c:forEach items="${status.errorMessages}" var="error">
+                                    <c:out value="${error}"/>
+                                </c:forEach>
+                            </c:if>
+                        </spring:bind>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="right">
+                        <label for="reportingEndDate">Report date (to):</label>
+                    </td>
+                    <td>
+                        <spring:bind path="queuedReports.reportingEndDate">
+                            <input type="text" id="reportingEndDate" name="${status.expression}" value="${status.value}"/>
                             <c:if test="${status.error}">
                                 Error codes:
                                 <c:forEach items="${status.errorMessages}" var="error">

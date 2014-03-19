@@ -4,28 +4,17 @@
 
 	<groupId>org.openmrs.module</groupId>
 	<artifactId>amrsreports</artifactId>
-	<version>0.3-SNAPSHOT</version>
+	<version>0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>AMRS Reports Module</name>
-	<description>Provides easy acess to AMPATH reports, limits access and adds logic rules and cohort definitions for MOH reports.</description>
+	<description>Provides easy Access to reports, limits access and adds logic rules and cohort definitions for reports.</description>
 
-	<url>http://wiki.ampath.or.ke/display/data/Comprehensive+Care+Clinic+Pre+ART+Register+MOH+361A</url>
+	<url>http://sampleurl.or.ke</url>
 	
 	<developers>
+
 		<developer>
-			<name>Jeremy Keiper</name>
-		</developer>
-		<developer>
-			<name>Antony O'jwang</name>
-		</developer>
-		<developer>
-			<name>Alfayo Kwatuha</name>
-		</developer>
-		<developer>
-			<name>Nicholas Ingosi</name>
-		</developer>
-		<developer>
-			<name>Oliver Mwalo</name>
+			<name>Antony Ojwang'</name>
 		</developer>
 	</developers>
 	
@@ -35,9 +24,9 @@
 	</organization>
 
 	<scm>
-		<connection>scm:git:https://github.com/AMPATH/openmrs-module-amrsreports</connection>
-		<developerConnection>scm:git:https://github.com/AMPATH/openmrs-module-amrsreports</developerConnection>
-		<url>https://github.com/AMPATH/openmrs-module-amrsreports</url>
+		<connection>scm:git:https://github.com/ojwanganto/openmrs-module-amrsreports</connection>
+		<developerConnection>scm:git:https://github.com/ojwanganto/openmrs-module-amrsreports</developerConnection>
+		<url>https://github.com/ojwanganto/openmrs-module-amrsreports</url>
 	  <tag>HEAD</tag>
   </scm>
 

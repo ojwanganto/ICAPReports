@@ -2,22 +2,16 @@ package org.openmrs.module.amrsreports.reporting.provider;
 
 import org.apache.commons.io.IOUtils;
 import org.openmrs.api.APIException;
-import org.openmrs.module.amrsreports.MOHFacility;
 import org.openmrs.module.amrsreports.reporting.CommonCohortLibrary;
-import org.openmrs.module.amrsreports.reporting.CommonIndicatorLibrary;
 import org.openmrs.module.amrsreports.reporting.ReportUtils;
 import org.openmrs.module.amrsreports.reporting.cohort.definition.CCCPatientCohortDefinition;
 import org.openmrs.module.reporting.ReportingConstants;
-import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.GenderCohortDefinition;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.module.reporting.indicator.dimension.CohortDefinitionDimension;
-import org.openmrs.module.reporting.indicator.util.IndicatorUtil;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.ReportDesignResource;
 import org.openmrs.module.reporting.report.definition.PeriodIndicatorReportDefinition;
@@ -27,7 +21,6 @@ import org.openmrs.util.OpenmrsClassLoader;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,13 +28,13 @@ import java.util.Map;
 /**
  * Provides mechanisms for rendering the MOH 361A Pre-ART Register
  */
-public class CCCPatientApplicationProvider extends ReportProvider {
+public class HIVPalliativeCareProvider extends ReportProvider {
 
 
     private CommonCohortLibrary commonCohorts = new CommonCohortLibrary();
 
-	public CCCPatientApplicationProvider() {
-		this.name = "CCC Patient Application";
+	public HIVPalliativeCareProvider() {
+		this.name = "1.0 HIV Palliative Care";
 		this.visible = true;
 	}
 

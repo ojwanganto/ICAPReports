@@ -1,7 +1,9 @@
 package org.openmrs.module.amrsreports.reporting.provider;
 
 import org.apache.commons.io.IOUtils;
+import org.openmrs.Location;
 import org.openmrs.api.APIException;
+import org.openmrs.module.amrsreports.MOHFacility;
 import org.openmrs.module.amrsreports.reporting.CommonCohortLibrary;
 import org.openmrs.module.amrsreports.reporting.ReportUtils;
 import org.openmrs.module.amrsreports.reporting.cohort.definition.CCCPatientCohortDefinition;
@@ -44,6 +46,11 @@ public class HIVPalliativeCareProvider extends ReportProvider {
 		ReportDefinition report = new PeriodIndicatorReportDefinition();
 		report.setName("CCC Patient Application");
 
+        // set up parameters
+        Parameter facility = new Parameter();
+        facility.setName("locationList");
+        facility.setType(Location.class);
+
         //define general cohorts
         /*Males (0-14 cohort)*/
 
@@ -83,47 +90,54 @@ public class HIVPalliativeCareProvider extends ReportProvider {
         CohortDefinitionDimension compositionDimension = new CohortDefinitionDimension();
         compositionDimension.setName("compositionDimension");
         compositionDimension.addParameter(new Parameter("startDate", "Start Date", Date.class));
-        compositionDimension.addCohortDefinition("malesZeroTo14CohortDimension", ReportUtils.map(malesZeroTo14, "effectiveDate=${startDate}"));
-        compositionDimension.addCohortDefinition("malesAbove15CohortDimension",  ReportUtils.map(malesAbove15, "effectiveDate=${startDate}"));
-        compositionDimension.addCohortDefinition("femalesZeroTo14CohortDimension", ReportUtils.map(femalesZeroTo14, "effectiveDate=${startDate}"));
-        compositionDimension.addCohortDefinition("femalesAbove15CohortDimension", ReportUtils.map(femalesAbove15, "effectiveDate=${startDate}"));
+        compositionDimension.addParameter(new Parameter("locationList", "List of Locations", MOHFacility.class));
+        compositionDimension.addCohortDefinition("malesZeroTo14CohortDimension", ReportUtils.map(malesZeroTo14, "effectiveDate=${startDate},locationList=${locationList}"));
+        compositionDimension.addCohortDefinition("malesAbove15CohortDimension",  ReportUtils.map(malesAbove15, "effectiveDate=${startDate},locationList=${locationList}"));
+        compositionDimension.addCohortDefinition("femalesZeroTo14CohortDimension", ReportUtils.map(femalesZeroTo14, "effectiveDate=${startDate},locationList=${locationList}"));
+        compositionDimension.addCohortDefinition("femalesAbove15CohortDimension", ReportUtils.map(femalesAbove15, "effectiveDate=${startDate},locationList=${locationList}"));
 
         //add cohort dimension for peds
-        compositionDimension.addCohortDefinition("pedsMalesZeroTo1CohortDimension", ReportUtils.map(pedsMalesZeroTo1, "effectiveDate=${startDate}"));
-        compositionDimension.addCohortDefinition("pedsFemalesZeroTo1CohortDimension", ReportUtils.map(pedsFemalesZeroTo1, "effectiveDate=${startDate}"));
-        compositionDimension.addCohortDefinition("pedsmales2To4CohortDimension", ReportUtils.map(pedsmales2To4, "effectiveDate=${startDate}"));
-        compositionDimension.addCohortDefinition("pedsFemales2To4CohortDimension", ReportUtils.map(pedsFemales2To4, "effectiveDate=${startDate}"));
-        compositionDimension.addCohortDefinition("pedsmales5To14CohortDimension", ReportUtils.map(pedsmales5To14, "effectiveDate=${startDate}"));
-        compositionDimension.addCohortDefinition("pedsFemales5To14CohortDimension", ReportUtils.map(pedsFemales5To14, "effectiveDate=${startDate}"));
+        compositionDimension.addCohortDefinition("pedsMalesZeroTo1CohortDimension", ReportUtils.map(pedsMalesZeroTo1, "effectiveDate=${startDate},locationList=${locationList}"));
+        compositionDimension.addCohortDefinition("pedsFemalesZeroTo1CohortDimension", ReportUtils.map(pedsFemalesZeroTo1, "effectiveDate=${startDate},locationList=${locationList}"));
+        compositionDimension.addCohortDefinition("pedsmales2To4CohortDimension", ReportUtils.map(pedsmales2To4, "effectiveDate=${startDate},locationList=${locationList}"));
+        compositionDimension.addCohortDefinition("pedsFemales2To4CohortDimension", ReportUtils.map(pedsFemales2To4, "effectiveDate=${startDate},locationList=${locationList}"));
+        compositionDimension.addCohortDefinition("pedsmales5To14CohortDimension", ReportUtils.map(pedsmales5To14, "effectiveDate=${startDate},locationList=${locationList}"));
+        compositionDimension.addCohortDefinition("pedsFemales5To14CohortDimension", ReportUtils.map(pedsFemales5To14, "effectiveDate=${startDate},locationList=${locationList}"));
 
-        CohortIndicator malesZeroTo14ind = createCohortIndicator("malesZeroTo14CohortIndicator",ReportUtils.map(malesZeroTo14, "effectiveDate=${startDate}"));
+        CohortIndicator malesZeroTo14ind = createCohortIndicator("malesZeroTo14CohortIndicator",ReportUtils.map(malesZeroTo14, "effectiveDate=${startDate},locationList=${locationList}"));
 
-        CohortIndicator malesAbove15ind = createCohortIndicator("malesAbove15CohortIndicator", ReportUtils.map(malesAbove15, "effectiveDate=${startDate}"));
+        CohortIndicator malesAbove15ind = createCohortIndicator("malesAbove15CohortIndicator", ReportUtils.map(malesAbove15, "effectiveDate=${startDate},locationList=${locationList}"));
 
-        CohortIndicator femalesZeroTo14ind = createCohortIndicator("femalesZeroTo14CohortIndicator", ReportUtils.map(femalesZeroTo14, "effectiveDate=${startDate}"));
+        CohortIndicator femalesZeroTo14ind = createCohortIndicator("femalesZeroTo14CohortIndicator", ReportUtils.map(femalesZeroTo14, "effectiveDate=${startDate},locationList=${locationList}"));
 
-        CohortIndicator femalesAbove15ind = createCohortIndicator("femalesAbove15CohortIndicator", ReportUtils.map(femalesAbove15, "effectiveDate=${startDate}"));
+        CohortIndicator femalesAbove15ind = createCohortIndicator("femalesAbove15CohortIndicator", ReportUtils.map(femalesAbove15, "effectiveDate=${startDate},locationList=${locationList}"));
 
         /**
          * Add indicators for peds
          */
-        CohortIndicator pedsMalesZeroTo1ind = createCohortIndicator("pedsMalesZeroTo1CohortIndicator", ReportUtils.map(pedsMalesZeroTo1, "effectiveDate=${startDate}"));
-        CohortIndicator pedsFemalesZeroTo1ind = createCohortIndicator("pedsFemalesZeroTo1CohortIndicator",ReportUtils.map(pedsFemalesZeroTo1, "effectiveDate=${startDate}"));
-        CohortIndicator pedsmales2To4ind = createCohortIndicator("pedsmales2To4CohortIndicator", ReportUtils.map(pedsmales2To4, "effectiveDate=${startDate}"));
-        CohortIndicator pedsFemales2To4ind = createCohortIndicator("pedsFemales2To4CohortIndicator", ReportUtils.map(pedsFemales2To4, "effectiveDate=${startDate}"));
-        CohortIndicator pedsmales5To14ind = createCohortIndicator("pedsmales5To14CohortIndicator", ReportUtils.map(pedsmales5To14, "effectiveDate=${startDate}"));
-        CohortIndicator pedsFemales5To14ind = createCohortIndicator("pedsFemales5To14CohortIndicator", ReportUtils.map(pedsFemales5To14, "effectiveDate=${startDate}"));
+        CohortIndicator pedsMalesZeroTo1ind = createCohortIndicator("pedsMalesZeroTo1CohortIndicator", ReportUtils.map(pedsMalesZeroTo1, "effectiveDate=${startDate},locationList=${locationList}"));
+        CohortIndicator pedsFemalesZeroTo1ind = createCohortIndicator("pedsFemalesZeroTo1CohortIndicator",ReportUtils.map(pedsFemalesZeroTo1, "effectiveDate=${startDate},locationList=${locationList}"));
+        CohortIndicator pedsmales2To4ind = createCohortIndicator("pedsmales2To4CohortIndicator", ReportUtils.map(pedsmales2To4, "effectiveDate=${startDate},locationList=${locationList}"));
+        CohortIndicator pedsFemales2To4ind = createCohortIndicator("pedsFemales2To4CohortIndicator", ReportUtils.map(pedsFemales2To4, "effectiveDate=${startDate},locationList=${locationList}"));
+        CohortIndicator pedsmales5To14ind = createCohortIndicator("pedsmales5To14CohortIndicator", ReportUtils.map(pedsmales5To14, "effectiveDate=${startDate},locationList=${locationList}"));
+        CohortIndicator pedsFemales5To14ind = createCohortIndicator("pedsFemales5To14CohortIndicator", ReportUtils.map(pedsFemales5To14, "effectiveDate=${startDate},locationList=${locationList}"));
         Map<String, Object> dimensionMappings = new HashMap<String, Object>();
         dimensionMappings.put("startDate", "${startDate}");
-
+        dimensionMappings.put("locationList", "${locationList}");
         Map<String, Object> periodMappings = new HashMap<String, Object>();
         periodMappings.put("startDate", "${startDate}");
         periodMappings.put("endDate", "${endDate}");
-        //periodMappings.put("location", "${location}");
+        periodMappings.put("locationList", "${locationList}");
+
+        Map<String, Object> indMappings = new HashMap<String, Object>();
+        periodMappings.put("startDate", "${startDate}");
+        periodMappings.put("endDate", "${endDate}");
+        periodMappings.put("locationList", "${locationList}");
 
         CohortIndicatorDataSetDefinition dsd = new CohortIndicatorDataSetDefinition();
         dsd.addParameter(ReportingConstants.START_DATE_PARAMETER);
         dsd.addParameter(ReportingConstants.END_DATE_PARAMETER);
+        dsd.addParameter(facility);
 
         dsd.addDimension("compositionDimension", new Mapped<CohortDefinitionDimension>(compositionDimension,dimensionMappings));
         dsd.addColumn("malesBelow15", "Males Below 15", new Mapped<CohortIndicator>(malesZeroTo14ind, periodMappings), "");
@@ -195,6 +209,7 @@ public class HIVPalliativeCareProvider extends ReportProvider {
         CohortIndicator ind = new CohortIndicator(description);
         ind.addParameter(new Parameter("startDate", "Start Date", Date.class));
         ind.addParameter(new Parameter("endDate", "End Date", Date.class));
+        ind.addParameter(new Parameter("locationList", "List of Locations", Location.class));
         ind.setType(CohortIndicator.IndicatorType.COUNT);
         ind.setCohortDefinition(mappedCohort);
         return ind;

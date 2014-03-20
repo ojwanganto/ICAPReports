@@ -19,6 +19,7 @@ import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.Program;
 import org.openmrs.api.PatientSetService;
+import org.openmrs.module.amrsreports.MOHFacility;
 import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CodedObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
@@ -108,11 +109,24 @@ public class CommonCohortLibrary {
 		CompositionCohortDefinition cd = new CompositionCohortDefinition();
 		cd.setName("females aged at least Some age");
 		cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
         cd.addSearch("females", ReportUtils.map(females()));
 		cd.addSearch("agedAtLeastSomeAge", ReportUtils.map(agedAtLeast(minAge), "effectiveDate=${effectiveDate}"));
-		cd.setCompositionString("females AND agedAtLeastSomeAge");
+        cd.addSearch("atLocation",ReportUtils.map(hasEncountersAtAfacility(), "locationList=${locationList}"));
+		cd.setCompositionString("females AND agedAtLeastSomeAge AND atLocation");
 		return cd;
 	}
+
+    public CohortDefinition femalesAgedAtLeastXaTFacility(Integer minAge){
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.setName("femalesAgedAtLeastSomeAgeAtLocation");
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
+        cd.addSearch("femalesAgedAtLeastSomeAge",ReportUtils.map(femalesAgedAtLeastX(minAge), "effectiveDate=${effectiveDate}"));
+        cd.addSearch("atLocation",ReportUtils.map(hasEncountersAtAfacility(), "locationList=${locationList}"));
+        cd.setCompositionString("femalesAgedAtLeastSomeAge AND atLocation");
+        return cd;
+    }
 
     /**
      * Patients who are female and at most x years old on ${effectiveDate}
@@ -122,9 +136,22 @@ public class CommonCohortLibrary {
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
         cd.setName("females aged at most some age");
         cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
         cd.addSearch("females", ReportUtils.map(females()));
         cd.addSearch("agedAtMostSomeAge", ReportUtils.map(agedAtMost(maxAge), "effectiveDate=${effectiveDate}"));
-        cd.setCompositionString("females AND agedAtMostSomeAge");
+        cd.addSearch("atLocation",ReportUtils.map(hasEncountersAtAfacility(), "locationList=${locationList}"));
+        cd.setCompositionString("females AND agedAtMostSomeAge AND atLocation");
+        return cd;
+    }
+
+    public CohortDefinition femalesAgedAtMostXaTFacility(Integer maxAge){
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.setName("femalesAgedAtMostSomeAgeAtLocation");
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
+        cd.addSearch("femalesAgedAtMostSomeAge",ReportUtils.map(femalesAgedAtMostX(maxAge), "effectiveDate=${effectiveDate}"));
+        cd.addSearch("atLocation",ReportUtils.map(hasEncountersAtAfacility(), "locationList=${locationList}"));
+        cd.setCompositionString("femalesAgedAtMostSomeAge AND atLocation");
         return cd;
     }
 
@@ -136,9 +163,23 @@ public class CommonCohortLibrary {
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
         cd.setName("females aged at least Some age");
         cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
         cd.addSearch("males", ReportUtils.map(males()));
         cd.addSearch("agedAtLeastSomeAge", ReportUtils.map(agedAtLeast(minAge), "effectiveDate=${effectiveDate}"));
-        cd.setCompositionString("males AND agedAtLeastSomeAge");
+        cd.addSearch("atLocation",ReportUtils.map(hasEncountersAtAfacility(), "locationList=${locationList}"));
+        cd.setCompositionString("males AND agedAtLeastSomeAge AND atLocation");
+        return cd;
+    }
+
+
+    public CohortDefinition malesAgedAtLeastXaTFacility(Integer minAge){
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.setName("malesAgedAtLeastSomeAgeAtLocation");
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
+        cd.addSearch("malesAgedAtLeastSomeAge",ReportUtils.map(malesAgedAtLeastX(minAge), "effectiveDate=${effectiveDate}"));
+        cd.addSearch("atLocation",ReportUtils.map(hasEncountersAtAfacility(), "locationList=${locationList}"));
+        cd.setCompositionString("malesAgedAtLeastSomeAge AND atLocation");
         return cd;
     }
 
@@ -150,9 +191,22 @@ public class CommonCohortLibrary {
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
         cd.setName("females aged at most some age");
         cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
         cd.addSearch("males", ReportUtils.map(males()));
         cd.addSearch("agedAtMostSomeAge", ReportUtils.map(agedAtMost(maxAge), "effectiveDate=${effectiveDate}"));
-        cd.setCompositionString("males AND agedAtMostSomeAge");
+        cd.addSearch("atLocation",ReportUtils.map(hasEncountersAtAfacility(), "locationList=${locationList}"));
+        cd.setCompositionString("males AND agedAtMostSomeAge AND atLocation");
+        return cd;
+    }
+
+    public CohortDefinition malesAgedAtMostXaTFacility(Integer maxAge){
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.setName("malesAgedAtMostSomeAgeAtLocation");
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
+        cd.addSearch("malesAgedAtMostSomeAge",ReportUtils.map(malesAgedAtMostX(maxAge), "effectiveDate=${effectiveDate}"));
+        cd.addSearch("atLocation",ReportUtils.map(hasEncountersAtAfacility(), "locationList=${locationList}"));
+        cd.setCompositionString("malesAgedAtMostSomeAge AND atLocation");
         return cd;
     }
 
@@ -164,9 +218,22 @@ public class CommonCohortLibrary {
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
         cd.setName("females aged at most some age");
         cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
         cd.addSearch("males", ReportUtils.map(males()));
         cd.addSearch("agedBetween", ReportUtils.map(agedBetween(minAge,maxAge), "effectiveDate=${effectiveDate}"));
-        cd.setCompositionString("males AND agedBetween");
+        cd.addSearch("atLocation",ReportUtils.map(hasEncountersAtAfacility(), "locationList=${locationList}"));
+        cd.setCompositionString("males AND agedBetween AND atLocation");
+        return cd;
+    }
+
+    public CohortDefinition malesAgedBetweenXaTFacility(Integer minAge,Integer maxAge){
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.setName("malesAgedBetweenAtLocation");
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
+        cd.addSearch("malesAgedBetween",ReportUtils.map(malesAgedBetween(minAge,maxAge), "effectiveDate=${effectiveDate}"));
+        cd.addSearch("atLocation",ReportUtils.map(hasEncountersAtAfacility(), "locationList=${locationList}"));
+        cd.setCompositionString("malesAgedBetween AND atLocation");
         return cd;
     }
 
@@ -178,11 +245,25 @@ public class CommonCohortLibrary {
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
         cd.setName("females aged at most some age");
         cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
         cd.addSearch("females", ReportUtils.map(females()));
         cd.addSearch("agedBetween", ReportUtils.map(agedBetween(minAge,maxAge), "effectiveDate=${effectiveDate}"));
-        cd.setCompositionString("females AND agedBetween");
+        cd.addSearch("atLocation",ReportUtils.map(hasEncountersAtAfacility(), "locationList=${locationList}"));
+        cd.setCompositionString("females AND agedBetween AND atLocation");
         return cd;
     }
+
+    public CohortDefinition femalesAgedBetweenXaTFacility(Integer minAge,Integer maxAge){
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.setName("femalesAgedBetweenAtLocation");
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
+        cd.addSearch("femalesAgedBetween",ReportUtils.map(femalesAgedBetween(minAge,maxAge), "effectiveDate=${effectiveDate}"));
+        cd.addSearch("atLocation",ReportUtils.map(hasEncountersAtAfacility(), "locationList=${locationList}"));
+        cd.setCompositionString("femalesAgedBetween AND atLocation");
+        return cd;
+    }
+
 	/**
 	 * Patients who have an encounter between ${onOrAfter} and ${onOrBefore}
 	 * @param types the encounter types

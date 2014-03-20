@@ -5,6 +5,7 @@ import org.apache.commons.lang.time.StopWatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Cohort;
+import org.openmrs.Location;
 import org.openmrs.api.APIException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
@@ -38,6 +39,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -75,17 +77,21 @@ public class QueuedReportServiceImpl implements QueuedReportService {
 
             CohortDefinition cohortDefinition = reportProvider.getCohortDefinition();
             cohortDefinition.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+            cohortDefinition.addParameter(new Parameter("locationList", "List of Locations", Location.class));
 
             ReportDefinition reportDefinition = reportProvider.getReportDefinition();
             reportDefinition.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+            cohortDefinition.addParameter(new Parameter("locationList", "List of Locations", Location.class));
 
             // try rendering the report
             EvaluationContext evaluationContext = new EvaluationContext();
 
             // set up evaluation context values
-            evaluationContext.addParameterValue(ReportingConstants.START_DATE_PARAMETER.getName(), DateUtil.getDateTime(1980, 1, 1));
-            evaluationContext.addParameterValue(ReportingConstants.END_DATE_PARAMETER.getName(), DateUtil.getDateTime(2000, 1, 1));
-           // evaluationContext.addParameterValue("startDate", queuedReport.getEvaluationDate());
+            evaluationContext.addParameterValue(ReportingConstants.START_DATE_PARAMETER.getName(), queuedReport.getEvaluationDate());
+            evaluationContext.addParameterValue(ReportingConstants.END_DATE_PARAMETER.getName(), queuedReport.getReportingEndDate());
+
+            List<Location> locationList = new ArrayList<Location>(queuedReport.getFacility().getLocations());
+            evaluationContext.addParameterValue("locationList", locationList);
             evaluationContext.setEvaluationDate(queuedReport.getEvaluationDate());
 
             StopWatch timer = new StopWatch();

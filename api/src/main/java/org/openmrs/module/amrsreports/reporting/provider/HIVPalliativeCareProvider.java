@@ -124,13 +124,14 @@ public class HIVPalliativeCareProvider extends ReportProvider {
         Map<String, Object> dimensionMappings = new HashMap<String, Object>();
         dimensionMappings.put("startDate", "${startDate}");
         dimensionMappings.put("locationList", "${locationList}");
+
         Map<String, Object> periodMappings = new HashMap<String, Object>();
         periodMappings.put("startDate", "${startDate}");
         periodMappings.put("endDate", "${endDate}");
         periodMappings.put("locationList", "${locationList}");
 
-        Map<String, Object> indMappings = new HashMap<String, Object>();
-        periodMappings.put("startDate", "${startDate}");
+        Map<String, Object> secondColumnMappings = new HashMap<String, Object>();
+        periodMappings.put("startDate", "${endDate}");
         periodMappings.put("endDate", "${endDate}");
         periodMappings.put("locationList", "${locationList}");
 
@@ -212,6 +213,26 @@ public class HIVPalliativeCareProvider extends ReportProvider {
         ind.addParameter(new Parameter("locationList", "List of Locations", Location.class));
         ind.setType(CohortIndicator.IndicatorType.COUNT);
         ind.setCohortDefinition(mappedCohort);
+        return ind;
+    }
+
+    public static CohortIndicator createCohortIndicatorForStart(String description, CohortDefinition  mappedCohort) {
+        CohortIndicator ind = new CohortIndicator(description);
+        ind.addParameter(new Parameter("startDate", "Start Date", Date.class));
+        ind.addParameter(new Parameter("endDate", "End Date", Date.class));
+        ind.addParameter(new Parameter("locationList", "List of Locations", Location.class));
+        ind.setType(CohortIndicator.IndicatorType.COUNT);
+        ind.setCohortDefinition(mappedCohort, "effectiveDate=${startDate}");
+        return ind;
+    }
+
+    public static CohortIndicator createCohortIndicatorForEnd(String description, CohortDefinition mappedCohort) {
+        CohortIndicator ind = new CohortIndicator(description);
+        ind.addParameter(new Parameter("startDate", "Start Date", Date.class));
+        ind.addParameter(new Parameter("endDate", "End Date", Date.class));
+        ind.addParameter(new Parameter("locationList", "List of Locations", Location.class));
+        ind.setType(CohortIndicator.IndicatorType.COUNT);
+        ind.setCohortDefinition(mappedCohort, "effectiveDate=${endDate}");
         return ind;
     }
 

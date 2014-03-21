@@ -45,7 +45,7 @@
         reportDate = new DatePicker("<openmrs:datePattern/>", "evaluationDate", {
 //            defaultDate: new Date()
         });
-        reportDate.setDate(new Date());
+        //reportDate.setDate(new Date());
 
         scheduleDate = new DateTimePicker("<openmrs:datePattern/>", "h:mm TT", "dateScheduled", {
             hourGrid: 6,
@@ -55,7 +55,7 @@
         evaluationEndDate = new DatePicker("<openmrs:datePattern/>", "reportingEndDate", {
 //
         });
-        evaluationEndDate.setDate(new Date());
+        //evaluationEndDate.setDate(new Date());
     });
 
 </script>

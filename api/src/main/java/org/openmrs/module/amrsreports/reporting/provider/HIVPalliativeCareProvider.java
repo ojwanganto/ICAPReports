@@ -126,23 +126,23 @@ public class HIVPalliativeCareProvider extends ReportProvider {
          * Define indicators for end date
          */
 
-        CohortIndicator malesZeroTo14indend = createCohortIndicatorForEnd("malesZeroTo14CohortIndicator",malesZeroTo14);
+        CohortIndicator malesZeroTo14indend = createCohortIndicatorForEnd("malesZeroTo14CohortIndicatorEnd",malesZeroTo14);
 
-        CohortIndicator malesAbove15indend = createCohortIndicatorForEnd("malesAbove15CohortIndicator", malesAbove15);
+        CohortIndicator malesAbove15indend = createCohortIndicatorForEnd("malesAbove15CohortIndicatorEnd", malesAbove15);
 
-        CohortIndicator femalesZeroTo14indend = createCohortIndicatorForEnd("femalesZeroTo14CohortIndicator", femalesZeroTo14);
+        CohortIndicator femalesZeroTo14indend = createCohortIndicatorForEnd("femalesZeroTo14CohortIndicatorEnd", femalesZeroTo14);
 
-        CohortIndicator femalesAbove15indend = createCohortIndicatorForEnd("femalesAbove15CohortIndicator", femalesAbove15);
+        CohortIndicator femalesAbove15indend = createCohortIndicatorForEnd("femalesAbove15CohortIndicatorEnd", femalesAbove15);
 
         /**
          * Add indicators for peds
          */
-        CohortIndicator pedsMalesZeroTo1indend = createCohortIndicatorForEnd("pedsMalesZeroTo1CohortIndicator", pedsMalesZeroTo1);
-        CohortIndicator pedsFemalesZeroTo1indend = createCohortIndicatorForEnd("pedsFemalesZeroTo1CohortIndicator",pedsFemalesZeroTo1);
-        CohortIndicator pedsmales2To4indend = createCohortIndicatorForEnd("pedsmales2To4CohortIndicator", pedsmales2To4);
-        CohortIndicator pedsFemales2To4indend = createCohortIndicatorForEnd("pedsFemales2To4CohortIndicator", pedsFemales2To4);
-        CohortIndicator pedsmales5To14indend = createCohortIndicatorForEnd("pedsmales5To14CohortIndicator", pedsmales5To14);
-        CohortIndicator pedsFemales5To14indend = createCohortIndicatorForEnd("pedsFemales5To14CohortIndicator", pedsFemales5To14);
+        CohortIndicator pedsMalesZeroTo1indend = createCohortIndicatorForEnd("pedsMalesZeroTo1CohortIndicatorEnd", pedsMalesZeroTo1);
+        CohortIndicator pedsFemalesZeroTo1indend = createCohortIndicatorForEnd("pedsFemalesZeroTo1CohortIndicatorEnd",pedsFemalesZeroTo1);
+        CohortIndicator pedsmales2To4indend = createCohortIndicatorForEnd("pedsmales2To4CohortIndicatorEnd", pedsmales2To4);
+        CohortIndicator pedsFemales2To4indend = createCohortIndicatorForEnd("pedsFemales2To4CohortIndicatorEnd", pedsFemales2To4);
+        CohortIndicator pedsmales5To14indend = createCohortIndicatorForEnd("pedsmales5To14CohortIndicatorEnd", pedsmales5To14);
+        CohortIndicator pedsFemales5To14indend = createCohortIndicatorForEnd("pedsFemales5To14CohortIndicatorEnd", pedsFemales5To14);
 
 
         Map<String, Object> dimensionMappings = new HashMap<String, Object>();

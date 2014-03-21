@@ -6,7 +6,7 @@
 	<artifactId>amrsreports</artifactId>
 	<version>0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>AMRS Reports Module</name>
+	<name>ICAP Reports Module</name>
 	<description>Provides easy Access to reports, limits access and adds logic rules and cohort definitions for reports.</description>
 
 	<url>http://sampleurl.or.ke</url>

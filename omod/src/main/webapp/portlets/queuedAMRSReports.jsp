@@ -49,7 +49,7 @@
                                     <c:when test="${model.status == 'COMPLETE'}">
                                         <a href="viewReport.form?reportId=${r.id}">View</a>
                                         <a href="downloadxls.htm?reportId=${r.id}">Excel</a>
-                                        <a href="downloadcsv.htm?reportId=${r.id}">CSV</a>
+                                        <%--<a href="downloadcsv.htm?reportId=${r.id}">CSV</a>--%>
                                     </c:when>
                                     <c:when test="${model.status == 'NEW'}">
                                         <a href="queuedReport.form?queuedReportId=${r.id}&status=${model.status}">Edit</a>

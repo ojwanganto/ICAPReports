@@ -35,8 +35,8 @@ public class AmrsReportAdminExt extends AdministrationSectionExt {
     public Map<String, String> getLinks() {
         Map<String, String> map = new LinkedHashMap<String, String>();
 
-        map.put("module/amrsreports/queuedReport.list", "Manage AMRS Reports");
-        map.put("module/amrsreports/facility.list", "Manage MOH Facilities");
+        map.put("module/amrsreports/queuedReport.list", "Manage ICAP Reports");
+        map.put("module/amrsreports/facility.list", "Manage ICAP Facilities");
         map.put("/module/amrsreports/cohortCounts.list", "View Cohort Counts");
 
         return map;
@@ -47,6 +47,6 @@ public class AmrsReportAdminExt extends AdministrationSectionExt {
      */
     @Override
     public String getTitle() {
-        return "CCC Patient App Reports";
+        return "ICAP  Reports Module";
     }
 }

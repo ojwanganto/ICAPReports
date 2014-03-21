@@ -22,7 +22,7 @@
 
         <li <c:if test='<%= request.getRequestURI().contains("queuedReport") %>'>class="active"</c:if>>
             <a href="${pageContext.request.contextPath}/module/amrsreports/queuedReport.list">
-                Manage AMRS Reports
+                Manage ICAP Reports
             </a>
         </li>
 
@@ -30,7 +30,7 @@
 
         <li <c:if test='<%= request.getRequestURI().contains("facilityList") %>'>class="active"</c:if>>
             <a href="${pageContext.request.contextPath}/module/amrsreports/facility.list">
-                View MOH Facilities
+                View Facilities
             </a>
         </li>
         <openmrs:hasPrivilege privilege="View Users">

@@ -101,7 +101,7 @@ public class QueuedReportServiceImpl implements QueuedReportService {
             Cohort cohort = cohortDefinitionService.evaluate(cohortDefinition, evaluationContext);
 
 
-            evaluationContext.setBaseCohort(cohort);
+            //evaluationContext.setBaseCohort(cohort);
             timer.stop();
             String cohortTime = timer.toString();
             timer.reset();

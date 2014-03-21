@@ -121,6 +121,30 @@ public class HIVPalliativeCareProvider extends ReportProvider {
         CohortIndicator pedsFemales2To4ind = createCohortIndicator("pedsFemales2To4CohortIndicator", ReportUtils.map(pedsFemales2To4, "effectiveDate=${startDate},locationList=${locationList}"));
         CohortIndicator pedsmales5To14ind = createCohortIndicator("pedsmales5To14CohortIndicator", ReportUtils.map(pedsmales5To14, "effectiveDate=${startDate},locationList=${locationList}"));
         CohortIndicator pedsFemales5To14ind = createCohortIndicator("pedsFemales5To14CohortIndicator", ReportUtils.map(pedsFemales5To14, "effectiveDate=${startDate},locationList=${locationList}"));
+
+        /**
+         * Define indicators for end date
+         */
+
+        CohortIndicator malesZeroTo14indend = createCohortIndicatorForEnd("malesZeroTo14CohortIndicator",malesZeroTo14);
+
+        CohortIndicator malesAbove15indend = createCohortIndicatorForEnd("malesAbove15CohortIndicator", malesAbove15);
+
+        CohortIndicator femalesZeroTo14indend = createCohortIndicatorForEnd("femalesZeroTo14CohortIndicator", femalesZeroTo14);
+
+        CohortIndicator femalesAbove15indend = createCohortIndicatorForEnd("femalesAbove15CohortIndicator", femalesAbove15);
+
+        /**
+         * Add indicators for peds
+         */
+        CohortIndicator pedsMalesZeroTo1indend = createCohortIndicatorForEnd("pedsMalesZeroTo1CohortIndicator", pedsMalesZeroTo1);
+        CohortIndicator pedsFemalesZeroTo1indend = createCohortIndicatorForEnd("pedsFemalesZeroTo1CohortIndicator",pedsFemalesZeroTo1);
+        CohortIndicator pedsmales2To4indend = createCohortIndicatorForEnd("pedsmales2To4CohortIndicator", pedsmales2To4);
+        CohortIndicator pedsFemales2To4indend = createCohortIndicatorForEnd("pedsFemales2To4CohortIndicator", pedsFemales2To4);
+        CohortIndicator pedsmales5To14indend = createCohortIndicatorForEnd("pedsmales5To14CohortIndicator", pedsmales5To14);
+        CohortIndicator pedsFemales5To14indend = createCohortIndicatorForEnd("pedsFemales5To14CohortIndicator", pedsFemales5To14);
+
+
         Map<String, Object> dimensionMappings = new HashMap<String, Object>();
         dimensionMappings.put("startDate", "${startDate}");
         dimensionMappings.put("locationList", "${locationList}");
@@ -146,10 +170,10 @@ public class HIVPalliativeCareProvider extends ReportProvider {
         dsd.addColumn("femalesBelow15", "Females Below 15", new Mapped<CohortIndicator>(femalesZeroTo14ind, periodMappings), "");
         dsd.addColumn("femalesAbove15", "Females 15 or more", new Mapped<CohortIndicator>(femalesAbove15ind, periodMappings), "");
         //Make second  column
-        dsd.addColumn("NEWmalesBelow15", "Males Below 15", new Mapped<CohortIndicator>(malesZeroTo14ind, periodMappings), "");
-        dsd.addColumn("NEWmalesAbove15", "Males 15 or more", new Mapped<CohortIndicator>(malesAbove15ind, periodMappings), "");
-        dsd.addColumn("NEWfemalesBelow15", "Females Below 15", new Mapped<CohortIndicator>(femalesZeroTo14ind, periodMappings), "");
-        dsd.addColumn("NEWfemalesAbove15", "Females 15 or more", new Mapped<CohortIndicator>(femalesAbove15ind, periodMappings), "");
+        dsd.addColumn("NEWmalesBelow15", "Males Below 15", new Mapped<CohortIndicator>(malesZeroTo14indend, periodMappings), "");
+        dsd.addColumn("NEWmalesAbove15", "Males 15 or more", new Mapped<CohortIndicator>(malesAbove15indend, periodMappings), "");
+        dsd.addColumn("NEWfemalesBelow15", "Females Below 15", new Mapped<CohortIndicator>(femalesZeroTo14indend, periodMappings), "");
+        dsd.addColumn("NEWfemalesAbove15", "Females 15 or more", new Mapped<CohortIndicator>(femalesAbove15indend, periodMappings), "");
         /**
          * Add columns for peds
          */
@@ -163,12 +187,12 @@ public class HIVPalliativeCareProvider extends ReportProvider {
         /**
          * Fill second column for peds
          */
-        dsd.addColumn("NEWmalesPedsAt1", "Male Peds up to one year", new Mapped<CohortIndicator>(pedsMalesZeroTo1ind, periodMappings), "");
-        dsd.addColumn("NEWmalesPedsBtw2n4", "Males peds between 2 and 4", new Mapped<CohortIndicator>(pedsmales2To4ind, periodMappings), "");
-        dsd.addColumn("NEWmalesPedsBtw5n14", "Male Ped btw 5 and 14", new Mapped<CohortIndicator>(pedsmales5To14ind, periodMappings), "");
-        dsd.addColumn("NEWfemalesPedsAt1", "Female peds at one ", new Mapped<CohortIndicator>(pedsFemalesZeroTo1ind, periodMappings), "");
-        dsd.addColumn("NEWfemalesPedsBtw2n4", "Female peds  btw 2 and 4", new Mapped<CohortIndicator>(pedsFemales2To4ind, periodMappings), "");
-        dsd.addColumn("NEWfemalesPedsBtw5n14", "Female peds between 5 and 14", new Mapped<CohortIndicator>(pedsFemales5To14ind, periodMappings), "");
+        dsd.addColumn("NEWmalesPedsAt1", "Male Peds up to one year", new Mapped<CohortIndicator>(pedsMalesZeroTo1indend, periodMappings), "");
+        dsd.addColumn("NEWmalesPedsBtw2n4", "Males peds between 2 and 4", new Mapped<CohortIndicator>(pedsmales2To4indend, periodMappings), "");
+        dsd.addColumn("NEWmalesPedsBtw5n14", "Male Ped btw 5 and 14", new Mapped<CohortIndicator>(pedsmales5To14indend, periodMappings), "");
+        dsd.addColumn("NEWfemalesPedsAt1", "Female peds at one ", new Mapped<CohortIndicator>(pedsFemalesZeroTo1indend, periodMappings), "");
+        dsd.addColumn("NEWfemalesPedsBtw2n4", "Female peds  btw 2 and 4", new Mapped<CohortIndicator>(pedsFemales2To4indend, periodMappings), "");
+        dsd.addColumn("NEWfemalesPedsBtw5n14", "Female peds between 5 and 14", new Mapped<CohortIndicator>(pedsFemales5To14indend, periodMappings), "");
 
 		report.addDataSetDefinition(dsd, periodMappings);
 
@@ -222,7 +246,7 @@ public class HIVPalliativeCareProvider extends ReportProvider {
         ind.addParameter(new Parameter("endDate", "End Date", Date.class));
         ind.addParameter(new Parameter("locationList", "List of Locations", Location.class));
         ind.setType(CohortIndicator.IndicatorType.COUNT);
-        ind.setCohortDefinition(mappedCohort, "effectiveDate=${startDate}");
+        ind.setCohortDefinition(mappedCohort, "effectiveDate=${startDate},locationList=${locationList}");
         return ind;
     }
 
@@ -232,7 +256,7 @@ public class HIVPalliativeCareProvider extends ReportProvider {
         ind.addParameter(new Parameter("endDate", "End Date", Date.class));
         ind.addParameter(new Parameter("locationList", "List of Locations", Location.class));
         ind.setType(CohortIndicator.IndicatorType.COUNT);
-        ind.setCohortDefinition(mappedCohort, "effectiveDate=${endDate}");
+        ind.setCohortDefinition(mappedCohort, "effectiveDate=${endDate},locationList=${locationList}");
         return ind;
     }
 

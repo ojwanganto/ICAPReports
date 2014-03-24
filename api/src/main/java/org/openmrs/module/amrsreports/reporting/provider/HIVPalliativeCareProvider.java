@@ -71,18 +71,18 @@ public class HIVPalliativeCareProvider extends ReportProvider {
         compositionDimension.addParameter(new Parameter("startDate", "Start Date", Date.class));
         compositionDimension.addParameter(new Parameter("endDate", "End Date", Date.class));
         compositionDimension.addParameter(new Parameter("locationList", "List of Locations", Location.class));
-        compositionDimension.addCohortDefinition("malesZeroTo14CohortDimension", ReportUtils.map(malesZeroTo14Cohort, "effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate},onOrAfter=${startDate}"));
-        compositionDimension.addCohortDefinition("malesAbove15CohortDimension",  ReportUtils.map(malesAbove15Cohort, "effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate},onOrAfter=${startDate}"));
-        compositionDimension.addCohortDefinition("femalesZeroTo14CohortDimension", ReportUtils.map(femalesZeroTo14Cohort, "effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate},onOrAfter=${startDate}"));
-        compositionDimension.addCohortDefinition("femalesAbove15CohortDimension", ReportUtils.map(femalesAbove15Cohort, "effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate},onOrAfter=${startDate}"));
+        compositionDimension.addCohortDefinition("malesZeroTo14CohortDimension", ReportUtils.map(malesZeroTo14Cohort, "effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate}"));
+        compositionDimension.addCohortDefinition("malesAbove15CohortDimension",  ReportUtils.map(malesAbove15Cohort, "effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate}"));
+        compositionDimension.addCohortDefinition("femalesZeroTo14CohortDimension", ReportUtils.map(femalesZeroTo14Cohort, "effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate}"));
+        compositionDimension.addCohortDefinition("femalesAbove15CohortDimension", ReportUtils.map(femalesAbove15Cohort, "effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate}"));
 
         //add cohort dimension for peds
-        compositionDimension.addCohortDefinition("pedsMalesZeroTo1CohortDimension", ReportUtils.map(pedsMalesZeroTo1Cohort, "effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate},onOrAfter=${startDate}"));
-        compositionDimension.addCohortDefinition("pedsFemalesZeroTo1CohortDimension", ReportUtils.map(pedsFemalesZeroTo1Cohort, "effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate},onOrAfter=${startDate}"));
-        compositionDimension.addCohortDefinition("pedsmales2To4CohortDimension", ReportUtils.map(pedsmales2To4Cohort, "effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate},onOrAfter=${startDate}"));
-        compositionDimension.addCohortDefinition("pedsFemales2To4CohortDimension", ReportUtils.map(pedsFemales2To4Cohort, "effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate},onOrAfter=${startDate}"));
-        compositionDimension.addCohortDefinition("pedsmales5To14CohortDimension", ReportUtils.map(pedsmales5To14Cohort, "effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate},onOrAfter=${startDate}"));
-        compositionDimension.addCohortDefinition("pedsFemales5To14CohortDimension", ReportUtils.map(pedsFemales5To14Cohort, "effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate},onOrAfter=${startDate}"));
+        compositionDimension.addCohortDefinition("pedsMalesZeroTo1CohortDimension", ReportUtils.map(pedsMalesZeroTo1Cohort, "effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate}"));
+        compositionDimension.addCohortDefinition("pedsFemalesZeroTo1CohortDimension", ReportUtils.map(pedsFemalesZeroTo1Cohort, "effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate}"));
+        compositionDimension.addCohortDefinition("pedsmales2To4CohortDimension", ReportUtils.map(pedsmales2To4Cohort, "effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate}"));
+        compositionDimension.addCohortDefinition("pedsFemales2To4CohortDimension", ReportUtils.map(pedsFemales2To4Cohort, "effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate}"));
+        compositionDimension.addCohortDefinition("pedsmales5To14CohortDimension", ReportUtils.map(pedsmales5To14Cohort, "effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate}"));
+        compositionDimension.addCohortDefinition("pedsFemales5To14CohortDimension", ReportUtils.map(pedsFemales5To14Cohort, "effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate}"));
 
         CohortIndicator malesZeroTo14ind = CommonIndicatorLibrary.createCohortIndicatorAtStart("malesZeroTo14CohortIndicator",malesZeroTo14Cohort);
 

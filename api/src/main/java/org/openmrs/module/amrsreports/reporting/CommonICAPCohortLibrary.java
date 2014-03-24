@@ -19,6 +19,14 @@ import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.Program;
 import org.openmrs.api.PatientSetService;
+import org.openmrs.calculation.patient.PatientCalculation;
+import org.openmrs.module.amrsreports.cache.MohCacheUtils;
+import org.openmrs.module.amrsreports.calculation.library.InProgramCalculation;
+import org.openmrs.module.amrsreports.calculation.library.OnMedicationCalculation;
+import org.openmrs.module.amrsreports.calculation.library.hiv.art.OnAlternateFirstLineArtCalculation;
+import org.openmrs.module.amrsreports.reporting.calculation.CalculationCohortDefinition;
+import org.openmrs.module.amrsreports.rule.MohEvaluableNameConstants;
+import org.openmrs.module.amrsreports.subcohorts.DateObsValueBetweenCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CodedObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
@@ -32,7 +40,9 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 
 
 /**
@@ -109,7 +119,7 @@ public class CommonICAPCohortLibrary {
         cd.setName("Has Encounters at a facility between dates");
         cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
         cd.addParameter(new Parameter("onOrBefore", "Before Date", Date.class));
-        cd.addParameter(new Parameter("onOrAfter", "After Date", Date.class));
+        /*cd.addParameter(new Parameter("onOrAfter", "After Date", Date.class))*/;
 
         return cd;
     }
@@ -129,9 +139,9 @@ public class CommonICAPCohortLibrary {
         cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
         cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
         cd.addParameter(new Parameter("onOrBefore", "Before Date", Date.class));
-        cd.addParameter(new Parameter("onOrAfter", "After Date", Date.class));
+        /*cd.addParameter(new Parameter("onOrAfter", "After Date", Date.class));*/
         cd.addSearch("agedAtLeast", ReportUtils.map(agedAtLeast(minAge), "effectiveDate=${effectiveDate}"));
-        cd.addSearch("atLocation",ReportUtils.map(hasFacilityEncounters(), "locationList=${locationList},onOrBefore=${onOrBefore},onOrAfter=${onOrAfter}"));
+        cd.addSearch("atLocation",ReportUtils.map(hasFacilityEncounters(), "locationList=${locationList},onOrBefore=${onOrBefore}"));
         cd.setCompositionString("agedAtLeast AND atLocation");
         return cd;
     }
@@ -145,9 +155,9 @@ public class CommonICAPCohortLibrary {
         cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
         cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
         cd.addParameter(new Parameter("onOrBefore", "Before Date", Date.class));
-        cd.addParameter(new Parameter("onOrAfter", "After Date", Date.class));
+       /* cd.addParameter(new Parameter("onOrAfter", "After Date", Date.class));*/
         cd.addSearch("agedAtMost", ReportUtils.map(agedAtMost(maxAge), "effectiveDate=${effectiveDate}"));
-        cd.addSearch("atLocation",ReportUtils.map(hasFacilityEncounters(), "locationList=${locationList},onOrBefore=${onOrBefore},onOrAfter=${onOrAfter}"));
+        cd.addSearch("atLocation",ReportUtils.map(hasFacilityEncounters(), "locationList=${locationList},onOrBefore=${onOrBefore}"));
         cd.setCompositionString("agedAtMost AND atLocation");
         return cd;
     }
@@ -161,9 +171,9 @@ public class CommonICAPCohortLibrary {
         cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
         cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
         cd.addParameter(new Parameter("onOrBefore", "Before Date", Date.class));
-        cd.addParameter(new Parameter("onOrAfter", "After Date", Date.class));
+        /*cd.addParameter(new Parameter("onOrAfter", "After Date", Date.class));*/
         cd.addSearch("rangeOfAge", ReportUtils.map(agedBetween(minAge,maxAge), "effectiveDate=${effectiveDate}"));
-        cd.addSearch("atLocation",ReportUtils.map(hasFacilityEncounters(), "locationList=${locationList},onOrBefore=${onOrBefore},onOrAfter=${onOrAfter}"));
+        cd.addSearch("atLocation",ReportUtils.map(hasFacilityEncounters(), "locationList=${locationList},onOrBefore=${onOrBefore}"));
         cd.setCompositionString("rangeOfAge AND atLocation");
         return cd;
     }
@@ -184,8 +194,8 @@ public class CommonICAPCohortLibrary {
         cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
         cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
         cd.addParameter(new Parameter("onOrBefore", "Before Date", Date.class));
-        cd.addParameter(new Parameter("onOrAfter", "After Date", Date.class));
-        cd.addSearch("agedAtLeastAtFacility", ReportUtils.map(agedAtLeastAtFacility(minAge), "effectiveDate=${effectiveDate},locationList=${locationList},onOrBefore=${onOrBefore},onOrAfter=${onOrAfter}"));
+        /*cd.addParameter(new Parameter("onOrAfter", "After Date", Date.class));*/
+        cd.addSearch("agedAtLeastAtFacility", ReportUtils.map(agedAtLeastAtFacility(minAge), "effectiveDate=${effectiveDate},locationList=${locationList},onOrBefore=${onOrBefore}"));
         cd.addSearch("males",ReportUtils.map(males()));
         cd.setCompositionString("agedAtLeastAtFacility AND males");
         return cd;
@@ -200,8 +210,8 @@ public class CommonICAPCohortLibrary {
         cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
         cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
         cd.addParameter(new Parameter("onOrBefore", "Before Date", Date.class));
-        cd.addParameter(new Parameter("onOrAfter", "After Date", Date.class));
-        cd.addSearch("agedAtLeastAtFacility", ReportUtils.map(agedAtLeastAtFacility(minAge), "effectiveDate=${effectiveDate},locationList=${locationList},onOrBefore=${onOrBefore},onOrAfter=${onOrAfter}"));
+        /*cd.addParameter(new Parameter("onOrAfter", "After Date", Date.class));*/
+        cd.addSearch("agedAtLeastAtFacility", ReportUtils.map(agedAtLeastAtFacility(minAge), "effectiveDate=${effectiveDate},locationList=${locationList},onOrBefore=${onOrBefore}"));
         cd.addSearch("females",ReportUtils.map(females()));
         cd.setCompositionString("agedAtLeastAtFacility AND females");
         return cd;
@@ -216,8 +226,8 @@ public class CommonICAPCohortLibrary {
         cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
         cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
         cd.addParameter(new Parameter("onOrBefore", "Before Date", Date.class));
-        cd.addParameter(new Parameter("onOrAfter", "After Date", Date.class));
-        cd.addSearch("agedAtMostAtFacility", ReportUtils.map(agedAtMostAtFacility(maxAge), "effectiveDate=${effectiveDate},locationList=${locationList},onOrBefore=${onOrBefore},onOrAfter=${onOrAfter}"));
+        /*cd.addParameter(new Parameter("onOrAfter", "After Date", Date.class));*/
+        cd.addSearch("agedAtMostAtFacility", ReportUtils.map(agedAtMostAtFacility(maxAge), "effectiveDate=${effectiveDate},locationList=${locationList},onOrBefore=${onOrBefore}"));
         cd.addSearch("males",ReportUtils.map(males()));
         cd.setCompositionString("agedAtMostAtFacility AND males");
         return cd;
@@ -232,8 +242,8 @@ public class CommonICAPCohortLibrary {
         cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
         cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
         cd.addParameter(new Parameter("onOrBefore", "Before Date", Date.class));
-        cd.addParameter(new Parameter("onOrAfter", "After Date", Date.class));
-        cd.addSearch("agedAtMostAtFacility", ReportUtils.map(agedAtMostAtFacility(maxAge), "effectiveDate=${effectiveDate},locationList=${locationList},onOrBefore=${onOrBefore},onOrAfter=${onOrAfter}"));
+       /* cd.addParameter(new Parameter("onOrAfter", "After Date", Date.class));*/
+        cd.addSearch("agedAtMostAtFacility", ReportUtils.map(agedAtMostAtFacility(maxAge), "effectiveDate=${effectiveDate},locationList=${locationList},onOrBefore=${onOrBefore}"));
         cd.addSearch("females",ReportUtils.map(females()));
         cd.setCompositionString("agedAtMostAtFacility AND females");
         return cd;
@@ -248,8 +258,8 @@ public class CommonICAPCohortLibrary {
         cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
         cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
         cd.addParameter(new Parameter("onOrBefore", "Before Date", Date.class));
-        cd.addParameter(new Parameter("onOrAfter", "After Date", Date.class));
-        cd.addSearch("agedBetweenAtFacility", ReportUtils.map(agedBetweenAtFacility(minAge,maxAge), "effectiveDate=${effectiveDate},locationList=${locationList},onOrBefore=${onOrBefore},onOrAfter=${onOrAfter}"));
+        /*cd.addParameter(new Parameter("onOrAfter", "After Date", Date.class));*/
+        cd.addSearch("agedBetweenAtFacility", ReportUtils.map(agedBetweenAtFacility(minAge,maxAge), "effectiveDate=${effectiveDate},locationList=${locationList},onOrBefore=${onOrBefore}"));
         cd.addSearch("males",ReportUtils.map(males()));
         cd.setCompositionString("agedBetweenAtFacility AND males");
         return cd;
@@ -264,8 +274,8 @@ public class CommonICAPCohortLibrary {
         cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
         cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
         cd.addParameter(new Parameter("onOrBefore", "Before Date", Date.class));
-        cd.addParameter(new Parameter("onOrAfter", "After Date", Date.class));
-        cd.addSearch("agedBetweenAtFacility", ReportUtils.map(agedBetweenAtFacility(minAge,maxAge), "effectiveDate=${effectiveDate},locationList=${locationList},onOrBefore=${onOrBefore},onOrAfter=${onOrAfter}"));
+        /*cd.addParameter(new Parameter("onOrAfter", "After Date", Date.class));*/
+        cd.addSearch("agedBetweenAtFacility", ReportUtils.map(agedBetweenAtFacility(minAge,maxAge), "effectiveDate=${effectiveDate},locationList=${locationList},onOrBefore=${onOrBefore}"));
         cd.addSearch("females",ReportUtils.map(females()));
         cd.setCompositionString("agedBetweenAtFacility AND females");
         return cd;
@@ -312,8 +322,8 @@ public class CommonICAPCohortLibrary {
 	 * Patients who transferred in between ${onOrAfter} and ${onOrBefore}
 	 * @return the cohort definition
 	 */
-	/*public CohortDefinition transferredIn() {
-		Concept transferInDate = Dictionary.getConcept(Dictionary.TRANSFER_IN_DATE);
+	public CohortDefinition transferredIn() {
+		Concept transferInDate = MohCacheUtils.getConcept(MohEvaluableNameConstants.ADMITTED_TO_HOSPITAL);//Dictionary.getConcept(Dictionary.TRANSFER_IN_DATE);
 
 		DateObsValueBetweenCohortDefinition cd = new DateObsValueBetweenCohortDefinition();
 		cd.setName("transferred in between dates");
@@ -321,15 +331,15 @@ public class CommonICAPCohortLibrary {
 		cd.addParameter(new Parameter("onOrAfter", "After Date", Date.class));
 		cd.addParameter(new Parameter("onOrBefore", "Before Date", Date.class));
 		return cd;
-	}*/
+	}
 
 	/**
 	 * Patients who transferred in between ${onOrAfter} and ${onOrBefore}
 	 * @return the cohort definition
 	 */
-	/*public CohortDefinition transferredOut() {
-		Concept reasonForDiscontinue = Dictionary.getConcept(Dictionary.REASON_FOR_PROGRAM_DISCONTINUATION);
-		Concept transferredOut = Dictionary.getConcept(Dictionary.TRANSFERRED_OUT);
+	public CohortDefinition transferredOut() {
+		Concept reasonForDiscontinue = MohCacheUtils.getConcept(MohEvaluableNameConstants.ADMITTED_TO_HOSPITAL);//Dictionary.getConcept(Dictionary.REASON_FOR_PROGRAM_DISCONTINUATION);
+		Concept transferredOut = MohCacheUtils.getConcept(MohEvaluableNameConstants.ADMITTED_TO_HOSPITAL);//Dictionary.getConcept(Dictionary.TRANSFERRED_OUT);
 
 		CodedObsCohortDefinition cd = new CodedObsCohortDefinition();
 		cd.addParameter(new Parameter("onOrBefore", "Before Date", Date.class));
@@ -341,7 +351,6 @@ public class CommonICAPCohortLibrary {
 		cd.setValueList(Collections.singletonList(transferredOut));
 		return cd;
 	}
-*/
 	/**
 	 * Patients who were enrolled on the given programs between ${enrolledOnOrAfter} and ${enrolledOnOrBefore}
 	 * @param programs the programs
@@ -363,8 +372,8 @@ public class CommonICAPCohortLibrary {
 	 * @param programs the programs
 	 * @return the cohort definition
 	 */
-	//public CohortDefinition enrolledExcludingTransfers(Program... programs) {
-	/*	CompositionCohortDefinition cd = new CompositionCohortDefinition();
+	public CohortDefinition enrolledExcludingTransfers(Program... programs) {
+		CompositionCohortDefinition cd = new CompositionCohortDefinition();
 		cd.setName("enrolled excluding transfers in program between dates");
 		cd.addParameter(new Parameter("onOrAfter", "From Date", Date.class));
 		cd.addParameter(new Parameter("onOrBefore", "To Date", Date.class));
@@ -372,42 +381,42 @@ public class CommonICAPCohortLibrary {
 		cd.addSearch("transferIn", ReportUtils.map(transferredIn(), "onOrBefore=${onOrBefore}"));
 		cd.setCompositionString("enrolled AND NOT transferIn");
 		return cd;
-	}*/
+	}
 
 	/**
 	 * Patients who are pregnant on ${onDate}
 	 * @return the cohort definition
 	 */
-	/*public CohortDefinition pregnant() {
-		CalculationCohortDefinition cd = new CalculationCohortDefinition(new OnAlternateFirstLineArtCalculation());
+	public CohortDefinition pregnant() {
+		CalculationCohortDefinition cd = new CalculationCohortDefinition( new OnAlternateFirstLineArtCalculation());
 		cd.setName("pregnant on date");
 		cd.addParameter(new Parameter("onDate", "On Date", Date.class));
 		return cd;
-	}*/
+	}
 
 	/**
 	 * Patients who are in the specified program on ${onDate}
 	 * @param program the program
 	 * @return
 	 */
-	/*public CohortDefinition inProgram(Program program) {
-		CalculationCohortDefinition cd = new CalculationCohortDefinition(new InProgramCalculation());
+	public CohortDefinition inProgram(Program program) {
+		CalculationCohortDefinition cd = new CalculationCohortDefinition( new InProgramCalculation());
 		cd.setName("in " + program.getName() + " on date");
 		cd.addParameter(new Parameter("onDate", "On Date", Date.class));
 		cd.addCalculationParameter("program", program);
 		return cd;
-	}*/
+	}
 
 	/**
 	 * Patients who are on the specified medication on ${onDate}
 	 * @param concepts the drug concepts
 	 * @return the cohort definition
 	 */
-	/*public CohortDefinition onMedication(Concept... concepts) {
-		CalculationCohortDefinition cd = new CalculationCohortDefinition(new OnMedicationCalculation());
+	public CohortDefinition onMedication(Concept... concepts) {
+		CalculationCohortDefinition cd = new CalculationCohortDefinition( new OnMedicationCalculation());
 		cd.setName("taking drug on date");
 		cd.addParameter(new Parameter("onDate", "On Date", Date.class));
 		cd.addCalculationParameter("drugs", new HashSet<Concept>(Arrays.asList(concepts)));
 		return cd;
-	}*/
+	}
 }

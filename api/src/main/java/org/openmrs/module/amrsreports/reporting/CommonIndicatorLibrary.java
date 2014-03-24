@@ -95,7 +95,7 @@ public class CommonIndicatorLibrary {
         ind.addParameter(new Parameter("endDate", "End Date", Date.class));
         ind.addParameter(new Parameter("locationList", "List of Locations", Location.class));
         ind.setType(CohortIndicator.IndicatorType.COUNT);
-        ind.setCohortDefinition(mappedCohort, "effectiveDate=${startDate},locationList=${locationList},onOrBefore=${endDate},onOrAfter=${startDate}");
+        ind.setCohortDefinition(mappedCohort, "effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate}");
         return ind;
     }
 
@@ -105,7 +105,7 @@ public class CommonIndicatorLibrary {
         ind.addParameter(new Parameter("endDate", "End Date", Date.class));
         ind.addParameter(new Parameter("locationList", "List of Locations", Location.class));
         ind.setType(CohortIndicator.IndicatorType.COUNT);
-        ind.setCohortDefinition(mappedCohort, "effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate},onOrAfter=${startDate}");
+        ind.setCohortDefinition(mappedCohort, "effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}");
         return ind;
     }
 

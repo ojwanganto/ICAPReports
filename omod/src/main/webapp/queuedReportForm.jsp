@@ -42,8 +42,10 @@
 
     $j(document).ready(function () {
 
-        reportDate = new DatePicker("<openmrs:datePattern/>", "evaluationDate", {
-//            defaultDate: new Date()
+        reportDate = new DateTimePicker("<openmrs:datePattern/>", "h:mm TT", "evaluationDate", {
+            hourGrid: 6,
+            minuteGrid: 10,
+            stepMinute: 5
         });
         //reportDate.setDate(new Date());
 
@@ -52,10 +54,12 @@
             minuteGrid: 10,
             stepMinute: 5
         });
-        evaluationEndDate = new DatePicker("<openmrs:datePattern/>", "reportingEndDate", {
-//
+        evaluationEndDate = new DateTimePicker("<openmrs:datePattern/>", "h:mm TT", "reportingEndDate", {
+            hourGrid: 6,
+            minuteGrid: 10,
+            stepMinute: 5
         });
-        //evaluationEndDate.setDate(new Date());
+       // evaluationEndDate.setDate(new Date());
     });
 
 </script>

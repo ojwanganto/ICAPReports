@@ -281,7 +281,93 @@ public class CommonICAPCohortLibrary {
         return cd;
     }
 
-	/**
+    /**
+     * Males on medication at a facility
+     */
+    public CohortDefinition malesAboveAgeOnMedication(int minAge,Concept question, Concept... answers){
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
+        cd.addParameter(new Parameter("onOrBefore", "Before Date", Date.class));
+        cd.addSearch("HasObs",ReportUtils.map(hasObs(question,answers),"onOrBefore=${onOrBefore}"));
+        cd.addSearch("MaleonMedication",ReportUtils.map(malesAgedAtLeastAtFacility(minAge),"effectiveDate=${effectiveDate},locationList=${locationList},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("HasObs AND MaleonMedication");
+        return cd;
+    }
+
+    /**
+     * Males on medication at a facility
+     */
+    public CohortDefinition malesBelowAgeOnMedication(int maxAge,Concept question, Concept... answers){
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
+        cd.addParameter(new Parameter("onOrBefore", "Before Date", Date.class));
+        cd.addSearch("HasObs",ReportUtils.map(hasObs(question,answers),"onOrBefore=${onOrBefore}"));
+        cd.addSearch("MaleonMedication",ReportUtils.map(malesAgedAtMostAtFacility(maxAge),"effectiveDate=${effectiveDate},locationList=${locationList},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("HasObs AND MaleonMedication");
+        return cd;
+    }
+
+    /**
+     * Males on medication at a facility
+     */
+    public CohortDefinition malesBetweenAgeOnMedication(int minAge,int maxAge,Concept question, Concept... answers){
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
+        cd.addParameter(new Parameter("onOrBefore", "Before Date", Date.class));
+        cd.addSearch("HasObs",ReportUtils.map(hasObs(question,answers),"onOrBefore=${onOrBefore}"));
+        cd.addSearch("MaleonMedication",ReportUtils.map(malesAgedBetweenAtFacility(minAge,maxAge),"effectiveDate=${effectiveDate},locationList=${locationList},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("HasObs AND MaleonMedication");
+        return cd;
+    }
+
+    //---------------------------------------------------------------------
+    /**
+     * Males on medication at a facility
+     */
+    public CohortDefinition femalesAboveAgeOnMedication(int minAge,Concept question, Concept... answers){
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
+        cd.addParameter(new Parameter("onOrBefore", "Before Date", Date.class));
+        cd.addSearch("HasObs",ReportUtils.map(hasObs(question,answers),"onOrBefore=${onOrBefore}"));
+        cd.addSearch("FemaleonMedication",ReportUtils.map(femalesAgedAtLeastAtFacility(minAge),"effectiveDate=${effectiveDate},locationList=${locationList},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("HasObs AND FemaleonMedication");
+        return cd;
+    }
+
+    /**
+     * females on medication at a facility
+     */
+    public CohortDefinition femalesBelowAgeOnMedication(int maxAge,Concept question, Concept... answers){
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
+        cd.addParameter(new Parameter("onOrBefore", "Before Date", Date.class));
+        cd.addSearch("HasObs",ReportUtils.map(hasObs(question,answers),"onOrBefore=${onOrBefore}"));
+        cd.addSearch("femaleonMedication",ReportUtils.map(femalesAgedAtMostAtFacility(maxAge),"effectiveDate=${effectiveDate},locationList=${locationList},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("HasObs AND femaleonMedication");
+        return cd;
+    }
+
+    /**
+     * Males on medication at a facility
+     */
+    public CohortDefinition femalesBetweenAgeOnMedication(int minAge,int maxAge,Concept question, Concept... answers){
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
+        cd.addParameter(new Parameter("onOrBefore", "Before Date", Date.class));
+        cd.addSearch("HasObs",ReportUtils.map(hasObs(question,answers),"onOrBefore=${onOrBefore}"));
+        cd.addSearch("femaleonMedication",ReportUtils.map(femalesAgedBetweenAtFacility(minAge,maxAge),"effectiveDate=${effectiveDate},locationList=${locationList},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("HasObs AND femaleonMedication");
+        return cd;
+    }
+
+
+    /**
 	 * Patients who have an encounter between ${onOrAfter} and ${onOrBefore}
 	 * @param types the encounter types
 	 * @return the cohort definition

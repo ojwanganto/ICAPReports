@@ -198,15 +198,22 @@ public class QueuedReportFormController {
 	@InitBinder
 	private void dateBinder(WebDataBinder binder) {
 		// The date format to parse or output your dates
-		//SimpleDateFormat dateFormat = Context.getDateFormat();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		SimpleDateFormat dateFormat = Context.getDateFormat();
+        //SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
 		// Another date format for datetime
 		SimpleDateFormat datetimeFormat = new SimpleDateFormat(getDatetimeFormat());
 
-		// Register them as custom editors for the Date type
-		binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat,true));
 		binder.registerCustomEditor(Date.class, new CustomDateEditor(datetimeFormat, true));
 	}
+
+    @InitBinder
+    private void dateBinderTwo(WebDataBinder binder) {
+        // The date format to parse or output your dates
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/mm/yyyy");
+
+        // Register them as custom editors for the Date type
+        binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat,true));
+    }
 
 }

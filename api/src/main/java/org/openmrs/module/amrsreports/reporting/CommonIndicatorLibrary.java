@@ -33,46 +33,45 @@ import java.util.Date;
 public class CommonIndicatorLibrary {
 
 
-	//CommonCohortLibrary commonCohorts = new CommonCohortLibrary();
+	CommonICAPCohortLibrary commonCohorts = new CommonICAPCohortLibrary();
 
 	/**
 	 * Number of patients enrolled in the given program (including transfers)
 	 * @param program the program
 	 * @return the indicator
 	 */
-	/*public CohortIndicator enrolled(Program program) {
+	public CohortIndicator enrolled(Program program) {
 		return createCohortIndicator("Number of new patients enrolled in " + program.getName() + " including transfers",
 				ReportUtils.map(commonCohorts.enrolledExcludingTransfers(program), "onOrAfter=${startDate},onOrBefore=${endDate}"));
 	}
-*/
 	/**
 	 * Number of patients enrolled in the given program (excluding transfers)
 	 * @param program the program
 	 * @return the indicator
 	 */
-	/*public CohortIndicator enrolledExcludingTransfers(Program program) {
+	public CohortIndicator enrolledExcludingTransfers(Program program) {
 		return createCohortIndicator("Number of new patients enrolled in " + program.getName() + " excluding transfers",
 				ReportUtils.map(commonCohorts.enrolledExcludingTransfers(program), "onOrAfter=${startDate},onOrBefore=${endDate}"));
-	}*/
+	}
 
 	/**
 	 * Number of patients ever enrolled in the given program (including transfers) up to ${endDate}
 	 * @param program the program
 	 * @return the indicator
 	 */
-	/*public CohortIndicator enrolledCumulative(Program program) {
+	public CohortIndicator enrolledCumulative(Program program) {
 		return createCohortIndicator("Number of patients ever enrolled in " + program.getName() + " excluding transfers",
 				ReportUtils.map(commonCohorts.enrolled(program), "enrolledOnOrBefore=${endDate}"));
-	}*/
+	}
 
 	/**
 	 * Number of patients on the specified medication
 	 * @param concepts the drug concepts
 	 * @return the indicator
 	 */
-	/*public CohortIndicator onMedication(Concept... concepts) {
+	public CohortIndicator onMedication(Concept... concepts) {
 		return createCohortIndicator("Number of patients on medication", ReportUtils.map(commonCohorts.onMedication(concepts), "onDate=${endDate}"));
-	}*/
+	}
 
 	/**
 	 * Utility method to create a new cohort indicator

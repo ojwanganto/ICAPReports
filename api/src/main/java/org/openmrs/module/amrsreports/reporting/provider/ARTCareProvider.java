@@ -149,10 +149,10 @@ public class ARTCareProvider extends ReportProvider {
         dsd.addColumn("E16", "Females Below 15", new Mapped<CohortIndicator>(femalesZeroTo14ind, periodMappings), "");
         dsd.addColumn("E17", "Females 15 or more", new Mapped<CohortIndicator>(femalesAbove15ind, periodMappings), "");
         //Make second  column
-        dsd.addColumn("G14", "Males Below 15", new Mapped<CohortIndicator>(malesZeroTo14indend, periodMappings), "");
-        dsd.addColumn("G15", "Males 15 or more", new Mapped<CohortIndicator>(malesAbove15indend, periodMappings), "");
-        dsd.addColumn("G16", "Females Below 15", new Mapped<CohortIndicator>(femalesZeroTo14indend, periodMappings), "");
-        dsd.addColumn("G17", "Females 15 or more", new Mapped<CohortIndicator>(femalesAbove15indend, periodMappings), "");
+        dsd.addColumn("I14", "Males Below 15", new Mapped<CohortIndicator>(malesZeroTo14indend, periodMappings), "");
+        dsd.addColumn("I15", "Males 15 or more", new Mapped<CohortIndicator>(malesAbove15indend, periodMappings), "");
+        dsd.addColumn("I16", "Females Below 15", new Mapped<CohortIndicator>(femalesZeroTo14indend, periodMappings), "");
+        dsd.addColumn("I17", "Females 15 or more", new Mapped<CohortIndicator>(femalesAbove15indend, periodMappings), "");
         /**
          * Add columns for peds
          */
@@ -166,12 +166,12 @@ public class ARTCareProvider extends ReportProvider {
         /**
          * Fill second column for peds
          */
-        dsd.addColumn("G27", "Male Peds up to one year", new Mapped<CohortIndicator>(pedsMalesZeroTo1indend, periodMappings), "");
-        dsd.addColumn("G28", "Males peds between 2 and 4", new Mapped<CohortIndicator>(pedsmales2To4indend, periodMappings), "");
-        dsd.addColumn("G29", "Male Ped btw 5 and 14", new Mapped<CohortIndicator>(pedsmales5To14indend, periodMappings), "");
-        dsd.addColumn("G30", "Female peds at one ", new Mapped<CohortIndicator>(pedsFemalesZeroTo1indend, periodMappings), "");
-        dsd.addColumn("G31", "Female peds  btw 2 and 4", new Mapped<CohortIndicator>(pedsFemales2To4indend, periodMappings), "");
-        dsd.addColumn("G32", "Female peds between 5 and 14", new Mapped<CohortIndicator>(pedsFemales5To14indend, periodMappings), "");
+        dsd.addColumn("I27", "Male Peds up to one year", new Mapped<CohortIndicator>(pedsMalesZeroTo1indend, periodMappings), "");
+        dsd.addColumn("I28", "Males peds between 2 and 4", new Mapped<CohortIndicator>(pedsmales2To4indend, periodMappings), "");
+        dsd.addColumn("I29", "Male Ped btw 5 and 14", new Mapped<CohortIndicator>(pedsmales5To14indend, periodMappings), "");
+        dsd.addColumn("I30", "Female peds at one ", new Mapped<CohortIndicator>(pedsFemalesZeroTo1indend, periodMappings), "");
+        dsd.addColumn("I31", "Female peds  btw 2 and 4", new Mapped<CohortIndicator>(pedsFemales2To4indend, periodMappings), "");
+        dsd.addColumn("I32", "Female peds between 5 and 14", new Mapped<CohortIndicator>(pedsFemales5To14indend, periodMappings), "");
 
         //sample for the other two cols
         dsd.addColumn("L14", "Males Below 15", new Mapped<CohortIndicator>(malesZeroTo14indend, periodMappings), "");

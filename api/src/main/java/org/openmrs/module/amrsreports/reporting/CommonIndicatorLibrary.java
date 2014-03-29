@@ -87,23 +87,34 @@ public class CommonIndicatorLibrary {
         ind.setCohortDefinition(mappedCohort);
         return ind;
     }
+    public static CohortIndicator createSQLCohortIndicator(String description, Mapped<CohortDefinition> mappedCohort) {
+        CohortIndicator ind = new CohortIndicator(description);
+        ind.addParameter(new Parameter("reportDate", "Report Date", Date.class));
+        ind.addParameter(new Parameter("minAge", "Min Age", Integer.class));
+        ind.addParameter(new Parameter("locationList", "List of Locations", Location.class));
+        ind.addParameter(new Parameter("gender", "Gender", String.class));
+        ind.addParameter(new Parameter("maxAge", "Max Age", Integer.class));
+        ind.addParameter(new Parameter("endDate", "End Reporting Date", Date.class));
+        ind.setCohortDefinition(mappedCohort);
+        return ind;
+    }
 
     public static CohortIndicator createCohortIndicatorAtStart(String description, CohortDefinition  mappedCohort) {
         CohortIndicator ind = new CohortIndicator(description);
+        ind.setName("Cohort Indicator for the start of a given date");
         ind.addParameter(new Parameter("startDate", "Start Date", Date.class));
         ind.addParameter(new Parameter("endDate", "End Date", Date.class));
         ind.addParameter(new Parameter("locationList", "List of Locations", Location.class));
-        ind.setType(CohortIndicator.IndicatorType.COUNT);
         ind.setCohortDefinition(mappedCohort, "effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate}");
         return ind;
     }
 
     public static CohortIndicator createCohortIndicatorAtEnd(String description, CohortDefinition mappedCohort) {
         CohortIndicator ind = new CohortIndicator(description);
+        ind.setName("Cohort Indicator at end of a given date");
         ind.addParameter(new Parameter("startDate", "Start Date", Date.class));
         ind.addParameter(new Parameter("endDate", "End Date", Date.class));
         ind.addParameter(new Parameter("locationList", "List of Locations", Location.class));
-        ind.setType(CohortIndicator.IndicatorType.COUNT);
         ind.setCohortDefinition(mappedCohort, "effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}");
         return ind;
     }
@@ -150,22 +161,53 @@ public class CommonIndicatorLibrary {
 
 
 		==================================================================================================
-        AgeCohortDefinition lessThanOne = new AgeCohortDefinition();
-		lessThanOne.addParameter(new Parameter("effectiveDate", "effectiveDate", Date.class));
-		lessThanOne.setMaxAge(1);
+        AgeCohortDefinition childrenOnDate = new AgeCohortDefinition();
+		childrenOnDate.addParameter(new Parameter("effectiveDate", "effectiveDate", Date.class));
+		childrenOnDate.setMaxAge(14);
 
-		CohortIndicator lessThanOneAtStart = new CohortIndicator();
-		lessThanOneAtStart.addParameter(ReportingConstants.START_DATE_PARAMETER);
-		lessThanOneAtStart.addParameter(ReportingConstants.END_DATE_PARAMETER);
-		lessThanOneAtStart.setUuid(UUID.randomUUID().toString());
-		Map<String, Object> mappings = new HashMap<String, Object>();
-		mappings.put("effectiveDate", "${startDate}");
-		lessThanOneAtStart.setCohortDefinition(lessThanOne, mappings);
+		AgeCohortDefinition adultsOnDate = new AgeCohortDefinition();
+		adultsOnDate.addParameter(new Parameter("effectiveDate", "effectiveDate", Date.class));
+		adultsOnDate.setMinAge(15);
+
+		CohortIndicator childrenAtStart = new CohortIndicator();
+		childrenAtStart.addParameter(ReportingConstants.START_DATE_PARAMETER);
+		childrenAtStart.addParameter(ReportingConstants.END_DATE_PARAMETER);
+		childrenAtStart.setUuid(UUID.randomUUID().toString());
+		childrenAtStart.setCohortDefinition(childrenOnDate, "effectiveDate=${startDate}");
+
+		CohortIndicator childrenAtEnd = new CohortIndicator();
+		childrenAtEnd.addParameter(ReportingConstants.START_DATE_PARAMETER);
+		childrenAtEnd.addParameter(ReportingConstants.END_DATE_PARAMETER);
+		childrenAtEnd.setUuid(UUID.randomUUID().toString());
+		childrenAtEnd.setCohortDefinition(childrenOnDate, "effectiveDate=${endDate}");
+
+		CohortIndicator adultsAtStart = new CohortIndicator();
+		adultsAtStart.addParameter(ReportingConstants.START_DATE_PARAMETER);
+		adultsAtStart.addParameter(ReportingConstants.END_DATE_PARAMETER);
+		adultsAtStart.setUuid(UUID.randomUUID().toString());
+		adultsAtStart.setCohortDefinition(adultsOnDate, "effectiveDate=${startDate}");
+
+		CohortIndicator adultsAtEnd = new CohortIndicator();
+		adultsAtEnd.addParameter(ReportingConstants.START_DATE_PARAMETER);
+		adultsAtEnd.addParameter(ReportingConstants.END_DATE_PARAMETER);
+		adultsAtEnd.setUuid(UUID.randomUUID().toString());
+		adultsAtEnd.setCohortDefinition(adultsOnDate, "effectiveDate=${endDate}");
 
 		Map<String, Object> periodMappings = new HashMap<String, Object>();
 		periodMappings.put("startDate", "${startDate}");
 		periodMappings.put("endDate", "${endDate}");
-		periodMappings.put("location", "${location}");
+
+		CohortIndicatorDataSetDefinition d = new CohortIndicatorDataSetDefinition();
+		d.addParameter(ReportingConstants.START_DATE_PARAMETER);
+		d.addParameter(ReportingConstants.END_DATE_PARAMETER);
+		d.addColumn("1", "Children At Start", new Mapped<CohortIndicator>(childrenAtStart, periodMappings), "");
+		d.addColumn("2", "Children At End", new Mapped<CohortIndicator>(childrenAtEnd, periodMappings), "");
+		d.addColumn("3", "Adults At Start", new Mapped<CohortIndicator>(adultsAtStart, periodMappings), "");
+		d.addColumn("4", "Adults At End", new Mapped<CohortIndicator>(adultsAtEnd, periodMappings), "");
+
+		EvaluationContext context = new EvaluationContext();
+		context.addParameterValue(ReportingConstants.START_DATE_PARAMETER.getName(), DateUtil.getDateTime(1980, 1, 1));
+		context.addParameterValue(ReportingConstants.END_DATE_PARAMETER.getName(), DateUtil.getDateTime(2000, 1, 1));
 
 
 

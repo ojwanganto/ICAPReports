@@ -143,7 +143,7 @@ public class ARTCareProvider extends ReportProvider {
         dsd.addParameter(ReportingConstants.END_DATE_PARAMETER);
         dsd.addParameter(facility);
 
-        dsd.addDimension("compositionDimension", new Mapped<CohortDefinitionDimension>(compositionDimension,dimensionMappings));
+        //dsd.addDimension("compositionDimension", new Mapped<CohortDefinitionDimension>(compositionDimension,dimensionMappings));
         dsd.addColumn("E14", "Males Below 15", new Mapped<CohortIndicator>(malesZeroTo14ind, periodMappings), "");
         dsd.addColumn("E15", "Males 15 or more", new Mapped<CohortIndicator>(malesAbove15ind, periodMappings), "");
         dsd.addColumn("E16", "Females Below 15", new Mapped<CohortIndicator>(femalesZeroTo14ind, periodMappings), "");

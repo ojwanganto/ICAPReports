@@ -34,6 +34,7 @@ import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinitio
 import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.GenderCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.ProgramEnrollmentCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.common.SetComparator;
 import org.openmrs.module.reporting.common.TimeQualifier;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
@@ -51,6 +52,25 @@ import java.util.HashSet;
 @Component
 public class CommonICAPCohortLibrary {
 
+    public String encounterSQL(){
+
+        String sql ="SELECT person_id from person " +
+                "  INNER JOIN encounter ON encounter.patient_id = person.person_id " +
+                "  where encounter.location_id in ( :locationList ) " +
+                "  and encounter.encounter_datetime <= :reportDate ";
+
+        return sql;
+    }
+
+    public String obsSQL(){
+
+        String sql ="SELECT person_id from person " +
+                "  INNER JOIN encounter ON encounter.patient_id = person.person_id " +
+                "  where encounter.location_id in ( :locationList ) " +
+                "  and encounter.encounter_datetime <= :reportDate ";
+
+        return sql;
+    }
 	/**
 	 * Patients who are female
 	 * @return the cohort definition
@@ -121,6 +141,108 @@ public class CommonICAPCohortLibrary {
         cd.addParameter(new Parameter("onOrBefore", "Before Date", Date.class));
         /*cd.addParameter(new Parameter("onOrAfter", "After Date", Date.class))*/;
 
+        return cd;
+    }
+
+    public CohortDefinition hasFacilityEncounters(String sqlString){
+
+        CohortDefinition generalCOhort = new SqlCohortDefinition(sqlString);
+        generalCOhort.setName("Patients with encounters at a facility");
+
+        generalCOhort.addParameter(new Parameter("reportDate", "Report Date", Date.class));
+        generalCOhort.addParameter(new Parameter("locationList", "List of Locations", Location.class));
+        return generalCOhort;
+    }
+
+    public CohortDefinition malesAtFacility(){
+        String sql = this.encounterSQL();
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.setName("Males at a facility");
+        cd.addParameter(new Parameter("reportDate", "Report Date", Date.class));
+        cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
+
+        cd.addSearch("males",ReportUtils.map(males()));
+        cd.addSearch("atLocation",ReportUtils.map(hasFacilityEncounters(sql), "reportDate=${reportDate},locationList=${locationList}"));
+        cd.setCompositionString("males AND atLocation");
+        return cd;
+    }
+
+    public CohortDefinition femalesAtFacility(){
+        String sql = this.encounterSQL();
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.setName("Females at a facility");
+        cd.addParameter(new Parameter("reportDate", "Report Date", Date.class));
+        cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
+
+        cd.addSearch("females",ReportUtils.map(females()));
+        cd.addSearch("atLocation",ReportUtils.map(hasFacilityEncounters(sql), "reportDate=${reportDate},locationList=${locationList}"));
+        cd.setCompositionString("females AND atLocation");
+        return cd;
+    }
+
+    public CohortDefinition facilityMalesWithAgeAtLeast(Integer minAge){
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.setName("Males at a facility of age above");
+        cd.addParameter(new Parameter("reportDate", "Report Date", Date.class));
+        cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
+        cd.addSearch("malesAtFacility",ReportUtils.map(malesAtFacility(), "reportDate=${reportDate},locationList=${locationList}"));
+        cd.addSearch("agedAtLeast",ReportUtils.map(agedAtLeast(minAge), "effectiveDate=${reportDate}"));
+        cd.setCompositionString("malesAtFacility AND agedAtLeast");
+        return cd;
+    }
+
+    public CohortDefinition facilityMalesWithAgeAtMost(Integer maxAge){
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.setName("Males at a facility of age above");
+        cd.addParameter(new Parameter("reportDate", "Report Date", Date.class));
+        cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
+        cd.addSearch("malesAtFacility",ReportUtils.map(malesAtFacility(), "reportDate=${reportDate},locationList=${locationList}"));
+        cd.addSearch("agedAtLeast",ReportUtils.map(agedAtMost(maxAge), "effectiveDate=${reportDate}"));
+        cd.setCompositionString("malesAtFacility AND agedAtLeast");
+        return cd;
+    }
+
+    public CohortDefinition facilityMalesWithAgeBetween(Integer minAge,Integer maxAge){
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.setName("Males at a facility of age above");
+        cd.addParameter(new Parameter("reportDate", "Report Date", Date.class));
+        cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
+        cd.addSearch("malesAtFacility",ReportUtils.map(malesAtFacility(), "reportDate=${reportDate},locationList=${locationList}"));
+        cd.addSearch("agedBetween",ReportUtils.map(agedBetween(minAge,maxAge), "effectiveDate=${reportDate}"));
+        cd.setCompositionString("malesAtFacility AND agedBetween");
+        return cd;
+    }
+
+    public CohortDefinition facilityFemalesWithAgeAtLeast(Integer minAge){
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.setName("Females at a facility of at least some age");
+        cd.addParameter(new Parameter("reportDate", "Report Date", Date.class));
+        cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
+        cd.addSearch("femalesAtFacility",ReportUtils.map(femalesAtFacility(), "reportDate=${reportDate},locationList=${locationList}"));
+        cd.addSearch("agedAtLeast",ReportUtils.map(agedAtLeast(minAge), "effectiveDate=${reportDate}"));
+        cd.setCompositionString("femalesAtFacility AND agedAtLeast");
+        return cd;
+    }
+
+    public CohortDefinition facilityFemalesWithAgeAtMost(Integer maxAge){
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.setName("Females at a facility of age above");
+        cd.addParameter(new Parameter("reportDate", "Report Date", Date.class));
+        cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
+        cd.addSearch("femalesAtFacility",ReportUtils.map(femalesAtFacility(), "reportDate=${reportDate},locationList=${locationList}"));
+        cd.addSearch("agedAtLeast",ReportUtils.map(agedAtMost(maxAge), "effectiveDate=${reportDate}"));
+        cd.setCompositionString("femalesAtFacility AND agedAtLeast");
+        return cd;
+    }
+
+    public CohortDefinition facilityFemalesWithAgeBetween(Integer minAge,Integer maxAge){
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.setName("Females at a facility of age above");
+        cd.addParameter(new Parameter("reportDate", "Report Date", Date.class));
+        cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
+        cd.addSearch("femalesAtFacility",ReportUtils.map(femalesAtFacility(), "reportDate=${reportDate},locationList=${locationList}"));
+        cd.addSearch("agedBetween",ReportUtils.map(agedBetween(minAge,maxAge), "effectiveDate=${reportDate}"));
+        cd.setCompositionString("femalesAtFacility AND agedBetween");
         return cd;
     }
 

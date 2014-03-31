@@ -28,6 +28,7 @@ import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinitio
 import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.GenderCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.ProgramEnrollmentCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.common.SetComparator;
 import org.openmrs.module.reporting.common.TimeQualifier;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
@@ -45,8 +46,22 @@ public class CommonSQLCohortLibrary {
 
     private final Log log = LogFactory.getLog(this.getClass());
 
+
+    public String encounterSQL(){
+
+        String sql ="SELECT person_id from person " +
+                "  INNER JOIN encounter ON encounter.patient_id = person.person_id " +
+                "  where encounter.location_id in ( :locationList ) " +
+                "  and encounter.encounter_datetime <= :reportDate " +
+                "  and birthdate is not null ";
+
+        return sql;
+    }
+
+
     public String malesWithMinAge(Integer minAge){
-        String sql ="SELECT person_id,birthdate, YEAR(:reportDate) - YEAR(birthdate) - " +
+        String sql = "SELECT person_id from person";
+        /*String sql ="SELECT person_id,birthdate, YEAR(:reportDate) - YEAR(birthdate) - " +
                 "  (CASE WHEN " +
                 "    MONTH(birthdate) > MONTH(:reportDate) OR " +
                 "    (MONTH(birthdate) = MONTH(:reportDate) AND DAY(birthdate) > DAY(:reportDate)) " +
@@ -61,29 +76,25 @@ public class CommonSQLCohortLibrary {
                 "  having age >= :minAge ";
 
         String hql = sql.replaceAll(":minAge", String.valueOf(minAge));
-        log.info("This is the sql: "+sql);
-        return hql;
+        log.info("Males with at least some age sql: "+sql);
+        return hql;*/
+        return sql;
     }
 
 
     public String malesWithMaxAge(Integer maxAge){
-        String sql ="SELECT person_id,birthdate, YEAR(:reportDate) - YEAR(birthdate) - " +
-                "  (CASE WHEN " +
-                "    MONTH(birthdate) > MONTH(:reportDate) OR " +
-                "    (MONTH(birthdate) = MONTH(:reportDate) AND DAY(birthdate) > DAY(:reportDate)) " +
-                "      THEN 1 " +
-                "      ELSE 0 " +
-                "  END) as age from person " +
+        //String sql = "SELECT person_id from person INNER JOIN encounter ON encounter.patient_id = person.person_id";
+        String sql ="SELECT person_id from person " +
                 "  INNER JOIN encounter ON encounter.patient_id = person.person_id " +
                 "  where gender= 'M' " +
                 "  and encounter.location_id in ( :locationList ) " +
                 "  and encounter.encounter_datetime <= :reportDate " +
-                "  and birthdate is not null " +
-                "  having age <= :maxAge ";
+                "  and birthdate is not null ";/* +
+                "  having age <= " + maxAge +" ";*/
 
-        String hql = sql.replaceAll(":maxAge", String.valueOf(maxAge));
+       /* String hql = sql.replaceAll(":maxAge", String.valueOf(maxAge));*/
         log.info("This is the sql: "+sql);
-        return hql;
+        return sql;
     }
 
     public String malesWithAgeOfRange(Integer minAge,Integer maxAge){
@@ -101,10 +112,10 @@ public class CommonSQLCohortLibrary {
                 "  and birthdate is not null " +
                 "  having age >= :minAge and age <= :maxAge ";
 
-        sql.replaceAll(":minAge", String.valueOf(minAge));
-        sql.replaceAll(":maxAge", String.valueOf(maxAge));
-        log.info("This is the sql: "+sql);
-        return sql;
+        String hql = sql.replaceAll(":minAge", String.valueOf(minAge));
+        String finalstr = hql.replaceAll(":maxAge", String.valueOf(maxAge));
+        log.info("This is the sql: "+finalstr);
+        return finalstr;
     }
 
     public String malesWithAgeOfRangeBetweenAndEncountersBetweenDates(Integer minAge,Integer maxAge){
@@ -122,9 +133,9 @@ public class CommonSQLCohortLibrary {
                 "  and birthdate is not null " +
                 "  having age >= :minAge and age <= :maxAge ";
 
-        sql.replaceAll(":minAge", String.valueOf(minAge));
-        sql.replaceAll(":maxAge", String.valueOf(maxAge));
-        log.info("This is the sql: "+sql);
+        String hql = sql.replaceAll(":minAge", String.valueOf(minAge));
+        String finalstr = hql.replaceAll(":maxAge", String.valueOf(maxAge));
+        log.info("This is the sql: "+finalstr);
         return sql;
     }
 
@@ -188,10 +199,10 @@ public class CommonSQLCohortLibrary {
                 "  and birthdate is not null " +
                 "  having age >= :minAge and age <= :maxAge ";
 
-        sql.replaceAll(":minAge", String.valueOf(minAge));
-        sql.replaceAll(":maxAge", String.valueOf(maxAge));
-        log.info("This is the sql: "+sql);
-        return sql;
+        String hql = sql.replaceAll(":minAge", String.valueOf(minAge));
+        String finalstr = hql.replaceAll(":maxAge", String.valueOf(maxAge));
+        log.info("This is the sql: "+finalstr);
+        return finalstr;
     }
 
     public String femalesWithAgeOfRangeBetweenAndEncountersBetweenDates(Integer minAge,Integer maxAge){
@@ -231,6 +242,19 @@ public class CommonSQLCohortLibrary {
                 "  having age >= :minAge ";
 
         return hql;
+    }
+
+    public CohortDefinition createCohortDefinition(String desc,String sqlString){
+
+        CohortDefinition generalCOhort = new SqlCohortDefinition(sqlString);
+        generalCOhort.setName(desc);
+
+        generalCOhort.addParameter(new Parameter("reportDate", "Report Date", Date.class));
+        generalCOhort.addParameter(new Parameter("endDate", "End Reporting Date", Date.class));
+        generalCOhort.addParameter(new Parameter("minAge", "Min Age", Integer.class));
+        generalCOhort.addParameter(new Parameter("maxAge", "Max Age", Integer.class));
+        generalCOhort.addParameter(new Parameter("locationList", "List of Locations", Location.class));
+        return generalCOhort;
     }
 
 }

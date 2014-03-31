@@ -79,35 +79,26 @@ public class QueuedReportServiceImpl implements QueuedReportService {
             //cohortDefinition.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
             //cohortDefinition.addParameter(new Parameter("locationList", "List of Locations", Location.class));
 
-            Parameter facility = new Parameter();
-            facility.setName("locationList");
-            facility.setType(Location.class);
-
             ReportDefinition reportDefinition = reportProvider.getReportDefinition();
-            reportDefinition.addParameter(new Parameter("reportDate", "Report Date", Date.class));
-            reportDefinition.addParameter(new Parameter("minAge", "Min Age", Integer.class));
-            reportDefinition.addParameter(new Parameter("maxAge", "Max Age", Integer.class));
-            reportDefinition.addParameter(new Parameter("endDate", "End Reporting Date", Date.class));
-            reportDefinition.addParameter(new Parameter("gender", "Gender", String.class));
-            reportDefinition.addParameter(facility);
+            //reportDefinition.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+            //cohortDefinition.addParameter(new Parameter("locationList", "List of Locations", Location.class));
 
             // try rendering the report
             EvaluationContext evaluationContext = new EvaluationContext();
 
             // set up evaluation context values
-            evaluationContext.addParameterValue("reportDate", queuedReport.getEvaluationDate());
-            evaluationContext.addParameterValue("minAge", 34);
+            evaluationContext.addParameterValue(ReportingConstants.START_DATE_PARAMETER.getName(), queuedReport.getEvaluationDate());
+            evaluationContext.addParameterValue(ReportingConstants.END_DATE_PARAMETER.getName(), queuedReport.getReportingEndDate());
 
             List<Location> locationList = new ArrayList<Location>(queuedReport.getFacility().getLocations());
             evaluationContext.addParameterValue("locationList", locationList);
             evaluationContext.setEvaluationDate(queuedReport.getEvaluationDate());
-            evaluationContext.addParameterValue("gender","M");
 
             StopWatch timer = new StopWatch();
             timer.start();
             // get the cohort
-           // CohortDefinitionService cohortDefinitionService = Context.getService(CohortDefinitionService.class);
-           // Cohort cohort = cohortDefinitionService.evaluate(cohortDefinition, evaluationContext);
+            CohortDefinitionService cohortDefinitionService = Context.getService(CohortDefinitionService.class);
+            Cohort cohort = cohortDefinitionService.evaluate(cohortDefinition, evaluationContext);
 
 
             //evaluationContext.setBaseCohort(cohort);
@@ -123,7 +114,6 @@ public class QueuedReportServiceImpl implements QueuedReportService {
             String formattedEvaluationDate = new SimpleDateFormat("yyyy-MM-dd").format(queuedReport.getEvaluationDate());
             ReportData reportData = Context.getService(ReportDefinitionService.class)
                     .evaluate(reportDefinition, evaluationContext);
-
 
             timer.stop();
 /*

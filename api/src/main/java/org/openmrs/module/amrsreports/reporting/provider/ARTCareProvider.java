@@ -65,85 +65,62 @@ public class ARTCareProvider extends ReportProvider {
         CohortDefinition pedsmales5To14Cohort = commonCohorts.malesAgedBetweenAtFacility(5,14);
         CohortDefinition pedsFemales5To14Cohort = commonCohorts.femalesAgedBetweenAtFacility(5,14);
 
-        CohortDefinitionDimension compositionDimension = new CohortDefinitionDimension();
-        compositionDimension.setName("compositionDimension");
-        compositionDimension.addParameter(new Parameter("startDate", "Start Date", Date.class));
-        compositionDimension.addParameter(new Parameter("endDate", "End Date", Date.class));
-        compositionDimension.addParameter(new Parameter("locationList", "List of Locations", Location.class));
-        compositionDimension.addCohortDefinition("malesZeroTo14CohortDimension", ReportUtils.map(malesZeroTo14Cohort, "effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate}"));
-        compositionDimension.addCohortDefinition("malesAbove15CohortDimension",  ReportUtils.map(malesAbove15Cohort, "effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate}"));
-        compositionDimension.addCohortDefinition("femalesZeroTo14CohortDimension", ReportUtils.map(femalesZeroTo14Cohort, "effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate}"));
-        compositionDimension.addCohortDefinition("femalesAbove15CohortDimension", ReportUtils.map(femalesAbove15Cohort, "effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate}"));
+       // CohortIndicator malesPedsFiveToFourteenCohortAtEndIndicator = CommonIndicatorLibrary.createCohortIndicator("Indicator for male peds btw 5 and 14 at end of quarter", ReportUtils.map(malesPedsFiveToFourteenCohort, "reportDate=${endDate},locationList=${locationList}"));
 
-        //add cohort dimension for peds
-        compositionDimension.addCohortDefinition("pedsMalesZeroTo1CohortDimension", ReportUtils.map(pedsMalesZeroTo1Cohort, "effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate}"));
-        compositionDimension.addCohortDefinition("pedsFemalesZeroTo1CohortDimension", ReportUtils.map(pedsFemalesZeroTo1Cohort, "effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate}"));
-        compositionDimension.addCohortDefinition("pedsmales2To4CohortDimension", ReportUtils.map(pedsmales2To4Cohort, "effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate}"));
-        compositionDimension.addCohortDefinition("pedsFemales2To4CohortDimension", ReportUtils.map(pedsFemales2To4Cohort, "effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate}"));
-        compositionDimension.addCohortDefinition("pedsmales5To14CohortDimension", ReportUtils.map(pedsmales5To14Cohort, "effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate}"));
-        compositionDimension.addCohortDefinition("pedsFemales5To14CohortDimension", ReportUtils.map(pedsFemales5To14Cohort, "effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate}"));
+        CohortIndicator malesZeroTo14ind = CommonIndicatorLibrary.createCohortIndicator("malesZeroTo14CohortIndicator",ReportUtils.map(malesZeroTo14Cohort,"effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate}"));
 
-        CohortIndicator malesZeroTo14ind = CommonIndicatorLibrary.createCohortIndicatorAtStart("malesZeroTo14CohortIndicator", malesZeroTo14Cohort);
+        CohortIndicator malesAbove15ind = CommonIndicatorLibrary.createCohortIndicator("malesAbove15CohortIndicator", ReportUtils.map(malesAbove15Cohort,"effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate}"));
 
-        CohortIndicator malesAbove15ind = CommonIndicatorLibrary.createCohortIndicatorAtStart("malesAbove15CohortIndicator", malesAbove15Cohort);
+        CohortIndicator femalesZeroTo14ind = CommonIndicatorLibrary.createCohortIndicator("femalesZeroTo14CohortIndicator", ReportUtils.map(femalesZeroTo14Cohort,"effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate}"));
 
-        CohortIndicator femalesZeroTo14ind = CommonIndicatorLibrary.createCohortIndicatorAtStart("femalesZeroTo14CohortIndicator", femalesZeroTo14Cohort);
-
-        CohortIndicator femalesAbove15ind = CommonIndicatorLibrary.createCohortIndicatorAtStart("femalesAbove15CohortIndicator", femalesAbove15Cohort);
+        CohortIndicator femalesAbove15ind = CommonIndicatorLibrary.createCohortIndicator("femalesAbove15CohortIndicator", ReportUtils.map(femalesAbove15Cohort,"effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate}"));
 
         /**
          * Add indicators for peds
          */
-        CohortIndicator pedsMalesZeroTo1ind = CommonIndicatorLibrary.createCohortIndicatorAtStart("pedsMalesZeroTo1CohortIndicator", pedsMalesZeroTo1Cohort);
-        CohortIndicator pedsFemalesZeroTo1ind = CommonIndicatorLibrary.createCohortIndicatorAtStart("pedsFemalesZeroTo1CohortIndicator", pedsFemalesZeroTo1Cohort);
-        CohortIndicator pedsmales2To4ind = CommonIndicatorLibrary.createCohortIndicatorAtStart("pedsmales2To4CohortIndicator", pedsmales2To4Cohort);
-        CohortIndicator pedsFemales2To4ind = CommonIndicatorLibrary.createCohortIndicatorAtStart("pedsFemales2To4CohortIndicator", pedsFemales2To4Cohort);
-        CohortIndicator pedsmales5To14ind = CommonIndicatorLibrary.createCohortIndicatorAtStart("pedsmales5To14CohortIndicator", pedsmales5To14Cohort);
-        CohortIndicator pedsFemales5To14ind = CommonIndicatorLibrary.createCohortIndicatorAtStart("pedsFemales5To14CohortIndicator", pedsFemales5To14Cohort);
+        CohortIndicator pedsMalesZeroTo1ind = CommonIndicatorLibrary.createCohortIndicator("pedsMalesZeroTo1CohortIndicator", ReportUtils.map(pedsMalesZeroTo1Cohort,"effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate}"));
+        CohortIndicator pedsFemalesZeroTo1ind = CommonIndicatorLibrary.createCohortIndicator("pedsFemalesZeroTo1CohortIndicator", ReportUtils.map(pedsFemalesZeroTo1Cohort,"effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate}"));
+        CohortIndicator pedsmales2To4ind = CommonIndicatorLibrary.createCohortIndicator("pedsmales2To4CohortIndicator", ReportUtils.map(pedsmales2To4Cohort,"effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate}"));
+        CohortIndicator pedsFemales2To4ind = CommonIndicatorLibrary.createCohortIndicator("pedsFemales2To4CohortIndicator", ReportUtils.map(pedsFemales2To4Cohort,"effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate}"));
+        CohortIndicator pedsmales5To14ind = CommonIndicatorLibrary.createCohortIndicator("pedsmales5To14CohortIndicator", ReportUtils.map(pedsmales5To14Cohort,"effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate}"));
+        CohortIndicator pedsFemales5To14ind = CommonIndicatorLibrary.createCohortIndicator("pedsFemales5To14CohortIndicator", ReportUtils.map(pedsFemales5To14Cohort,"effectiveDate=${startDate},locationList=${locationList},onOrBefore=${startDate}"));
 
         /**
          * Define indicators for end date
          */
 
-        CohortIndicator malesZeroTo14indend = CommonIndicatorLibrary.createCohortIndicatorAtEnd("malesZeroTo14CohortIndicatorEnd", malesZeroTo14Cohort);
+        CohortIndicator malesZeroTo14indend = CommonIndicatorLibrary.createCohortIndicator("malesZeroTo14CohortIndicatorEnd", ReportUtils.map(malesZeroTo14Cohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
 
-        CohortIndicator malesAbove15indend = CommonIndicatorLibrary.createCohortIndicatorAtEnd("malesAbove15CohortIndicatorEnd", malesAbove15Cohort);
+        CohortIndicator malesAbove15indend = CommonIndicatorLibrary.createCohortIndicator("malesAbove15CohortIndicatorEnd", ReportUtils.map(malesAbove15Cohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
 
-        CohortIndicator femalesZeroTo14indend = CommonIndicatorLibrary.createCohortIndicatorAtEnd("femalesZeroTo14CohortIndicatorEnd", femalesZeroTo14Cohort);
+        CohortIndicator femalesZeroTo14indend = CommonIndicatorLibrary.createCohortIndicator("femalesZeroTo14CohortIndicatorEnd", ReportUtils.map(femalesZeroTo14Cohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
 
-        CohortIndicator femalesAbove15indend = CommonIndicatorLibrary.createCohortIndicatorAtEnd("femalesAbove15CohortIndicatorEnd", femalesAbove15Cohort);
+        CohortIndicator femalesAbove15indend = CommonIndicatorLibrary.createCohortIndicator("femalesAbove15CohortIndicatorEnd", ReportUtils.map(femalesAbove15Cohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
 
         /**
          * Add indicators for peds
          */
-        CohortIndicator pedsMalesZeroTo1indend = CommonIndicatorLibrary.createCohortIndicatorAtEnd("pedsMalesZeroTo1CohortIndicatorEnd", pedsMalesZeroTo1Cohort);
-        CohortIndicator pedsFemalesZeroTo1indend = CommonIndicatorLibrary.createCohortIndicatorAtEnd("pedsFemalesZeroTo1CohortIndicatorEnd", pedsFemalesZeroTo1Cohort);
-        CohortIndicator pedsmales2To4indend = CommonIndicatorLibrary.createCohortIndicatorAtEnd("pedsmales2To4CohortIndicatorEnd", pedsmales2To4Cohort);
-        CohortIndicator pedsFemales2To4indend = CommonIndicatorLibrary.createCohortIndicatorAtEnd("pedsFemales2To4CohortIndicatorEnd", pedsFemales2To4Cohort);
-        CohortIndicator pedsmales5To14indend = CommonIndicatorLibrary.createCohortIndicatorAtEnd("pedsmales5To14CohortIndicatorEnd", pedsmales5To14Cohort);
-        CohortIndicator pedsFemales5To14indend = CommonIndicatorLibrary.createCohortIndicatorAtEnd("pedsFemales5To14CohortIndicatorEnd", pedsFemales5To14Cohort);
+        CohortIndicator pedsMalesZeroTo1indend = CommonIndicatorLibrary.createCohortIndicator("pedsMalesZeroTo1CohortIndicatorEnd", ReportUtils.map(pedsMalesZeroTo1Cohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
+        CohortIndicator pedsFemalesZeroTo1indend = CommonIndicatorLibrary.createCohortIndicator("pedsFemalesZeroTo1CohortIndicatorEnd", ReportUtils.map(pedsFemalesZeroTo1Cohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
+        CohortIndicator pedsmales2To4indend = CommonIndicatorLibrary.createCohortIndicator("pedsmales2To4CohortIndicatorEnd", ReportUtils.map(pedsmales2To4Cohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
+        CohortIndicator pedsFemales2To4indend = CommonIndicatorLibrary.createCohortIndicator("pedsFemales2To4CohortIndicatorEnd", ReportUtils.map(pedsFemales2To4Cohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
+        CohortIndicator pedsmales5To14indend = CommonIndicatorLibrary.createCohortIndicator("pedsmales5To14CohortIndicatorEnd", ReportUtils.map(pedsmales5To14Cohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
+        CohortIndicator pedsFemales5To14indend = CommonIndicatorLibrary.createCohortIndicator("pedsFemales5To14CohortIndicatorEnd", ReportUtils.map(pedsFemales5To14Cohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
 
 
-        Map<String, Object> dimensionMappings = new HashMap<String, Object>();
-        dimensionMappings.put("startDate", "${startDate}");
-        dimensionMappings.put("locationList", "${locationList}");
+
 
         Map<String, Object> periodMappings = new HashMap<String, Object>();
         periodMappings.put("startDate", "${startDate}");
         periodMappings.put("endDate", "${endDate}");
         periodMappings.put("locationList", "${locationList}");
 
-        Map<String, Object> secondColumnMappings = new HashMap<String, Object>();
-        periodMappings.put("startDate", "${endDate}");
-        periodMappings.put("endDate", "${endDate}");
-        periodMappings.put("locationList", "${locationList}");
 
         CohortIndicatorDataSetDefinition dsd = new CohortIndicatorDataSetDefinition();
         dsd.addParameter(ReportingConstants.START_DATE_PARAMETER);
         dsd.addParameter(ReportingConstants.END_DATE_PARAMETER);
         dsd.addParameter(facility);
 
-        //dsd.addDimension("compositionDimension", new Mapped<CohortDefinitionDimension>(compositionDimension,dimensionMappings));
         dsd.addColumn("E14", "Males Below 15", new Mapped<CohortIndicator>(malesZeroTo14ind, periodMappings), "");
         dsd.addColumn("E15", "Males 15 or more", new Mapped<CohortIndicator>(malesAbove15ind, periodMappings), "");
         dsd.addColumn("E16", "Females Below 15", new Mapped<CohortIndicator>(femalesZeroTo14ind, periodMappings), "");

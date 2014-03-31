@@ -39,7 +39,6 @@ public class AmrsReportModuleActivator implements Activator {
 		// TODO use some classpath or Spring magic to acquire these automatically
 		ReportProviderRegistrar.getInstance().registerReportProvider(new HIVPalliativeCareProvider());
         ReportProviderRegistrar.getInstance().registerReportProvider(new ARTCareProvider());
-        ReportProviderRegistrar.getInstance().registerReportProvider(new SQLCohortDefTest());
 
 	}
 

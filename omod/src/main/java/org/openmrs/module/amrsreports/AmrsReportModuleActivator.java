@@ -17,6 +17,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.Activator;
 import org.openmrs.module.amrsreports.reporting.provider.ARTCareProvider;
+import org.openmrs.module.amrsreports.reporting.provider.EligibleButNotOnARVReportProvider;
 import org.openmrs.module.amrsreports.reporting.provider.HIVPalliativeCareProvider;
 import org.openmrs.module.amrsreports.reporting.provider.SQLCohortDefTest;
 import org.openmrs.module.amrsreports.service.ReportProviderRegistrar;
@@ -39,6 +40,7 @@ public class AmrsReportModuleActivator implements Activator {
 		// TODO use some classpath or Spring magic to acquire these automatically
 		ReportProviderRegistrar.getInstance().registerReportProvider(new HIVPalliativeCareProvider());
         ReportProviderRegistrar.getInstance().registerReportProvider(new ARTCareProvider());
+        ReportProviderRegistrar.getInstance().registerReportProvider(new EligibleButNotOnARVReportProvider());
 
 	}
 

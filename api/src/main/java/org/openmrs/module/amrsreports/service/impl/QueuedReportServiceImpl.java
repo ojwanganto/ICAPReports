@@ -76,8 +76,8 @@ public class QueuedReportServiceImpl implements QueuedReportService {
             ReportProvider reportProvider = ReportProviderRegistrar.getInstance().getReportProviderByName(queuedReport.getReportName());
 
             CohortDefinition cohortDefinition = reportProvider.getCohortDefinition();
-            //cohortDefinition.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-            //cohortDefinition.addParameter(new Parameter("locationList", "List of Locations", Location.class));
+            //cohortDefinition.addParameter(ReportingConstants.START_DATE_PARAMETER);
+            cohortDefinition.addParameter(new Parameter("locationList", "List of Locations", Location.class));
 
             ReportDefinition reportDefinition = reportProvider.getReportDefinition();
             //reportDefinition.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
@@ -101,7 +101,7 @@ public class QueuedReportServiceImpl implements QueuedReportService {
             Cohort cohort = cohortDefinitionService.evaluate(cohortDefinition, evaluationContext);
 
 
-            //evaluationContext.setBaseCohort(cohort);
+            evaluationContext.setBaseCohort(cohort);
             timer.stop();
             String cohortTime = timer.toString();
             timer.reset();

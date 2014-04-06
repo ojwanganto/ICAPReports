@@ -16,10 +16,11 @@ package org.openmrs.module.amrsreports;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.Activator;
+import org.openmrs.module.amrsreports.reporting.provider.ARTCareFollowUpProvider;
+import org.openmrs.module.amrsreports.reporting.provider.ARTCarePEDFollowUpProvider;
 import org.openmrs.module.amrsreports.reporting.provider.ARTCareProvider;
 import org.openmrs.module.amrsreports.reporting.provider.EligibleButNotOnARVReportProvider;
-import org.openmrs.module.amrsreports.reporting.provider.HIVPalliativeCareProvider;
-import org.openmrs.module.amrsreports.reporting.provider.SQLCohortDefTest;
+import org.openmrs.module.amrsreports.reporting.provider.RegimensProvider;
 import org.openmrs.module.amrsreports.service.ReportProviderRegistrar;
 import org.openmrs.module.amrsreports.util.TaskRunnerThread;
 
@@ -38,9 +39,12 @@ public class AmrsReportModuleActivator implements Activator {
 		log.info("Starting AMRS Reporting Module");
 
 		// TODO use some classpath or Spring magic to acquire these automatically
-		ReportProviderRegistrar.getInstance().registerReportProvider(new HIVPalliativeCareProvider());
+		ReportProviderRegistrar.getInstance().registerReportProvider(new ARTCarePEDFollowUpProvider());
         ReportProviderRegistrar.getInstance().registerReportProvider(new ARTCareProvider());
         ReportProviderRegistrar.getInstance().registerReportProvider(new EligibleButNotOnARVReportProvider());
+        ReportProviderRegistrar.getInstance().registerReportProvider(new ARTCareFollowUpProvider());
+        ReportProviderRegistrar.getInstance().registerReportProvider(new ARTCarePEDFollowUpProvider());
+        ReportProviderRegistrar.getInstance().registerReportProvider(new RegimensProvider());
 
 	}
 

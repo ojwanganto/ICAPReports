@@ -170,6 +170,8 @@ public interface MohEvaluableNameConstants {
 	public static final String ZIDOVUDINE = "ZIDOVUDINE";
 	public static final String NEWBORN_PROPHYLACTIC_ANTIRETROVIRAL_USE = "NEWBORN PROPHYLACTIC ANTIRETROVIRAL USE";
 	public static final String YES = "YES";
+    public static final String DEAD = "DEAD";
+    public static final String PATIENT_DIED= "PATIENT DIED";
 	//End of  Additional Concepts for ART Treatment start date rule
 	
 	//TRANSFER WITHIN AMPATH LOCATIONS
@@ -295,7 +297,9 @@ public interface MohEvaluableNameConstants {
 	//End of Additional Concepts for WHO Stage Rule
 	
 	//TRANSFER OUTSIDE AMPATH LOCATIONS
-	public static final String NON_AMPATH = "NON-AMPATH";
+	public static final String NON_AMPATH = "NON-AMPATH"; //
+    public static final String PATIENT_DEFAULTED = "PATIENT DEFAULTED";
+    public static final String PLAN_TO_RETURN_TO_CLINIC = "PLAN TO RETURN TO CLINIC 86";
 	public static final String REASON_EXITED_CARE = "REASON EXITED CARE";
 	public static final String PATIENT_TRANSFERRED_OUT = "PATIENT TRANSFERRED OUT";
 	public static final String OUTCOME_AT_END_OF_TUBERCULOSIS_TREATMENT = "OUTCOME AT END OF TUBERCULOSIS TREATMENT";
@@ -333,6 +337,11 @@ public interface MohEvaluableNameConstants {
     public static final String COUGH_FOR_MORE_THAN_TWO_WEEKS = "COUGH FOR MORE THAN TWO WEEKS";
     public static final String STOP_ALL_MEDICATIONS = "STOP ALL MEDICATIONS";
     public static final String NOT_DONE = "NOT DONE";
+
+    //death
+    public static final String DATE_OF_DEATH = "DATE OF DEATH";
+    public static final String DEATH_REPORTED_BY = "DEATH REPORTED BY";
+    public static final String CAUSE_FOR_DEATH = "CAUSE FOR DEATH";
 
 	// Age group for use in some rules
 	public static enum AgeGroup {

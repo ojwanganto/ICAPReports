@@ -526,6 +526,18 @@ public class CommonICAPCohortLibrary {
 		return cd;
 	}
 
+    public CohortDefinition hasObs(Concept question) {
+        CodedObsCohortDefinition cd = new CodedObsCohortDefinition();
+        cd.setName("has obs between dates");
+        cd.setQuestion(question);
+        cd.setOperator(SetComparator.IN);
+        cd.setTimeModifier(PatientSetService.TimeModifier.ANY);
+        cd.addParameter(new Parameter("onOrBefore", "Before Date", Date.class));
+        cd.addParameter(new Parameter("onOrAfter", "After Date", Date.class));
+
+        return cd;
+    }
+
 	/**
 	 * Patients who transferred in between ${onOrAfter} and ${onOrBefore}
 	 * @return the cohort definition

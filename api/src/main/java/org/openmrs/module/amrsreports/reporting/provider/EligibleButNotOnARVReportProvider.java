@@ -11,6 +11,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.amrsreports.AmrsReportsConceptNames;
 import org.openmrs.module.amrsreports.MOHFacility;
 import org.openmrs.module.amrsreports.cache.MohCacheUtils;
+import org.openmrs.module.amrsreports.reporting.cohort.definition.CCCPatientCohortDefinition;
 import org.openmrs.module.amrsreports.reporting.cohort.definition.EligibleButNotOnARVCohortDefinition;
 import org.openmrs.module.amrsreports.reporting.cohort.definition.Moh361BCohortDefinition;
 import org.openmrs.module.amrsreports.reporting.converter.ARTMonthZeroConverter;
@@ -74,7 +75,7 @@ import java.util.Properties;
 public class EligibleButNotOnARVReportProvider extends ReportProvider {
 
 	public EligibleButNotOnARVReportProvider() {
-		this.name = "Eligible but not on ARV";
+		this.name = "Eligible and not on ARV";
 		this.visible = true;
 	}
 
@@ -82,29 +83,17 @@ public class EligibleButNotOnARVReportProvider extends ReportProvider {
 	public ReportDefinition getReportDefinition() {
 
 		String nullString = null;
-		MohCoreService service = Context.getService(MohCoreService.class);
-
 		ReportDefinition report = new PeriodIndicatorReportDefinition();
-		report.setName("Eligible not on ARV");
+		report.setName("Eligible and not on ARV");
 
-		// set up the DSD
 		PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 		dsd.setName("allPatients");
-		// sort by serial number, then by date
+
 		dsd.addSortCriteria("id", SortCriteria.SortDirection.ASC);
-
-
-		// set up the columns ...
-		// Patient ID
-
 		dsd.addColumn("id", new PatientIdDataDefinition(), nullString);
-
-		//  Patient's Name
 		dsd.addColumn("name", new PreferredNameDataDefinition(), nullString, new ObjectFormatter());
-
-		//  Sex
 		dsd.addColumn("sex", new GenderDataDefinition(), nullString);
-		//  Age
+
 		AgeAtEvaluationDateDataDefinition add = new AgeAtEvaluationDateDataDefinition();
 		dsd.addColumn("age", add, nullString, new DecimalAgeConverter(0));
 

@@ -87,6 +87,7 @@ public class QueuedReportServiceImpl implements QueuedReportService {
             EvaluationContext evaluationContext = new EvaluationContext();
 
             // set up evaluation context values
+
             evaluationContext.addParameterValue(ReportingConstants.START_DATE_PARAMETER.getName(), queuedReport.getEvaluationDate());
             evaluationContext.addParameterValue(ReportingConstants.END_DATE_PARAMETER.getName(), queuedReport.getReportingEndDate());
 

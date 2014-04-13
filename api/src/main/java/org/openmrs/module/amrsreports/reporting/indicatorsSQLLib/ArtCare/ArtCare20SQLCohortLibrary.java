@@ -12,178 +12,168 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.amrsreports.reporting.indicatorsSQLLib.artCareFollowup;
+package org.openmrs.module.amrsreports.reporting.indicatorsSQLLib.ArtCare;
 
-import org.openmrs.Location;
-import org.openmrs.module.amrsreports.reporting.CommonICAPCohortLibrary;
-import org.openmrs.module.amrsreports.reporting.ReportUtils;
-import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.GenderCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
-import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.springframework.stereotype.Component;
-
-import java.util.Date;
 
 /**
  * Library for ART Care Follow-Up Cohorts
  */
 @Component
-public class ArtCareSQLCohortLibrary {
+public class ArtCare20SQLCohortLibrary {
 
     /**
-     * Define Queries for ART Stop date
-     * 1679;//160739;
+     * Define Queries for Enrolment in palliative care
+     * 160555 for date enrolled in program concept
+     * or 160534 for transfer in
+     * or 159599 for first line regimen start date
      */
-    public String malesWhoStoppedArtBetweenDatesQry(){
+    public String malesEnrolledBetweenDatesQry(){
         String sql ="select obs.person_id from obs " +
                 "  inner join person p " +
                 "  on p.person_id=obs.person_id  " +
-                "  where concept_id=160739 " +
+                "  where concept_id in(160555,160534,159599) " +
                 "  and gender='M' " +
                 "  and location_id in(:locationList) " +
-                "  and obs_datetime between (:startDate) and (:endDate) ";
+                "  and value_datetime between (:startDate) and (:endDate) ";
 
         return sql;
     }
-    public String femalesWhoStoppedArtBetweenDatesQry(){
+    public String femalesEnrolledBetweenDatesQry(){
         String sql ="select obs.person_id from obs " +
                 "  inner join person p " +
                 "  on p.person_id=obs.person_id  " +
-                "  where concept_id=160739 " +
+                "  where concept_id in(160555,160534,159599) " +
                 "  and gender='F' " +
                 "  and location_id in(:locationList) " +
-                "  and obs_datetime between (:startDate) and (:endDate) ";
+                "  and value_datetime between (:startDate) and (:endDate) ";
 
         return sql;
     }
 
-    public String malesWhoStoppedArtAtStartQry(){
+    public String malesEnrolledAtStartQry(){
         String sql ="select obs.person_id from obs " +
                 "  inner join person p " +
                 "  on p.person_id=obs.person_id  " +
-                "  where concept_id=160739 " +
+                "  where concept_id in(160555,160534,159599) " +
                 "  and gender='M' " +
                 "  and location_id in(:locationList) " +
-                "  and obs_datetime <= (:startDate) ";
+                "  and value_datetime <= (:startDate) ";
 
         return sql;
     }
 
-    public String femalesWhoStoppedArtAtStartQry(){
+    public String femalesEnrolledAtStartQry(){
         String sql ="select obs.person_id from obs " +
                 "  inner join person p " +
                 "  on p.person_id=obs.person_id  " +
-                "  where concept_id=160739 " +
+                "  where concept_id in(160555,160534,159599) " +
                 "  and gender='F' " +
                 "  and location_id in(:locationList) " +
-                "  and obs_datetime <= (:startDate) ";
-
-        return sql;
-    }
-
-
-    /**
-     * Define Queries for Transfer Out
-     * 1285;//160649;
-     */
-    public String malesWhoTOBetweenDatesQry(){
-        String sql ="select obs.person_id from obs " +
-                "  inner join person p " +
-                "  on p.person_id=obs.person_id  " +
-                "  where concept_id=160649 " +
-                "  and gender='M' " +
-                "  and location_id in(:locationList) " +
-                "  and obs_datetime between (:startDate) and (:endDate) ";
-
-        return sql;
-    }
-    public String femalesWhoTOBetweenDatesQry(){
-        String sql ="select obs.person_id from obs " +
-                "  inner join person p " +
-                "  on p.person_id=obs.person_id  " +
-                "  where concept_id=160649 " +
-                "  and gender='F' " +
-                "  and location_id in(:locationList) " +
-                "  and obs_datetime between (:startDate) and (:endDate) ";
-
-        return sql;
-    }
-
-    public String malesWhoTOAtStartQry(){
-        String sql ="select obs.person_id from obs " +
-                "  inner join person p " +
-                "  on p.person_id=obs.person_id  " +
-                "  where concept_id=160649 " +
-                "  and gender='M' " +
-                "  and location_id in(:locationList) " +
-                "  and obs_datetime >= (:startDate) ";
-
-        return sql;
-    }
-
-    public String femalesWhoTOAtStartQry(){
-        String sql ="select obs.person_id from obs " +
-                "  inner join person p " +
-                "  on p.person_id=obs.person_id  " +
-                "  where concept_id=160649 " +
-                "  and gender='F' " +
-                "  and location_id in(:locationList) " +
-                "  and obs_datetime <= (:startDate) ";
+                "  and value_datetime <= (:startDate) ";
 
         return sql;
     }
 
 
     /**
-     * Define Queries for Death concept
-     * 159;//1543;
+     * Define Queries for Transfers
+     * 160534 for Q and value_datetime as ans
      */
-    public String malesWhoDEADBetweenDatesQry(){
+    public String malesTIBetweenDatesQry(){
         String sql ="select obs.person_id from obs " +
                 "  inner join person p " +
                 "  on p.person_id=obs.person_id  " +
-                "  where concept_id=1543 " +
+                "  where concept_id=160534 " +
                 "  and gender='M' " +
                 "  and location_id in(:locationList) " +
-                "  and obs_datetime between (:startDate) and (:endDate) ";
+                "  and value_datetime between (:startDate) and (:endDate) ";
 
         return sql;
     }
-    public String femalesWhoDEADBetweenDatesQry(){
+    public String femalesTIBetweenDatesQry(){
         String sql ="select obs.person_id from obs " +
                 "  inner join person p " +
                 "  on p.person_id=obs.person_id  " +
-                "  where concept_id=1543 " +
+                "  where concept_id=160534 " +
                 "  and gender='F' " +
                 "  and location_id in(:locationList) " +
-                "  and obs_datetime between (:startDate) and (:endDate) ";
+                "  and value_datetime between (:startDate) and (:endDate) ";
 
         return sql;
     }
 
-    public String malesWhoDEADAtStartQry(){
+    public String malesTIAtStartQry(){
         String sql ="select obs.person_id from obs " +
                 "  inner join person p " +
                 "  on p.person_id=obs.person_id  " +
-                "  where concept_id=1543 " +
+                "  where concept_id=160534 " +
                 "  and gender='M' " +
                 "  and location_id in(:locationList) " +
-                "  and obs_datetime >= (:startDate) ";
+                "  and value_datetime >= (:startDate) ";
 
         return sql;
     }
 
-    public String femalesWhoDEADAtStartQry(){
+    public String femalesTIAtStartQry(){
         String sql ="select obs.person_id from obs " +
                 "  inner join person p " +
                 "  on p.person_id=obs.person_id  " +
-                "  where concept_id=1543 " +
+                "  where concept_id=160534 " +
                 "  and gender='F' " +
                 "  and location_id in(:locationList) " +
-                "  and obs_datetime <= (:startDate) ";
+                "  and value_datetime <= (:startDate) ";
+
+        return sql;
+    }
+
+    /**
+     * Define Queries for patients started on first line regimens
+     * 159599 for Q and value_datetime as ans
+     */
+    public String malesStartedOnFirstLineARTBetweenDatesQry(){
+        String sql ="select obs.person_id from obs " +
+                "  inner join person p " +
+                "  on p.person_id=obs.person_id  " +
+                "  where concept_id=159599 " +
+                "  and gender='M' " +
+                "  and location_id in(:locationList) " +
+                "  and value_datetime between (:startDate) and (:endDate) ";
+
+        return sql;
+    }
+    public String femalesStartedOnFirstLineARTBetweenDatesQry(){
+        String sql ="select obs.person_id from obs " +
+                "  inner join person p " +
+                "  on p.person_id=obs.person_id  " +
+                "  where concept_id=159599 " +
+                "  and gender='F' " +
+                "  and location_id in(:locationList) " +
+                "  and value_datetime between (:startDate) and (:endDate) ";
+
+        return sql;
+    }
+
+    public String malesStartedOnFirstLineARTAtStartQry(){
+        String sql ="select obs.person_id from obs " +
+                "  inner join person p " +
+                "  on p.person_id=obs.person_id  " +
+                "  where concept_id=159599 " +
+                "  and gender='M' " +
+                "  and location_id in(:locationList) " +
+                "  and value_datetime >= (:startDate) ";
+
+        return sql;
+    }
+
+    public String femalesStartedOnFirstLineARTAtStartQry(){
+        String sql ="select obs.person_id from obs " +
+                "  inner join person p " +
+                "  on p.person_id=obs.person_id  " +
+                "  where concept_id=159599 " +
+                "  and gender='F' " +
+                "  and location_id in(:locationList) " +
+                "  and value_datetime <= (:startDate) ";
 
         return sql;
     }

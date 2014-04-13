@@ -22,6 +22,7 @@ import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.GenderCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
+import org.openmrs.module.reporting.common.DurationUnit;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.springframework.stereotype.Component;
 
@@ -32,27 +33,6 @@ import java.util.Date;
  */
 @Component
 public class BaseSQLCohortLibrary {
-
-    public String getQry(){
-        String sql ="select obs.person_id from obs " +
-                "  inner join person p " +
-                "  on p.person_id=obs.person_id  " +
-                "  where concept_id=1679 " +
-                "  and obs_datetime between '2009-01-01' and '2014-01-01'";
-
-        return sql;
-    }
-
-    public String getQryBetweenDates(){
-        String sql ="select obs.person_id from obs " +
-                "  inner join person p " +
-                "  on p.person_id=obs.person_id  " +
-                "  where concept_id=1679 " +
-                "  and location_id in(:locationList) " +
-                "  and obs_datetime between (:startDate) and (:endDate) ";
-
-        return sql;
-    }
 
     /**
      * Patients who are female
@@ -101,6 +81,36 @@ public class BaseSQLCohortLibrary {
         return cd;
     }
 
+    public CohortDefinition agedBetweenInMonths(int minAge,int maxAge) {
+        AgeCohortDefinition cd = new AgeCohortDefinition();
+        cd.setName("aged Between");
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.setMaxAge(maxAge);
+        cd.setMinAge(minAge);
+        cd.setMaxAgeUnit(DurationUnit.MONTHS);
+        cd.setMinAgeUnit(DurationUnit.MONTHS);
+        return cd;
+    }
+
+    public CohortDefinition agedMinInMonths(int minAge) {
+        AgeCohortDefinition cd = new AgeCohortDefinition();
+        cd.setName("aged Between");
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+
+        cd.setMinAge(minAge);
+        cd.setMinAgeUnit(DurationUnit.MONTHS);
+        return cd;
+    }
+
+    public CohortDefinition agedMaxInMonths(int maxAge) {
+        AgeCohortDefinition cd = new AgeCohortDefinition();
+        cd.setName("aged Between");
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.setMaxAge(maxAge);
+        cd.setMaxAgeUnit(DurationUnit.MONTHS);
+        return cd;
+    }
+
     /**
      * Patients who are at least minAge years old on ${effectiveDate}
      * @return the cohort definition
@@ -134,6 +144,44 @@ public class BaseSQLCohortLibrary {
 
         cd.addSearch("SqlCohortDefinition",ReportUtils.map(createCohortDefinition("SqlCohortDefinition",qryString),"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
         cd.addSearch("AgeCohortDefinition",ReportUtils.map(agedBetween(minAge,maxAge),"effectiveDate=${endDate}"));
+        cd.setCompositionString("SqlCohortDefinition AND AgeCohortDefinition");
+        return cd;
+    }
+    public CohortDefinition compositionAgeInMonthsCohort(Integer minAge,Integer maxAge,String qryString){
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.setName("Composition Cohort for age and sql cohort definitions");
+        cd.addParameter(new Parameter("startDate", "Start Date", Date.class));
+        cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
+        cd.addParameter(new Parameter("endDate", "End Date", Date.class));
+
+        cd.addSearch("SqlCohortDefinition",ReportUtils.map(createCohortDefinition("SqlCohortDefinition",qryString),"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        cd.addSearch("AgeCohortDefinition",ReportUtils.map(agedBetweenInMonths(minAge,maxAge),"effectiveDate=${endDate}"));
+        cd.setCompositionString("SqlCohortDefinition AND AgeCohortDefinition");
+        return cd;
+    }
+
+    public CohortDefinition compositionMaxAgeCohort(Integer maxAge,String qryString){
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.setName("Composition Cohort for age and sql cohort definitions");
+        cd.addParameter(new Parameter("startDate", "Start Date", Date.class));
+        cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
+        cd.addParameter(new Parameter("endDate", "End Date", Date.class));
+
+        cd.addSearch("SqlCohortDefinition",ReportUtils.map(createCohortDefinition("SqlCohortDefinition",qryString),"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        cd.addSearch("AgeCohortDefinition",ReportUtils.map(agedAtMost(maxAge),"effectiveDate=${endDate}"));
+        cd.setCompositionString("SqlCohortDefinition AND AgeCohortDefinition");
+        return cd;
+    }
+
+    public CohortDefinition compositionMinAgeCohort(Integer minAge,String qryString){
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.setName("Composition Cohort for age and sql cohort definitions");
+        cd.addParameter(new Parameter("startDate", "Start Date", Date.class));
+        cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
+        cd.addParameter(new Parameter("endDate", "End Date", Date.class));
+
+        cd.addSearch("SqlCohortDefinition",ReportUtils.map(createCohortDefinition("SqlCohortDefinition",qryString),"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        cd.addSearch("AgeCohortDefinition",ReportUtils.map(agedAtLeast(minAge),"effectiveDate=${endDate}"));
         cd.setCompositionString("SqlCohortDefinition AND AgeCohortDefinition");
         return cd;
     }

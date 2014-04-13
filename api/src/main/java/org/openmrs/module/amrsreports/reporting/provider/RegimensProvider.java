@@ -11,6 +11,8 @@ import org.openmrs.module.amrsreports.reporting.RegimensCohortLibrary;
 import org.openmrs.module.amrsreports.reporting.ReportUtils;
 import org.openmrs.module.amrsreports.reporting.cohort.definition.CCCPatientCohortDefinition;
 import org.openmrs.module.amrsreports.reporting.cohort.definition.RegimensCohortDefinition;
+import org.openmrs.module.amrsreports.reporting.indicatorsSQLLib.BaseSQLCohortLibrary;
+import org.openmrs.module.amrsreports.reporting.indicatorsSQLLib.artRegimens.RegimensSQLCohortLibrary;
 import org.openmrs.module.reporting.ReportingConstants;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
@@ -30,15 +32,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Provides mechanisms for rendering the MOH 361A Pre-ART Register
+ * Provides mechanisms for rendering the Regimen Report
  */
 public class RegimensProvider extends ReportProvider {
 
-    private ArtCareFollowUpCohortLibrary commonCohorts = new ArtCareFollowUpCohortLibrary();
-    private RegimensCohortLibrary sqlCohort = new RegimensCohortLibrary();
-    private static final Integer ART_STOP_DATE_CONCEPT = 1679;//160739;
-    private static final Integer TRANSFER_OUT_CONCEPT = 1285;//160649;
-    private static final Integer DEATH_CONCEPT = 159;//1543;
+    private RegimensCohortLibrary baseCohorts = new RegimensCohortLibrary();
+
 
 	public RegimensProvider() {
 		this.name = "Regimens";
@@ -57,116 +56,108 @@ public class RegimensProvider extends ReportProvider {
         facility.setName("locationList");
         facility.setType(Location.class);
 
-        //define general cohorts
-        Concept artStopDateConcept = Context.getConceptService().getConcept(ART_STOP_DATE_CONCEPT);
-        Concept transferOut = Context.getConceptService().getConcept(TRANSFER_OUT_CONCEPT);
-        Concept deathConcept = Context.getConceptService().getConcept(DEATH_CONCEPT);
-
-        CohortDefinition malesZeroTo14Cohort = sqlCohort.createCohortDefinition("Sql Cohort Test",sqlCohort.getQry());
-       CohortDefinition malesAbove15Cohort = sqlCohort.compositionAgeCohort(0,14);
-        /* CohortDefinition femalesZeroTo14Cohort = commonCohorts.femalesBelowAgeWithConcepts(14,artStopDateConcept);
-        CohortDefinition femalesAbove15Cohort = commonCohorts.femalesAboveAgeWithConcepts(15,artStopDateConcept);
-        CohortDefinition pedsMalesZeroTo1Cohort = commonCohorts.malesBetweenAgeWithConcepts(0,1,artStopDateConcept);
-        CohortDefinition pedsFemalesZeroTo1Cohort = commonCohorts.femalesBetweenAgeWithConcepts(0,1,artStopDateConcept);
-        CohortDefinition pedsmales2To4Cohort = commonCohorts.malesBetweenAgeWithConcepts(2,4,artStopDateConcept);
-        CohortDefinition pedsFemales2To4Cohort = commonCohorts.femalesBetweenAgeWithConcepts(2,4,artStopDateConcept);
-        CohortDefinition pedsmales5To14Cohort = commonCohorts.malesBetweenAgeWithConcepts(5,14,artStopDateConcept);
-        CohortDefinition pedsFemales5To14Cohort = commonCohorts.femalesBetweenAgeWithConcepts(5,14,artStopDateConcept);
-
-        //add cohorts for transfer out
-        CohortDefinition malesZeroTo14TCohort = commonCohorts.malesBelowAgeWithConcepts(14,transferOut);
-        CohortDefinition malesAbove15TCohort = commonCohorts.malesAboveAgeWithConcepts(15,transferOut);
-        CohortDefinition femalesZeroTo14TCohort = commonCohorts.femalesBelowAgeWithConcepts(14,transferOut);
-        CohortDefinition femalesAbove15TCohort = commonCohorts.femalesAboveAgeWithConcepts(15,transferOut);
-        CohortDefinition pedsMalesZeroTo1TCohort = commonCohorts.malesBetweenAgeWithConcepts(0,1,transferOut);
-        CohortDefinition pedsFemalesZeroTo1TCohort = commonCohorts.femalesBetweenAgeWithConcepts(0,1,transferOut);
-        CohortDefinition pedsmales2To4TCohort = commonCohorts.malesBetweenAgeWithConcepts(2,4,transferOut);
-        CohortDefinition pedsFemales2To4TCohort = commonCohorts.femalesBetweenAgeWithConcepts(2,4,transferOut);
-        CohortDefinition pedsmales5To14TCohort = commonCohorts.malesBetweenAgeWithConcepts(5,14,transferOut);
-        CohortDefinition pedsFemales5To14TCohort = commonCohorts.femalesBetweenAgeWithConcepts(5,14,transferOut);
-
-        //Define cohort for the dead
-        CohortDefinition malesZeroTo14DCohort = commonCohorts.malesBelowAgeWithConcepts(14,deathConcept);
-        CohortDefinition malesAbove15DCohort = commonCohorts.malesAboveAgeWithConcepts(15,deathConcept);
-        CohortDefinition femalesZeroTo14DCohort = commonCohorts.femalesBelowAgeWithConcepts(14,deathConcept);
-        CohortDefinition femalesAbove15DCohort = commonCohorts.femalesAboveAgeWithConcepts(15,deathConcept);
-        CohortDefinition pedsMalesZeroTo1DCohort = commonCohorts.malesBetweenAgeWithConcepts(0,1,deathConcept);
-        CohortDefinition pedsFemalesZeroTo1DCohort = commonCohorts.femalesBetweenAgeWithConcepts(0,1,deathConcept);
-        CohortDefinition pedsmales2To4DCohort = commonCohorts.malesBetweenAgeWithConcepts(2,4,deathConcept);
-        CohortDefinition pedsFemales2To4DCohort = commonCohorts.femalesBetweenAgeWithConcepts(2,4,deathConcept);
-        CohortDefinition pedsmales5To14DCohort = commonCohorts.malesBetweenAgeWithConcepts(5,14,deathConcept);
-        CohortDefinition pedsFemales5To14DCohort = commonCohorts.femalesBetweenAgeWithConcepts(5,14,deathConcept);*/
-
-
-        CohortIndicator malesZeroTo14ind = CommonIndicatorLibrary.createCohortIndicator("malesZeroTo14CohortIndicator",ReportUtils.map(malesZeroTo14Cohort,""));
-
-        CohortIndicator malesAbove15ind = CommonIndicatorLibrary.createCohortIndicator("malesAbove15CohortIndicator", ReportUtils.map(malesAbove15Cohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
-
-        /*CohortIndicator femalesZeroTo14ind = CommonIndicatorLibrary.createCohortIndicator("femalesZeroTo14CohortIndicator", ReportUtils.map(femalesZeroTo14Cohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-
-        CohortIndicator femalesAbove15ind = CommonIndicatorLibrary.createCohortIndicator("femalesAbove15CohortIndicator", ReportUtils.map(femalesAbove15Cohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-
-        CohortIndicator pedsMalesZeroTo1ind = CommonIndicatorLibrary.createCohortIndicator("pedsMalesZeroTo1CohortIndicator", ReportUtils.map(pedsMalesZeroTo1Cohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-        CohortIndicator pedsFemalesZeroTo1ind = CommonIndicatorLibrary.createCohortIndicator("pedsFemalesZeroTo1CohortIndicator", ReportUtils.map(pedsFemalesZeroTo1Cohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-        CohortIndicator pedsmales2To4ind = CommonIndicatorLibrary.createCohortIndicator("pedsmales2To4CohortIndicator", ReportUtils.map(pedsmales2To4Cohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-        CohortIndicator pedsFemales2To4ind = CommonIndicatorLibrary.createCohortIndicator("pedsFemales2To4CohortIndicator", ReportUtils.map(pedsFemales2To4Cohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-        CohortIndicator pedsmales5To14ind = CommonIndicatorLibrary.createCohortIndicator("pedsmales5To14CohortIndicator", ReportUtils.map(pedsmales5To14Cohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-        CohortIndicator pedsFemales5To14ind = CommonIndicatorLibrary.createCohortIndicator("pedsFemales5To14CohortIndicator", ReportUtils.map(pedsFemales5To14Cohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
+        CohortIndicator  childrenOn10ACohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOn10ACohortInd", ReportUtils.map(baseCohorts.childrenOn10ACohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOn10BCohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOn10BCohortInd", ReportUtils.map(baseCohorts.childrenOn10BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOn11BCohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOn11BCohortInd", ReportUtils.map(baseCohorts.childrenOn11BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOn1BCohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOn1BCohortInd", ReportUtils.map(baseCohorts.childrenOn1BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOn2BCohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOn2BCohortInd", ReportUtils.map(baseCohorts.childrenOn2BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOn4ACohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOn4ACohortInd", ReportUtils.map(baseCohorts.childrenOn4ACohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOn4BCohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOn4BCohortInd", ReportUtils.map(baseCohorts.childrenOn4BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOn5ACohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOn5ACohortInd", ReportUtils.map(baseCohorts.childrenOn5ACohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOn5BCohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOn5BCohortInd", ReportUtils.map(baseCohorts.childrenOn5BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOn6ACohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOn6ACohortInd", ReportUtils.map(baseCohorts.childrenOn6ACohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOn6BCohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOn6BCohortInd", ReportUtils.map(baseCohorts.childrenOn6BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOn7ACohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOn7ACohortInd", ReportUtils.map(baseCohorts.childrenOn7ACohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOn7BCohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOn7BCohortInd", ReportUtils.map(baseCohorts.childrenOn7BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOn9CohortInd =  CommonIndicatorLibrary.createCohortIndicator("childrenOn9CohortInd", ReportUtils.map(baseCohorts.childrenOn9Cohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOnAF1ACohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOnAF1ACohortInd", ReportUtils.map(baseCohorts.childrenOnAF1ACohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOnAF1BCohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOnAF1BCohortInd", ReportUtils.map(baseCohorts.childrenOnAF1BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOnAF1CCohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOnAF1CCohortInd", ReportUtils.map(baseCohorts.childrenOnAF1CCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOnAF2ACohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOnAF2ACohortInd", ReportUtils.map(baseCohorts.childrenOnAF2ACohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOnAF2BCohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOnAF2BCohortInd", ReportUtils.map(baseCohorts.childrenOnAF2BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOnAF2CCohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOnAF2CCohortInd", ReportUtils.map(baseCohorts.childrenOnAF2CCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOnAF3ACohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOnAF3ACohortInd", ReportUtils.map(baseCohorts.childrenOnAF3ACohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOnAF3BCohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOnAF3BCohortInd", ReportUtils.map(baseCohorts.childrenOnAF3BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOnAF3CCohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOnAF3CCohortInd", ReportUtils.map(baseCohorts.childrenOnAF3CCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOnAS1ACohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOnAS1ACohortInd", ReportUtils.map(baseCohorts.childrenOnAS1ACohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOnAS1BCohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOnAS1BCohortInd", ReportUtils.map(baseCohorts.childrenOnAS1BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOnAS2ACohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOnAS2ACohortInd", ReportUtils.map(baseCohorts.childrenOnAS2ACohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOnAS2BCohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOnAS2BCohortInd", ReportUtils.map(baseCohorts.childrenOnAS2BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOnAS2CCohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOnAS2CCohortInd", ReportUtils.map(baseCohorts.childrenOnAS2CCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOnAS3ACohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOnAS3ACohortInd", ReportUtils.map(baseCohorts.childrenOnAS3ACohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOnAS4ACohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOnAS4ACohortInd", ReportUtils.map(baseCohorts.childrenOnAS4ACohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOnB3BCohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOnB3BCohortInd", ReportUtils.map(baseCohorts.childrenOnB3BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOnB3CCohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOnB3CCohortInd", ReportUtils.map(baseCohorts.childrenOnB3CCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOnB3LCohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOnB3LCohortInd", ReportUtils.map(baseCohorts.childrenOnB3LCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOnC1BCohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOnC1BCohortInd", ReportUtils.map(baseCohorts.childrenOnC1BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOnC1CCohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOnC1CCohortInd", ReportUtils.map(baseCohorts.childrenOnC1CCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOnC1DCohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOnC1DCohortInd", ReportUtils.map(baseCohorts.childrenOnC1DCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOnC2CCohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOnC2CCohortInd", ReportUtils.map(baseCohorts.childrenOnC2CCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOnC2DCohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOnC2DCohortInd", ReportUtils.map(baseCohorts.childrenOnC2DCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOnC3CCohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOnC3CCohortInd", ReportUtils.map(baseCohorts.childrenOnC3CCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOnC3DCohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOnC3DCohortInd", ReportUtils.map(baseCohorts.childrenOnC3DCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOnC4BCohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOnC4BCohortInd", ReportUtils.map(baseCohorts.childrenOnC4BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOnC4CCohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOnC4CCohortInd", ReportUtils.map(baseCohorts.childrenOnC4CCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOnC4DCohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOnC4DCohortInd", ReportUtils.map(baseCohorts.childrenOnC4DCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOnC5ACohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOnC5ACohortInd", ReportUtils.map(baseCohorts.childrenOnC5ACohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOnC5BCohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOnC5BCohortInd", ReportUtils.map(baseCohorts.childrenOnC5BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOnC6ACohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOnC6ACohortInd", ReportUtils.map(baseCohorts.childrenOnC6ACohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOnC6BCohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOnC6BCohortInd", ReportUtils.map(baseCohorts.childrenOnC6BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOnC7BCohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOnC7BCohortInd", ReportUtils.map(baseCohorts.childrenOnC7BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOnCF1ACohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOnCF1ACohortInd", ReportUtils.map(baseCohorts.childrenOnCF1ACohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  childrenOnCF1BCohortInd = CommonIndicatorLibrary.createCohortIndicator("childrenOnCF1BCohortInd", ReportUtils.map(baseCohorts.childrenOnCF1BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
 
 
-        //indicators for transfers
-        CohortIndicator malesZeroTo14Tind = CommonIndicatorLibrary.createCohortIndicator("malesZeroTo14CohortIndicator",ReportUtils.map(malesZeroTo14TCohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-
-        CohortIndicator malesAbove15Tind = CommonIndicatorLibrary.createCohortIndicator("malesAbove15CohortIndicator", ReportUtils.map(malesAbove15TCohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-
-        CohortIndicator femalesZeroTo14Tind = CommonIndicatorLibrary.createCohortIndicator("femalesZeroTo14CohortIndicator", ReportUtils.map(femalesZeroTo14TCohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-
-        CohortIndicator femalesAbove15Tind = CommonIndicatorLibrary.createCohortIndicator("femalesAbove15CohortIndicator", ReportUtils.map(femalesAbove15TCohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-
-        CohortIndicator pedsMalesZeroTo1Tind = CommonIndicatorLibrary.createCohortIndicator("pedsMalesZeroTo1CohortIndicator", ReportUtils.map(pedsMalesZeroTo1TCohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-        CohortIndicator pedsFemalesZeroTo1Tind = CommonIndicatorLibrary.createCohortIndicator("pedsFemalesZeroTo1CohortIndicator", ReportUtils.map(pedsFemalesZeroTo1TCohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-        CohortIndicator pedsmales2To4Tind = CommonIndicatorLibrary.createCohortIndicator("pedsmales2To4CohortIndicator", ReportUtils.map(pedsmales2To4TCohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-        CohortIndicator pedsFemales2To4Tind = CommonIndicatorLibrary.createCohortIndicator("pedsFemales2To4CohortIndicator", ReportUtils.map(pedsFemales2To4TCohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-        CohortIndicator pedsmales5To14Tind = CommonIndicatorLibrary.createCohortIndicator("pedsmales5To14CohortIndicator", ReportUtils.map(pedsmales5To14TCohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-        CohortIndicator pedsFemales5To14Tind = CommonIndicatorLibrary.createCohortIndicator("pedsFemales5To14CohortIndicator", ReportUtils.map(pedsFemales5To14TCohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-
-
-        //indicators for dead
-        CohortIndicator malesZeroTo14Dind = CommonIndicatorLibrary.createCohortIndicator("malesZeroTo14CohortIndicator",ReportUtils.map(malesZeroTo14DCohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-
-        CohortIndicator malesAbove15Dind = CommonIndicatorLibrary.createCohortIndicator("malesAbove15CohortIndicator", ReportUtils.map(malesAbove15DCohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-
-        CohortIndicator femalesZeroTo14Dind = CommonIndicatorLibrary.createCohortIndicator("femalesZeroTo14CohortIndicator", ReportUtils.map(femalesZeroTo14DCohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-
-        CohortIndicator femalesAbove15Dind = CommonIndicatorLibrary.createCohortIndicator("femalesAbove15CohortIndicator", ReportUtils.map(femalesAbove15DCohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-
-        CohortIndicator pedsMalesZeroTo1Dind = CommonIndicatorLibrary.createCohortIndicator("pedsMalesZeroTo1CohortIndicator", ReportUtils.map(pedsMalesZeroTo1DCohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-        CohortIndicator pedsFemalesZeroTo1Dind = CommonIndicatorLibrary.createCohortIndicator("pedsFemalesZeroTo1CohortIndicator", ReportUtils.map(pedsFemalesZeroTo1DCohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-        CohortIndicator pedsmales2To4Dind = CommonIndicatorLibrary.createCohortIndicator("pedsmales2To4CohortIndicator", ReportUtils.map(pedsmales2To4DCohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-        CohortIndicator pedsFemales2To4Dind = CommonIndicatorLibrary.createCohortIndicator("pedsFemales2To4CohortIndicator", ReportUtils.map(pedsFemales2To4DCohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-        CohortIndicator pedsmales5To14Dind = CommonIndicatorLibrary.createCohortIndicator("pedsmales5To14CohortIndicator", ReportUtils.map(pedsmales5To14DCohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-        CohortIndicator pedsFemales5To14Dind = CommonIndicatorLibrary.createCohortIndicator("pedsFemales5To14CohortIndicator", ReportUtils.map(pedsFemales5To14DCohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-*/
-        /**
-         * Define indicators for end date
-         */
-
-       /* CohortIndicator malesZeroTo14indend = CommonIndicatorLibrary.createCohortIndicator("malesZeroTo14CohortIndicatorEnd", ReportUtils.map(malesZeroTo14Cohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-
-        CohortIndicator malesAbove15indend = CommonIndicatorLibrary.createCohortIndicator("malesAbove15CohortIndicatorEnd", ReportUtils.map(malesAbove15Cohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-
-        CohortIndicator femalesZeroTo14indend = CommonIndicatorLibrary.createCohortIndicator("femalesZeroTo14CohortIndicatorEnd", ReportUtils.map(femalesZeroTo14Cohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-
-        CohortIndicator femalesAbove15indend = CommonIndicatorLibrary.createCohortIndicator("femalesAbove15CohortIndicatorEnd", ReportUtils.map(femalesAbove15Cohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-
-        CohortIndicator pedsMalesZeroTo1indend = CommonIndicatorLibrary.createCohortIndicator("pedsMalesZeroTo1CohortIndicatorEnd", ReportUtils.map(pedsMalesZeroTo1Cohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-        CohortIndicator pedsFemalesZeroTo1indend = CommonIndicatorLibrary.createCohortIndicator("pedsFemalesZeroTo1CohortIndicatorEnd", ReportUtils.map(pedsFemalesZeroTo1Cohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-        CohortIndicator pedsmales2To4indend = CommonIndicatorLibrary.createCohortIndicator("pedsmales2To4CohortIndicatorEnd", ReportUtils.map(pedsmales2To4Cohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-        CohortIndicator pedsFemales2To4indend = CommonIndicatorLibrary.createCohortIndicator("pedsFemales2To4CohortIndicatorEnd", ReportUtils.map(pedsFemales2To4Cohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-        CohortIndicator pedsmales5To14indend = CommonIndicatorLibrary.createCohortIndicator("pedsmales5To14CohortIndicatorEnd", ReportUtils.map(pedsmales5To14Cohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-        CohortIndicator pedsFemales5To14indend = CommonIndicatorLibrary.createCohortIndicator("pedsFemales5To14CohortIndicatorEnd", ReportUtils.map(pedsFemales5To14Cohort,"effectiveDate=${endDate},locationList=${locationList},onOrBefore=${endDate}"));
-*/
-
+        CohortIndicator  adultsOn10ACohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOn10ACohortInd", ReportUtils.map(baseCohorts.adultsOn10ACohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOn10BCohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOn10BCohortInd", ReportUtils.map(baseCohorts.adultsOn10BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOn11BCohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOn11BCohortInd", ReportUtils.map(baseCohorts.adultsOn11BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOn1BCohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOn1BCohortInd", ReportUtils.map(baseCohorts.adultsOn1BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOn2BCohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOn2BCohortInd", ReportUtils.map(baseCohorts.adultsOn2BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOn4ACohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOn4ACohortInd", ReportUtils.map(baseCohorts.adultsOn4ACohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOn4BCohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOn4BCohortInd", ReportUtils.map(baseCohorts.adultsOn4BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOn5ACohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOn5ACohortInd", ReportUtils.map(baseCohorts.adultsOn5ACohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOn5BCohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOn5BCohortInd", ReportUtils.map(baseCohorts.adultsOn5BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOn6ACohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOn6ACohortInd", ReportUtils.map(baseCohorts.adultsOn6ACohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOn6BCohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOn6BCohortInd", ReportUtils.map(baseCohorts.adultsOn6BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOn7ACohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOn7ACohortInd", ReportUtils.map(baseCohorts.adultsOn7ACohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOn7BCohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOn7BCohortInd", ReportUtils.map(baseCohorts.adultsOn7BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOn9CohortInd =  CommonIndicatorLibrary.createCohortIndicator("adultsOn9CohortInd", ReportUtils.map(baseCohorts.adultsOn9Cohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOnAF1ACohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOnAF1ACohortInd", ReportUtils.map(baseCohorts.adultsOnAF1ACohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOnAF1BCohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOnAF1BCohortInd", ReportUtils.map(baseCohorts.adultsOnAF1BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOnAF1CCohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOnAF1CCohortInd", ReportUtils.map(baseCohorts.adultsOnAF1CCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOnAF2ACohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOnAF2ACohortInd", ReportUtils.map(baseCohorts.adultsOnAF2ACohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOnAF2BCohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOnAF2BCohortInd", ReportUtils.map(baseCohorts.adultsOnAF2BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOnAF2CCohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOnAF2CCohortInd", ReportUtils.map(baseCohorts.adultsOnAF2CCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOnAF3ACohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOnAF3ACohortInd", ReportUtils.map(baseCohorts.adultsOnAF3ACohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOnAF3BCohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOnAF3BCohortInd", ReportUtils.map(baseCohorts.adultsOnAF3BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOnAF3CCohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOnAF3CCohortInd", ReportUtils.map(baseCohorts.adultsOnAF3CCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOnAS1ACohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOnAS1ACohortInd", ReportUtils.map(baseCohorts.adultsOnAS1ACohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOnAS1BCohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOnAS1BCohortInd", ReportUtils.map(baseCohorts.adultsOnAS1BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOnAS2ACohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOnAS2ACohortInd", ReportUtils.map(baseCohorts.adultsOnAS2ACohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOnAS2BCohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOnAS2BCohortInd", ReportUtils.map(baseCohorts.adultsOnAS2BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOnAS2CCohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOnAS2CCohortInd", ReportUtils.map(baseCohorts.adultsOnAS2CCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOnAS3ACohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOnAS3ACohortInd", ReportUtils.map(baseCohorts.adultsOnAS3ACohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOnAS4ACohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOnAS4ACohortInd", ReportUtils.map(baseCohorts.adultsOnAS4ACohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOnB3BCohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOnB3BCohortInd", ReportUtils.map(baseCohorts.adultsOnB3BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOnB3CCohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOnB3CCohortInd", ReportUtils.map(baseCohorts.adultsOnB3CCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOnB3LCohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOnB3LCohortInd", ReportUtils.map(baseCohorts.adultsOnB3LCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOnC1BCohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOnC1BCohortInd", ReportUtils.map(baseCohorts.adultsOnC1BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOnC1CCohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOnC1CCohortInd", ReportUtils.map(baseCohorts.adultsOnC1CCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOnC1DCohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOnC1DCohortInd", ReportUtils.map(baseCohorts.adultsOnC1DCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOnC2CCohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOnC2CCohortInd", ReportUtils.map(baseCohorts.adultsOnC2CCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOnC2DCohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOnC2DCohortInd", ReportUtils.map(baseCohorts.adultsOnC2DCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOnC3CCohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOnC3CCohortInd", ReportUtils.map(baseCohorts.adultsOnC3CCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOnC3DCohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOnC3DCohortInd", ReportUtils.map(baseCohorts.adultsOnC3DCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOnC4BCohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOnC4BCohortInd", ReportUtils.map(baseCohorts.adultsOnC4BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOnC4CCohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOnC4CCohortInd", ReportUtils.map(baseCohorts.adultsOnC4CCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOnC4DCohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOnC4DCohortInd", ReportUtils.map(baseCohorts.adultsOnC4DCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOnC5ACohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOnC5ACohortInd", ReportUtils.map(baseCohorts.adultsOnC5ACohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOnC5BCohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOnC5BCohortInd", ReportUtils.map(baseCohorts.adultsOnC5BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOnC6ACohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOnC6ACohortInd", ReportUtils.map(baseCohorts.adultsOnC6ACohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOnC6BCohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOnC6BCohortInd", ReportUtils.map(baseCohorts.adultsOnC6BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOnC7BCohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOnC7BCohortInd", ReportUtils.map(baseCohorts.adultsOnC7BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOnCF1ACohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOnCF1ACohortInd", ReportUtils.map(baseCohorts.adultsOnCF1ACohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator  adultsOnCF1BCohortInd = CommonIndicatorLibrary.createCohortIndicator("adultsOnCF1BCohortInd", ReportUtils.map(baseCohorts.adultsOnCF1BCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
 
 
         Map<String, Object> periodMappings = new HashMap<String, Object>();
@@ -180,58 +171,132 @@ public class RegimensProvider extends ReportProvider {
         dsd.addParameter(ReportingConstants.END_DATE_PARAMETER);
         dsd.addParameter(facility);
 
-        dsd.addColumn("ms14", "Males Below 15", new Mapped<CohortIndicator>(malesZeroTo14ind, periodMappings), "");
-        dsd.addColumn("ms15", "Males 15 or more", new Mapped<CohortIndicator>(malesAbove15ind, periodMappings), "");
-         /*dsd.addColumn("fs14", "Females Below 15", new Mapped<CohortIndicator>(femalesZeroTo14ind, periodMappings), "");
-        dsd.addColumn("fs15", "Females 15 or more", new Mapped<CohortIndicator>(femalesAbove15ind, periodMappings), "");
+        dsd.addColumn("10A", "Males Below 15", new Mapped<CohortIndicator>(childrenOn10ACohortInd, periodMappings), "");
+        dsd.addColumn("10B", "Males 15 or more", new Mapped<CohortIndicator>(childrenOn10BCohortInd, periodMappings), "");
+         dsd.addColumn("11B", "Females Below 15", new Mapped<CohortIndicator>(childrenOn11BCohortInd, periodMappings), "");
+        dsd.addColumn("1B", "Females 15 or more", new Mapped<CohortIndicator>(childrenOn1BCohortInd, periodMappings), "");
 
-        dsd.addColumn("mps01", "Male Peds up to one year", new Mapped<CohortIndicator>(pedsMalesZeroTo1ind, periodMappings), "");
-        dsd.addColumn("mps24", "Males peds between 2 and 4", new Mapped<CohortIndicator>(pedsmales2To4ind, periodMappings), "");
-        dsd.addColumn("mps514", "Male Ped btw 5 and 14", new Mapped<CohortIndicator>(pedsmales5To14ind, periodMappings), "");
-        dsd.addColumn("fps01", "Female peds at one ", new Mapped<CohortIndicator>(pedsFemalesZeroTo1ind, periodMappings), "");
-        dsd.addColumn("fps24", "Female peds  btw 2 and 4", new Mapped<CohortIndicator>(pedsFemales2To4ind, periodMappings), "");
-        dsd.addColumn("fps514", "Female peds between 5 and 14", new Mapped<CohortIndicator>(pedsFemales5To14ind, periodMappings), "");
+        dsd.addColumn("2B", "Male Peds up to one year", new Mapped<CohortIndicator>(childrenOn2BCohortInd, periodMappings), "");
+        dsd.addColumn("4A", "Males peds between 2 and 4", new Mapped<CohortIndicator>(childrenOn4ACohortInd, periodMappings), "");
+        dsd.addColumn("4B", "Male Ped btw 5 and 14", new Mapped<CohortIndicator>(childrenOn4BCohortInd, periodMappings), "");
+        dsd.addColumn("5A", "Female peds at one ", new Mapped<CohortIndicator>(childrenOn5ACohortInd, periodMappings), "");
+        dsd.addColumn("5B", "Female peds  btw 2 and 4", new Mapped<CohortIndicator>(childrenOn5BCohortInd, periodMappings), "");
+        dsd.addColumn("6A", "Female peds between 5 and 14", new Mapped<CohortIndicator>(childrenOn6ACohortInd, periodMappings), "");
 
         //add columns for transfer out
-        dsd.addColumn("mt14", "Males Below 15", new Mapped<CohortIndicator>(malesZeroTo14Tind, periodMappings), "");
-        dsd.addColumn("mt15", "Males 15 or more", new Mapped<CohortIndicator>(malesAbove15Tind, periodMappings), "");
-        dsd.addColumn("ft14", "Females Below 15", new Mapped<CohortIndicator>(femalesZeroTo14Tind, periodMappings), "");
-        dsd.addColumn("ft15", "Females 15 or more", new Mapped<CohortIndicator>(femalesAbove15Tind, periodMappings), "");
+        dsd.addColumn("6B", "Males Below 15", new Mapped<CohortIndicator>(childrenOn6BCohortInd, periodMappings), "");
+        dsd.addColumn("7A", "Males 15 or more", new Mapped<CohortIndicator>(childrenOn7ACohortInd, periodMappings), "");
+        dsd.addColumn("7B", "Females Below 15", new Mapped<CohortIndicator>(childrenOn7BCohortInd, periodMappings), "");
+        dsd.addColumn("9", "Females 15 or more", new Mapped<CohortIndicator>(childrenOn9CohortInd, periodMappings), "");
 
-        dsd.addColumn("mpt01", "Male Peds up to one year", new Mapped<CohortIndicator>(pedsMalesZeroTo1Tind, periodMappings), "");
-        dsd.addColumn("mpt24", "Males peds between 2 and 4", new Mapped<CohortIndicator>(pedsmales2To4Tind, periodMappings), "");
-        dsd.addColumn("mpt514", "Male Ped btw 5 and 14", new Mapped<CohortIndicator>(pedsmales5To14Tind, periodMappings), "");
-        dsd.addColumn("fpt01", "Female peds at one ", new Mapped<CohortIndicator>(pedsFemalesZeroTo1Tind, periodMappings), "");
-        dsd.addColumn("fpt24", "Female peds  btw 2 and 4", new Mapped<CohortIndicator>(pedsFemales2To4Tind, periodMappings), "");
-        dsd.addColumn("fpt514", "Female peds between 5 and 14", new Mapped<CohortIndicator>(pedsFemales5To14Tind, periodMappings), "");
+        dsd.addColumn("AF1A", "Male Peds up to one year", new Mapped<CohortIndicator>(childrenOnAF1ACohortInd, periodMappings), "");
+        dsd.addColumn("AF1B", "Males peds between 2 and 4", new Mapped<CohortIndicator>(childrenOnAF1BCohortInd, periodMappings), "");
+        dsd.addColumn("AF1C", "Male Ped btw 5 and 14", new Mapped<CohortIndicator>(childrenOnAF1CCohortInd, periodMappings), "");
+        dsd.addColumn("AF2A", "Female peds at one ", new Mapped<CohortIndicator>(childrenOnAF2ACohortInd, periodMappings), "");
+        dsd.addColumn("AF2B", "Female peds  btw 2 and 4", new Mapped<CohortIndicator>(childrenOnAF2BCohortInd, periodMappings), "");
+        dsd.addColumn("AF2C", "Female peds between 5 and 14", new Mapped<CohortIndicator>(childrenOnAF2CCohortInd, periodMappings), "");
 
         //Add columns for dead
-        dsd.addColumn("md14", "Males Below 15", new Mapped<CohortIndicator>(malesZeroTo14Dind, periodMappings), "");
-        dsd.addColumn("md15", "Males 15 or more", new Mapped<CohortIndicator>(malesAbove15Dind, periodMappings), "");
-        dsd.addColumn("fd14", "Females Below 15", new Mapped<CohortIndicator>(femalesZeroTo14Dind, periodMappings), "");
-        dsd.addColumn("fd15", "Females 15 or more", new Mapped<CohortIndicator>(femalesAbove15Dind, periodMappings), "");
+        dsd.addColumn("AF3A", "Males Below 15", new Mapped<CohortIndicator>(childrenOnAF3ACohortInd, periodMappings), "");
+        dsd.addColumn("AF3B", "Males 15 or more", new Mapped<CohortIndicator>(childrenOnAF3BCohortInd, periodMappings), "");
+        dsd.addColumn("AF3C", "Females Below 15", new Mapped<CohortIndicator>(childrenOnAF3CCohortInd, periodMappings), "");
+        dsd.addColumn("AS1A", "Females 15 or more", new Mapped<CohortIndicator>(childrenOnAS1ACohortInd, periodMappings), "");
 
-        dsd.addColumn("mpd01", "Male Peds up to one year", new Mapped<CohortIndicator>(pedsMalesZeroTo1Dind, periodMappings), "");
-        dsd.addColumn("mpd24", "Males peds between 2 and 4", new Mapped<CohortIndicator>(pedsmales2To4Dind, periodMappings), "");
-        dsd.addColumn("mpd514", "Male Ped btw 5 and 14", new Mapped<CohortIndicator>(pedsmales5To14Dind, periodMappings), "");
-        dsd.addColumn("fpd01", "Female peds at one ", new Mapped<CohortIndicator>(pedsFemalesZeroTo1Dind, periodMappings), "");
-        dsd.addColumn("fpd24", "Female peds  btw 2 and 4", new Mapped<CohortIndicator>(pedsFemales2To4Dind, periodMappings), "");
-        dsd.addColumn("fpd514", "Female peds between 5 and 14", new Mapped<CohortIndicator>(pedsFemales5To14Dind, periodMappings), "");
-*/
+        dsd.addColumn("AS1B", "Male Peds up to one year", new Mapped<CohortIndicator>(childrenOnAS1BCohortInd, periodMappings), "");
+        dsd.addColumn("AS2A", "Males peds between 2 and 4", new Mapped<CohortIndicator>(childrenOnAS2ACohortInd, periodMappings), "");
+        dsd.addColumn("AS2B", "Male Ped btw 5 and 14", new Mapped<CohortIndicator>(childrenOnAS2BCohortInd, periodMappings), "");
+        dsd.addColumn("AS2C", "Female peds at one ", new Mapped<CohortIndicator>(childrenOnAS2CCohortInd, periodMappings), "");
+        dsd.addColumn("AS3A", "Female peds  btw 2 and 4", new Mapped<CohortIndicator>(childrenOnAS3ACohortInd, periodMappings), "");
+        dsd.addColumn("AS4A", "Female peds between 5 and 14", new Mapped<CohortIndicator>(childrenOnAS4ACohortInd, periodMappings), "");
 
-       /* dsd.addColumn("N14", "Males Below 15", new Mapped<CohortIndicator>(malesZeroTo14indend, periodMappings), "");
-        dsd.addColumn("N15", "Males 15 or more", new Mapped<CohortIndicator>(malesAbove15indend, periodMappings), "");
-        dsd.addColumn("N16", "Females Below 15", new Mapped<CohortIndicator>(femalesZeroTo14indend, periodMappings), "");
-        dsd.addColumn("N17", "Females 15 or more", new Mapped<CohortIndicator>(femalesAbove15indend, periodMappings), "");
+        dsd.addColumn("B3B", "Males Below 15", new Mapped<CohortIndicator>(childrenOnB3BCohortInd, periodMappings), "");
+        dsd.addColumn("B3C", "Males 15 or more", new Mapped<CohortIndicator>(childrenOnB3CCohortInd, periodMappings), "");
+        dsd.addColumn("B3L", "Females Below 15", new Mapped<CohortIndicator>(childrenOnB3LCohortInd, periodMappings), "");
+        dsd.addColumn("C1B", "Females 15 or more", new Mapped<CohortIndicator>(childrenOnC1BCohortInd, periodMappings), "");
 
-        dsd.addColumn("N27", "Male Peds up to one year", new Mapped<CohortIndicator>(pedsMalesZeroTo1indend, periodMappings), "");
-        dsd.addColumn("N28", "Males peds between 2 and 4", new Mapped<CohortIndicator>(pedsmales2To4indend, periodMappings), "");
-        dsd.addColumn("N29", "Male Ped btw 5 and 14", new Mapped<CohortIndicator>(pedsmales5To14indend, periodMappings), "");
-        dsd.addColumn("N30", "Female peds at one ", new Mapped<CohortIndicator>(pedsFemalesZeroTo1indend, periodMappings), "");
-        dsd.addColumn("N31", "Female peds  btw 2 and 4", new Mapped<CohortIndicator>(pedsFemales2To4indend, periodMappings), "");
-        dsd.addColumn("N32", "Female peds between 5 and 14", new Mapped<CohortIndicator>(pedsFemales5To14indend, periodMappings), "");
+        dsd.addColumn("C1C", "Male Peds up to one year", new Mapped<CohortIndicator>(childrenOnC1CCohortInd, periodMappings), "");
+        dsd.addColumn("C1D", "Males peds between 2 and 4", new Mapped<CohortIndicator>(childrenOnC1DCohortInd, periodMappings), "");
+        dsd.addColumn("C2C", "Male Ped btw 5 and 14", new Mapped<CohortIndicator>(childrenOnC2CCohortInd, periodMappings), "");
+        dsd.addColumn("C2D", "Female peds at one ", new Mapped<CohortIndicator>(childrenOnC2DCohortInd, periodMappings), "");
+        dsd.addColumn("C3C", "Female peds  btw 2 and 4", new Mapped<CohortIndicator>(childrenOnC3CCohortInd, periodMappings), "");
+        dsd.addColumn("C3D", "Female peds between 5 and 14", new Mapped<CohortIndicator>(childrenOnC3DCohortInd, periodMappings), "");
 
-*/
+        dsd.addColumn("C4B", "Male Peds up to one year", new Mapped<CohortIndicator>(childrenOnC4BCohortInd, periodMappings), "");
+        dsd.addColumn("C4C", "Males peds between 2 and 4", new Mapped<CohortIndicator>(childrenOnC4CCohortInd, periodMappings), "");
+        dsd.addColumn("C4D", "Male Ped btw 5 and 14", new Mapped<CohortIndicator>(childrenOnC4DCohortInd, periodMappings), "");
+        dsd.addColumn("C5A", "Female peds at one ", new Mapped<CohortIndicator>(childrenOnC5ACohortInd, periodMappings), "");
+        dsd.addColumn("C5B", "Female peds  btw 2 and 4", new Mapped<CohortIndicator>(childrenOnC5BCohortInd, periodMappings), "");
+        dsd.addColumn("C6A", "Female peds between 5 and 14", new Mapped<CohortIndicator>(childrenOnC6ACohortInd, periodMappings), "");
+
+        dsd.addColumn("C6B", "Male Peds up to one year", new Mapped<CohortIndicator>(childrenOnC6BCohortInd, periodMappings), "");
+        dsd.addColumn("C7B", "Males peds between 2 and 4", new Mapped<CohortIndicator>(childrenOnC7BCohortInd, periodMappings), "");
+        dsd.addColumn("CF1A", "Male Ped btw 5 and 14", new Mapped<CohortIndicator>(childrenOnCF1ACohortInd, periodMappings), "");
+        dsd.addColumn("CF1B", "Female peds at one ", new Mapped<CohortIndicator>(childrenOnCF1BCohortInd, periodMappings), "");
+
+
+        //Add columns for adults
+
+        dsd.addColumn("10AA", "Males Below 15", new Mapped<CohortIndicator>(adultsOn10ACohortInd, periodMappings), "");
+        dsd.addColumn("10BB", "Males 15 or more", new Mapped<CohortIndicator>(adultsOn10BCohortInd, periodMappings), "");
+        dsd.addColumn("11BB", "Females Below 15", new Mapped<CohortIndicator>(adultsOn11BCohortInd, periodMappings), "");
+        dsd.addColumn("1BB", "Females 15 or more", new Mapped<CohortIndicator>(adultsOn1BCohortInd, periodMappings), "");
+
+        dsd.addColumn("2BB", "Male Peds up to one year", new Mapped<CohortIndicator>(adultsOn2BCohortInd, periodMappings), "");
+        dsd.addColumn("4AA", "Males peds between 2 and 4", new Mapped<CohortIndicator>(adultsOn4ACohortInd, periodMappings), "");
+        dsd.addColumn("4BB", "Male Ped btw 5 and 14", new Mapped<CohortIndicator>(adultsOn4BCohortInd, periodMappings), "");
+        dsd.addColumn("5AA", "Female peds at one ", new Mapped<CohortIndicator>(adultsOn5ACohortInd, periodMappings), "");
+        dsd.addColumn("5BB", "Female peds  btw 2 and 4", new Mapped<CohortIndicator>(adultsOn5BCohortInd, periodMappings), "");
+        dsd.addColumn("6AA", "Female peds between 5 and 14", new Mapped<CohortIndicator>(adultsOn6ACohortInd, periodMappings), "");
+
+        //add columns for transfer out
+        dsd.addColumn("6BB", "Males Below 15", new Mapped<CohortIndicator>(adultsOn6BCohortInd, periodMappings), "");
+        dsd.addColumn("7AA", "Males 15 or more", new Mapped<CohortIndicator>(adultsOn7ACohortInd, periodMappings), "");
+        dsd.addColumn("7BB", "Females Below 15", new Mapped<CohortIndicator>(adultsOn7BCohortInd, periodMappings), "");
+        dsd.addColumn("99", "Females 15 or more", new Mapped<CohortIndicator>(adultsOn9CohortInd, periodMappings), "");
+
+        dsd.addColumn("AF1AA", "Male Peds up to one year", new Mapped<CohortIndicator>(adultsOnAF1ACohortInd, periodMappings), "");
+        dsd.addColumn("AF1BB", "Males peds between 2 and 4", new Mapped<CohortIndicator>(adultsOnAF1BCohortInd, periodMappings), "");
+        dsd.addColumn("AF1CC", "Male Ped btw 5 and 14", new Mapped<CohortIndicator>(adultsOnAF1CCohortInd, periodMappings), "");
+        dsd.addColumn("AF2AA", "Female peds at one ", new Mapped<CohortIndicator>(adultsOnAF2ACohortInd, periodMappings), "");
+        dsd.addColumn("AF2BB", "Female peds  btw 2 and 4", new Mapped<CohortIndicator>(adultsOnAF2BCohortInd, periodMappings), "");
+        dsd.addColumn("AF2CC", "Female peds between 5 and 14", new Mapped<CohortIndicator>(adultsOnAF2CCohortInd, periodMappings), "");
+
+        //Add columns for dead
+        dsd.addColumn("AF3AA", "Males Below 15", new Mapped<CohortIndicator>(adultsOnAF3ACohortInd, periodMappings), "");
+        dsd.addColumn("AF3BB", "Males 15 or more", new Mapped<CohortIndicator>(adultsOnAF3BCohortInd, periodMappings), "");
+        dsd.addColumn("AF3CC", "Females Below 15", new Mapped<CohortIndicator>(adultsOnAF3CCohortInd, periodMappings), "");
+        dsd.addColumn("AS1AA", "Females 15 or more", new Mapped<CohortIndicator>(adultsOnAS1ACohortInd, periodMappings), "");
+
+        dsd.addColumn("AS1BB", "Male Peds up to one year", new Mapped<CohortIndicator>(adultsOnAS1BCohortInd, periodMappings), "");
+        dsd.addColumn("AS2AA", "Males peds between 2 and 4", new Mapped<CohortIndicator>(adultsOnAS2ACohortInd, periodMappings), "");
+        dsd.addColumn("AS2BB", "Male Ped btw 5 and 14", new Mapped<CohortIndicator>(adultsOnAS2BCohortInd, periodMappings), "");
+        dsd.addColumn("AS2CC", "Female peds at one ", new Mapped<CohortIndicator>(adultsOnAS2CCohortInd, periodMappings), "");
+        dsd.addColumn("AS3AA", "Female peds  btw 2 and 4", new Mapped<CohortIndicator>(adultsOnAS3ACohortInd, periodMappings), "");
+        dsd.addColumn("AS4AA", "Female peds between 5 and 14", new Mapped<CohortIndicator>(adultsOnAS4ACohortInd, periodMappings), "");
+
+        dsd.addColumn("B3BB", "Males Below 15", new Mapped<CohortIndicator>(adultsOnB3BCohortInd, periodMappings), "");
+        dsd.addColumn("B3CC", "Males 15 or more", new Mapped<CohortIndicator>(adultsOnB3CCohortInd, periodMappings), "");
+        dsd.addColumn("B3LL", "Females Below 15", new Mapped<CohortIndicator>(adultsOnB3LCohortInd, periodMappings), "");
+        dsd.addColumn("C1BB", "Females 15 or more", new Mapped<CohortIndicator>(adultsOnC1BCohortInd, periodMappings), "");
+
+        dsd.addColumn("C1CC", "Male Peds up to one year", new Mapped<CohortIndicator>(adultsOnC1CCohortInd, periodMappings), "");
+        dsd.addColumn("C1DD", "Males peds between 2 and 4", new Mapped<CohortIndicator>(adultsOnC1DCohortInd, periodMappings), "");
+        dsd.addColumn("C2CC", "Male Ped btw 5 and 14", new Mapped<CohortIndicator>(adultsOnC2CCohortInd, periodMappings), "");
+        dsd.addColumn("C2DD", "Female peds at one ", new Mapped<CohortIndicator>(adultsOnC2DCohortInd, periodMappings), "");
+        dsd.addColumn("C3CC", "Female peds  btw 2 and 4", new Mapped<CohortIndicator>(adultsOnC3CCohortInd, periodMappings), "");
+        dsd.addColumn("C3DD", "Female peds between 5 and 14", new Mapped<CohortIndicator>(adultsOnC3DCohortInd, periodMappings), "");
+
+        dsd.addColumn("C4BB", "Male Peds up to one year", new Mapped<CohortIndicator>(adultsOnC4BCohortInd, periodMappings), "");
+        dsd.addColumn("C4CC", "Males peds between 2 and 4", new Mapped<CohortIndicator>(adultsOnC4CCohortInd, periodMappings), "");
+        dsd.addColumn("C4DD", "Male Ped btw 5 and 14", new Mapped<CohortIndicator>(adultsOnC4DCohortInd, periodMappings), "");
+        dsd.addColumn("C5AA", "Female peds at one ", new Mapped<CohortIndicator>(adultsOnC5ACohortInd, periodMappings), "");
+        dsd.addColumn("C5BB", "Female peds  btw 2 and 4", new Mapped<CohortIndicator>(adultsOnC5BCohortInd, periodMappings), "");
+        dsd.addColumn("C6AA", "Female peds between 5 and 14", new Mapped<CohortIndicator>(adultsOnC6ACohortInd, periodMappings), "");
+
+        dsd.addColumn("C6BB", "Male Peds up to one year", new Mapped<CohortIndicator>(adultsOnC6BCohortInd, periodMappings), "");
+        dsd.addColumn("C7BB", "Males peds between 2 and 4", new Mapped<CohortIndicator>(adultsOnC7BCohortInd, periodMappings), "");
+        dsd.addColumn("CF1AA", "Male Ped btw 5 and 14", new Mapped<CohortIndicator>(adultsOnCF1ACohortInd, periodMappings), "");
+        dsd.addColumn("CF1BB", "Female peds at one ", new Mapped<CohortIndicator>(adultsOnCF1BCohortInd, periodMappings), "");
 
 
 		report.addDataSetDefinition(dsd, periodMappings);
@@ -247,7 +312,7 @@ public class RegimensProvider extends ReportProvider {
 	@Override
 	public ReportDesign getReportDesign() {
 		ReportDesign design = new ReportDesign();
-		design.setName("ART Care Report Design");
+		design.setName("Regimen Report Design");
 		design.setReportDefinition(this.getReportDefinition());
 		design.setRendererType(ExcelTemplateRenderer.class);
 
@@ -261,7 +326,7 @@ public class RegimensProvider extends ReportProvider {
 		try {
 			resource.setContents(IOUtils.toByteArray(is));
 		} catch (IOException ex) {
-			throw new APIException("Could not create report design for ART Care Report.", ex);
+			throw new APIException("Could not create report design for Regimen Report.", ex);
 		}
 
 		IOUtils.closeQuietly(is);

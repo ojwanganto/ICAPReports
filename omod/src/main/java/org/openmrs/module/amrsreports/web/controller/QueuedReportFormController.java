@@ -103,7 +103,7 @@ public class QueuedReportFormController {
 		}
 
 	// save it
-
+        editedReport.setDateScheduled(new Date());
 		queuedReportService.saveQueuedReport(editedReport);
 
 		// kindly respond

@@ -14,7 +14,7 @@
 
         <set name="locations" table="amrsreports_facility_location" cascade="delete">
             <key column="facility_id"/>
-            <many-to-many column="location_id" unique="true" class="org.openmrs.Location"/>
+            <many-to-many column="location_id" unique="true" class="org.openmrs.Location" lazy="false"/>
         </set>
 
         <many-to-one name="creator" class="org.openmrs.User" not-null="true">

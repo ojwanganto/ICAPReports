@@ -9,7 +9,7 @@
 		<discriminator column="queued_report_id" insert="false"/>
 
         <property name="reportName" type="java.lang.String" column="report_name" not-null="true"/>
-        <many-to-one class="MOHFacility" name="facility" column="facility_id" not-null="true"/>
+        <many-to-one class="MOHFacility" name="facility" column="facility_id" not-null="true" lazy="false"/>
         <property name="dateScheduled" type="java.util.Date" column="date_scheduled" not-null="true" length="19" />
         <property name="evaluationDate" type="java.util.Date" column="evaluation_date" not-null="true" length="19" />
         <property name="reportingEndDate" type="java.util.Date" column="reporting_end_date" not-null="true" length="19" />

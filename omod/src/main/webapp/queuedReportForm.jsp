@@ -4,11 +4,6 @@
 
 <openmrs:require privilege="Run Reports" otherwise="/login.htm" redirect="/module/amrsreports/queuedReport.form"/>
 
-<openmrs:htmlInclude file="/moduleResources/amrsreports/js/jquery-ui-timepicker-addon.min.js"/>
-<openmrs:htmlInclude file="/moduleResources/amrsreports/js/openmrs-1.9.js"/>
-
-<openmrs:htmlInclude file="/moduleResources/amrsreports/css/jquery-ui-timepicker-addon.css"/>
-
 <%@ include file="localHeader.jsp" %>
 
 
@@ -42,24 +37,53 @@
 
     $j(document).ready(function () {
 
-        reportDate = new DateTimePicker("<openmrs:datePattern/>", "h:mm TT", "evaluationDate", {
-            hourGrid: 6,
-            minuteGrid: 10,
-            stepMinute: 5
-        });
-        //reportDate.setDate(new Date());
+        reportDate = $j("#evaluationDate").datepicker({
+            dateFormat: "dd/mm/yy" ,
+            defaultDate: new Date(),
+            setDate: new Date(),
+            showOtherMonths: true,
+            selectOtherMonths: true,
+            changeYear:true,
+            changeMonth: true,
+            gotoCurrent: true
 
-        scheduleDate = new DateTimePicker("<openmrs:datePattern/>", "h:mm TT", "dateScheduled", {
+        });
+        scheduleDate = $j("#dateScheduled").datepicker({
+            dateFormat: "dd/mm/yy" ,
+            defaultDate: new Date(),
+            setDate: new Date(),
+            showOtherMonths: true,
+            selectOtherMonths: true,
+            changeYear:true,
+            changeMonth: true,
+            gotoCurrent: true
+        });
+        evaluationEndDate = $j("#reportingEndDate").datepicker({
+            dateFormat: "dd/mm/yy" ,
+            defaultDate: new Date(),
+            setDate: new Date(),
+            showOtherMonths: true,
+            selectOtherMonths: true,
+            changeYear:true,
+            changeMonth: true,
+            gotoCurrent: true
+        });
+
+       /* reportDate = new DatePicker("<openmrs:datePattern/>", "evaluationDate", {
+//            defaultDate: new Date()
+        });
+        reportDate.setDate(new Date());*/
+
+       /* scheduleDate = new DateTimePicker("<openmrs:datePattern/>", "h:mm TT", "dateScheduled", {
             hourGrid: 6,
             minuteGrid: 10,
             stepMinute: 5
         });
-        evaluationEndDate = new DateTimePicker("<openmrs:datePattern/>", "h:mm TT", "reportingEndDate", {
-            hourGrid: 6,
-            minuteGrid: 10,
-            stepMinute: 5
+
+        evaluationEndDate = new DatePicker("<openmrs:datePattern/>", "reportingEndDate", {
+//            defaultDate: new Date()
         });
-       // evaluationEndDate.setDate(new Date());
+        evaluationEndDate.setDate(new Date());*/
     });
 
 </script>

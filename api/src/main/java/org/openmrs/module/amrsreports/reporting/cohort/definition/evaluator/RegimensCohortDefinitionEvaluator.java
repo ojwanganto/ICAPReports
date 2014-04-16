@@ -51,7 +51,7 @@ public class RegimensCohortDefinitionEvaluator implements CohortDefinitionEvalua
                 "  inner join person p " +
                 "  on p.person_id=obs.person_id  " +
                 "  where concept_id=1679 " +
-                "  and obs_datetime between '2009-01-01' and '2014-01-01'";
+                "  and obs_datetime between (:startDate) and (:endDate) ";
 
         /*String sql =
                 "select patient_id" +

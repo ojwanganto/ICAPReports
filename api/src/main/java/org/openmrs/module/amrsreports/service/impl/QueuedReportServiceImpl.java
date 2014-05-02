@@ -62,7 +62,7 @@ public class QueuedReportServiceImpl implements QueuedReportService {
 	}
 
 	@Override
-	public void processQueuedReport(QueuedReport queuedReport)  {
+	public void processQueuedReport(QueuedReport queuedReport) throws EvaluationException, IOException {
 
 		// validate
 		if (queuedReport.getReportName() == null)
@@ -71,6 +71,63 @@ public class QueuedReportServiceImpl implements QueuedReportService {
 		if (queuedReport.getFacility() == null)
 			throw new APIException("The queued report must reference a facility.");
 
+        ReportProvider reportProvider = ReportProviderRegistrar.getInstance().getReportProviderByName(queuedReport.getReportName());
+
+
+        if(reportProvider.getIndicator()){
+            runIndicatorReports(queuedReport);
+
+        }
+        else {
+            runRegisters(queuedReport);
+        }
+
+
+	}
+
+
+	@Override
+	public QueuedReport saveQueuedReport(QueuedReport queuedReport) {
+		if (queuedReport == null)
+			return queuedReport;
+
+		if (queuedReport.getStatus() == null || queuedReport.getStatus().equals("ERROR"))
+			queuedReport.setStatus(QueuedReport.STATUS_NEW);
+
+		return dao.saveQueuedReport(queuedReport);
+	}
+
+	@Override
+	public void purgeQueuedReport(QueuedReport queuedReport) {
+		dao.purgeQueuedReport(queuedReport);
+	}
+
+	@Override
+	public List<QueuedReport> getAllQueuedReports() {
+		return dao.getAllQueuedReports();
+	}
+
+	@Override
+	public List<QueuedReport> getQueuedReportsWithStatus(String status) {
+		UserFacilityService userFacilityService = Context.getService(UserFacilityService.class);
+		List<MOHFacility> allowedFacilities = userFacilityService.getAllowedFacilitiesForUser(Context.getAuthenticatedUser());
+
+		return dao.getQueuedReportsByFacilities(allowedFacilities, status);
+
+	}
+
+	@Override
+	public QueuedReport getQueuedReport(Integer reportId) {
+		return dao.getQueuedReport(reportId);
+	}
+
+	@Override
+	public List<QueuedReport> getQueuedReportsByFacilities(List<MOHFacility> facilities, String status) {
+		return dao.getQueuedReportsByFacilities(facilities, status);
+	}
+
+
+    private void runIndicatorReports(QueuedReport queuedReport){
         try {
 
             ReportProvider reportProvider = ReportProviderRegistrar.getInstance().getReportProviderByName(queuedReport.getReportName());
@@ -216,46 +273,135 @@ public class QueuedReportServiceImpl implements QueuedReportService {
         }
 
 
-	}
+    }
 
-	@Override
-	public QueuedReport saveQueuedReport(QueuedReport queuedReport) {
-		if (queuedReport == null)
-			return queuedReport;
+    private void runRegisters(QueuedReport queuedReport) throws EvaluationException, IOException {
 
-		if (queuedReport.getStatus() == null || queuedReport.getStatus().equals("ERROR"))
-			queuedReport.setStatus(QueuedReport.STATUS_NEW);
 
-		return dao.saveQueuedReport(queuedReport);
-	}
+        // find the report provider
+        ReportProvider reportProvider = ReportProviderRegistrar.getInstance().getReportProviderByName(queuedReport.getReportName());
 
-	@Override
-	public void purgeQueuedReport(QueuedReport queuedReport) {
-		dao.purgeQueuedReport(queuedReport);
-	}
+        CohortDefinition cohortDefinition = reportProvider.getCohortDefinition();
+        cohortDefinition.addParameter(new Parameter("locationList", "List of Locations", Location.class));
 
-	@Override
-	public List<QueuedReport> getAllQueuedReports() {
-		return dao.getAllQueuedReports();
-	}
+        ReportDefinition reportDefinition = reportProvider.getReportDefinition();
+        //reportDefinition.addParameter(new Parameter("locationList", "List of Locations", Location.class));
 
-	@Override
-	public List<QueuedReport> getQueuedReportsWithStatus(String status) {
-		UserFacilityService userFacilityService = Context.getService(UserFacilityService.class);
-		List<MOHFacility> allowedFacilities = userFacilityService.getAllowedFacilitiesForUser(Context.getAuthenticatedUser());
+        EvaluationContext evaluationContext = new EvaluationContext();
+        evaluationContext.addParameterValue(ReportingConstants.START_DATE_PARAMETER.getName(), queuedReport.getEvaluationDate());
+        evaluationContext.addParameterValue(ReportingConstants.END_DATE_PARAMETER.getName(), queuedReport.getReportingEndDate());
 
-		return dao.getQueuedReportsByFacilities(allowedFacilities, status);
+        List<Location> locationList = new ArrayList<Location>(queuedReport.getFacility().getLocations());
+        evaluationContext.addParameterValue("locationList", locationList);
+        evaluationContext.setEvaluationDate(queuedReport.getEvaluationDate());
 
-	}
+        // set up evaluation context values
+        evaluationContext.addParameterValue("facility", queuedReport.getFacility());
+        evaluationContext.setEvaluationDate(queuedReport.getEvaluationDate());
 
-	@Override
-	public QueuedReport getQueuedReport(Integer reportId) {
-		return dao.getQueuedReport(reportId);
-	}
+        StopWatch timer = new StopWatch();
+        timer.start();
 
-	@Override
-	public List<QueuedReport> getQueuedReportsByFacilities(List<MOHFacility> facilities, String status) {
-		return dao.getQueuedReportsByFacilities(facilities, status);
-	}
+        // get the cohort
+        CohortDefinitionService cohortDefinitionService = Context.getService(CohortDefinitionService.class);
+        Cohort cohort = cohortDefinitionService.evaluate(cohortDefinition, evaluationContext);
+        evaluationContext.setBaseCohort(cohort);
+
+       timer.stop();
+        String cohortTime = timer.toString();
+        timer.reset();
+
+        timer.start();
+
+        // get the time the report was started (not finished)
+        Date startTime = Calendar.getInstance().getTime();
+        String formattedStartTime = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(startTime);
+        String formattedEvaluationDate = new SimpleDateFormat("yyyy-MM-dd").format(queuedReport.getEvaluationDate());
+        ReportData reportData = Context.getService(ReportDefinitionService.class)
+                .evaluate(reportDefinition, evaluationContext);
+
+        timer.stop();
+
+        log.info("Time for rendering " + cohort.getSize() + "-person cohort: " + cohortTime);
+        log.info("Time for rendering " + cohort.getSize() + "-person report: " + timer.toString());
+
+        // find the directory to put the file in
+        AdministrationService as = Context.getAdministrationService();
+        String folderName = as.getGlobalProperty("amrsreports.file_dir");
+
+        // create a new file
+        String code = queuedReport.getFacility().getCode();
+
+        String csvFilename = ""
+                + queuedReport.getReportName().replaceAll(" ", "-")
+                + "_"
+                + code
+                + "_"
+                + queuedReport.getFacility().getName().replaceAll(" ", "-")
+                + "_as-of_"
+                + formattedEvaluationDate
+                + "_run-on_"
+                + formattedStartTime
+                + ".csv";
+
+        File loaddir = OpenmrsUtil.getDirectoryInApplicationDataDirectory(folderName);
+        File amrsreport = new File(loaddir, csvFilename);
+        BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(amrsreport));
+
+        // renderCSVFromReportData the CSV
+        MOHReportUtil.renderCSVFromReportData(reportData, outputStream);
+        outputStream.close();
+
+        String xlsFilename = FilenameUtils.getBaseName(csvFilename) + ".xls";
+        File xlsFile = new File(loaddir, xlsFilename);
+        OutputStream stream = new BufferedOutputStream(new FileOutputStream(xlsFile));
+
+        // get the report design
+        final ReportDesign design = reportProvider.getReportDesign();
+
+        // build an Excel template renderer with the report design
+        ExcelTemplateRenderer renderer = new ExcelTemplateRenderer() {
+            public ReportDesign getDesign(String argument) {
+                return design;
+            }
+        };
+
+        // render the Excel template
+        renderer.render(reportData, queuedReport.getReportName(), stream);
+        stream.close();
+
+        // finish off by setting stuff on the queued report
+        queuedReport.setCsvFilename(csvFilename);
+        queuedReport.setXlsFilename(xlsFilename);
+
+        //Mark original QueuedReport as complete and save status
+        queuedReport.setStatus(QueuedReport.STATUS_COMPLETE);
+        Context.getService(QueuedReportService.class).saveQueuedReport(queuedReport);
+
+
+        if (queuedReport.getRepeatInterval() != null && queuedReport.getRepeatInterval() > 0) {
+
+            //create a new QueuedReport borrowing some values from the run report
+            QueuedReport newQueuedReport = new QueuedReport();
+            newQueuedReport.setFacility(queuedReport.getFacility());
+            newQueuedReport.setReportName(queuedReport.getReportName());
+
+
+            //compute date for next schedule
+            Calendar newScheduleDate = Calendar.getInstance();
+            newScheduleDate.setTime(queuedReport.getDateScheduled());
+            newScheduleDate.add(Calendar.SECOND, newScheduleDate.get(Calendar.SECOND) + queuedReport.getRepeatInterval());
+            Date nextSchedule = newScheduleDate.getTime();
+
+            //set date for next schedule
+            newQueuedReport.setDateScheduled(nextSchedule);
+            newQueuedReport.setEvaluationDate(nextSchedule);
+
+            newQueuedReport.setStatus(QueuedReport.STATUS_NEW);
+            newQueuedReport.setRepeatInterval(queuedReport.getRepeatInterval());
+
+            Context.getService(QueuedReportService.class).saveQueuedReport(newQueuedReport);
+        }
+    }
 
 }

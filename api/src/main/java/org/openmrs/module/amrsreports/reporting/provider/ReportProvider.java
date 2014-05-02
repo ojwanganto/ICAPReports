@@ -11,6 +11,7 @@ public abstract class ReportProvider {
 
 	protected String name;
 	protected Boolean visible = false;
+    protected Boolean isIndicator = true;
 	protected ReportDefinition reportDefinition;
 	protected CohortDefinition cohortDefinition;
 	protected ReportDesign reportDesign;
@@ -54,4 +55,12 @@ public abstract class ReportProvider {
 	public void setReportDesign(ReportDesign reportDesign) {
 		this.reportDesign = reportDesign;
 	}
+
+    public Boolean getIndicator() {
+        return isIndicator;
+    }
+
+    public void setIndicator(Boolean indicator) {
+        isIndicator = indicator;
+    }
 }

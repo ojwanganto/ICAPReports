@@ -29,10 +29,10 @@ import java.util.Properties;
 /**
  * Provides mechanisms for rendering the Eligible and not on ARV
  */
-public class EligibleButNotOnARVReportProvider extends ReportProvider {
+public class BookedAndAttendedReportProvider extends ReportProvider {
 
-	public EligibleButNotOnARVReportProvider() {
-		this.name = "Eligible and not on ARV";
+	public BookedAndAttendedReportProvider() {
+		this.name = "Booked and Attended Report";
 		this.visible = true;
         this.isIndicator= false;
 	}
@@ -42,10 +42,10 @@ public class EligibleButNotOnARVReportProvider extends ReportProvider {
 
 		String nullString = null;
 		ReportDefinition report = new PeriodIndicatorReportDefinition();
-		report.setName("allEligiblePatients");
+		report.setName("Booked and Attended");
 
 		PatientDataSetDefinition dsd = new PatientDataSetDefinition();
-		dsd.setName("allEligiblePatients");
+		dsd.setName("bookedAndAttended");
 
 		dsd.addSortCriteria("id", SortCriteria.SortDirection.ASC);
 		dsd.addColumn("id", new PatientIdDataDefinition(), nullString);
@@ -62,28 +62,29 @@ public class EligibleButNotOnARVReportProvider extends ReportProvider {
 
 	@Override
 	public CohortDefinition getCohortDefinition() {
-        String sql ="select  o.person_id  " +
+
+        String attended ="select   e.patient_id  " +
+                "  from encounter e  " +
+                "  inner join person p  " +
+                "  on p.person_id=e.patient_id   " +
+                "    where e.voided = 0  " +
+                "    and p.voided=0   " +
+                "    and e.encounter_datetime between (:startDate) and (:endDate)  " +
+                "    and e.location_id in ( :locationList ) ";
+
+        String booked ="select  o.person_id  " +
                 "  from obs o  " +
                 "  inner join person p  " +
                 "  on p.person_id=o.person_id   " +
                 "    where o.voided = 0  " +
                 "    and p.voided=0   " +
-                "    and (o.concept_id = 162227 and value_datetime between (:startDate) and (:endDate))  " +
-                "    and concept_id<>159599 " +
+                "    and o.concept_id = 5096 and value_datetime between (:startDate) and (:endDate)  " +
                 "    and o.location_id in ( :locationList ) ";
 
-        String hsql ="select  o.person_id  " +
-                "  from obs o  " +
-                "  inner join person p  " +
-                "  on p.person_id=o.person_id   " +
-                "    where o.voided = 0  " +
-                "    and p.voided=0   " +
-                "    and (o.concept_id = 162227 and value_datetime between (:startDate) and (:endDate))  " +
 
-                "    and o.location_id in ( :locationList ) ";
-
-        CohortDefinition generalCOhort = new SqlCohortDefinition(hsql);
-        generalCOhort.setName("Eligible and not on ARV Within a given period of time");
+        String sql = attended + " UNION " + booked;
+        CohortDefinition generalCOhort = new SqlCohortDefinition(sql);
+        generalCOhort.setName("Booked and Attended");
 
         generalCOhort.addParameter(new Parameter("startDate", "Report Date", Date.class));
         generalCOhort.addParameter(new Parameter("endDate", "End Reporting Date", Date.class));
@@ -94,26 +95,26 @@ public class EligibleButNotOnARVReportProvider extends ReportProvider {
 	@Override
 	public ReportDesign getReportDesign() {
 		ReportDesign design = new ReportDesign();
-		design.setName("Eligible Not on ARV Register Design");
+		design.setName("Booked and Attended Report Design");
 		design.setReportDefinition(this.getReportDefinition());
 		design.setRendererType(ExcelTemplateRenderer.class);
 
 		Properties props = new Properties();
-		props.put("repeatingSections", "sheet:1,row:6,dataset:allEligiblePatients");
+		props.put("repeatingSections", "sheet:1,row:6,dataset:bookedAndAttended");
 
 		design.setProperties(props);
 
 		ReportDesignResource resource = new ReportDesignResource();
 		resource.setName("template.xls");
-		InputStream is = OpenmrsClassLoader.getInstance().getResourceAsStream("templates/EligibleNotOnARVReportTemplate.xls");
+		InputStream is = OpenmrsClassLoader.getInstance().getResourceAsStream("templates/BookedAndAttendedReportTemplate.xls");
 
 		if (is == null)
-			throw new APIException("Could not find report template for eligible and not on ARV.");
+			throw new APIException("Could not find report template for Booked and Attended Report.");
 
 		try {
 			resource.setContents(IOUtils.toByteArray(is));
 		} catch (IOException ex) {
-			throw new APIException("Could not create report design for Eligible and not on ARV", ex);
+			throw new APIException("Could not create report design for Booked and Attended Report", ex);
 		}
 
 		IOUtils.closeQuietly(is);

@@ -18,8 +18,12 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.Activator;
 import org.openmrs.module.amrsreports.reporting.provider.ARTCareFollowUpProvider;
 import org.openmrs.module.amrsreports.reporting.provider.ARTCareProvider;
+import org.openmrs.module.amrsreports.reporting.provider.AttendedReportProvider;
+import org.openmrs.module.amrsreports.reporting.provider.BookedAndAttendedReportProvider;
+import org.openmrs.module.amrsreports.reporting.provider.BookedReportProvider;
 import org.openmrs.module.amrsreports.reporting.provider.EligibleButNotOnARVReportProvider;
 import org.openmrs.module.amrsreports.reporting.provider.HIVPalliativeCareProvider;
+import org.openmrs.module.amrsreports.reporting.provider.LFTUReportProvider;
 import org.openmrs.module.amrsreports.reporting.provider.MOH711Provider;
 import org.openmrs.module.amrsreports.reporting.provider.MOH731Provider;
 import org.openmrs.module.amrsreports.reporting.provider.RegimensProvider;
@@ -49,6 +53,10 @@ public class AmrsReportModuleActivator implements Activator {
         ReportProviderRegistrar.getInstance().registerReportProvider(new RegimensProvider());
         ReportProviderRegistrar.getInstance().registerReportProvider(new MOH731Provider());
         ReportProviderRegistrar.getInstance().registerReportProvider(new MOH711Provider());
+        ReportProviderRegistrar.getInstance().registerReportProvider(new BookedReportProvider());
+        ReportProviderRegistrar.getInstance().registerReportProvider(new BookedAndAttendedReportProvider());
+        ReportProviderRegistrar.getInstance().registerReportProvider(new LFTUReportProvider());
+        ReportProviderRegistrar.getInstance().registerReportProvider(new AttendedReportProvider());
 
 	}
 

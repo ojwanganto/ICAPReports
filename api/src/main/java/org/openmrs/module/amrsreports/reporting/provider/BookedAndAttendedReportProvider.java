@@ -5,6 +5,7 @@ import org.openmrs.Location;
 import org.openmrs.api.APIException;
 import org.openmrs.module.amrsreports.reporting.converter.DecimalAgeConverter;
 import org.openmrs.module.amrsreports.reporting.data.AgeAtEvaluationDateDataDefinition;
+import org.openmrs.module.amrsreports.reporting.data.ICAPCCCNoDataDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.common.SortCriteria;
@@ -47,8 +48,8 @@ public class BookedAndAttendedReportProvider extends ReportProvider {
 		PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 		dsd.setName("bookedAndAttended");
 
-		dsd.addSortCriteria("id", SortCriteria.SortDirection.ASC);
-		dsd.addColumn("id", new PatientIdDataDefinition(), nullString);
+        dsd.addSortCriteria("id", SortCriteria.SortDirection.ASC);
+        dsd.addColumn("id", new ICAPCCCNoDataDefinition(), nullString);
 		dsd.addColumn("name", new PreferredNameDataDefinition(), nullString, new ObjectFormatter());
 		dsd.addColumn("sex", new GenderDataDefinition(), nullString);
 

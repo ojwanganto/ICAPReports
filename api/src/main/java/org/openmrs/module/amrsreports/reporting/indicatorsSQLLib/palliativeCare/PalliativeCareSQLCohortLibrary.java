@@ -73,6 +73,30 @@ public class PalliativeCareSQLCohortLibrary {
         return sql;
     }
 
+    public String cumulativeMalesInCare(){
+        String sql ="select obs.person_id from obs " +
+                "  inner join person p " +
+                "  on p.person_id=obs.person_id  " +
+                "  where concept_id=160555 " +
+                "  and gender='M' " +
+                "  and location_id in(:locationList) " +
+                "  and value_datetime <= (:endDate) ";
+
+        return sql;
+    }
+
+    public String cumulativeFemalesInCare(){
+        String sql ="select obs.person_id from obs " +
+                "  inner join person p " +
+                "  on p.person_id=obs.person_id  " +
+                "  where concept_id=160555 " +
+                "  and gender='F' " +
+                "  and location_id in(:locationList) " +
+                "  and value_datetime <= (:endDate) ";
+
+        return sql;
+    }
+
 
     /**
      * Define Queries for Cotrimazole

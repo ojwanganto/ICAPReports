@@ -15,16 +15,22 @@
 package org.openmrs.module.amrsreports.reporting;
 
 import org.openmrs.Concept;
+import org.openmrs.Location;
 import org.openmrs.module.amrsreports.cache.MetadataUtils;
 import org.openmrs.module.amrsreports.cache.MohCacheUtils;
+import org.openmrs.module.amrsreports.reporting.cohort.definition.DeadPatientsCohortDefinition;
 import org.openmrs.module.amrsreports.reporting.indicatorsSQLLib.BaseSQLCohortLibrary;
 import org.openmrs.module.amrsreports.reporting.indicatorsSQLLib.MOH731.MOH731SQLCohortLibrary;
 import org.openmrs.module.amrsreports.reporting.indicatorsSQLLib.artCareFollowup.ArtCareSQLCohortLibrary;
 import org.openmrs.module.amrsreports.rule.MohEvaluableNameConstants;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.evaluation.parameter.Mapped;
+import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Date;
 
 /**
  * Library of MOH 731 related indicator definitions. All indicators require parameters ${startDate} and ${endDate}
@@ -36,6 +42,22 @@ public class MOH731IndicatorLibrary {
     private BaseSQLCohortLibrary baseCohorts = new BaseSQLCohortLibrary();
     private MOH731SQLCohortLibrary sqlQueries = new MOH731SQLCohortLibrary();
 
+    /**
+     * Dead patients indicator
+     */
+    public CohortIndicator cohortIndicatorCount(String desc, CohortDefinition cd) {
+        CohortIndicator cohortIndicator = new CohortIndicator(desc);
+        cohortIndicator.addParameter(new Parameter("startDate", "Start Date", Date.class));
+        cohortIndicator.addParameter(new Parameter("endDate", "End Date", Date.class));
+        cohortIndicator.addParameter(new Parameter("locationList", "List of Locations", Location.class));
+        cohortIndicator.setType(CohortIndicator.IndicatorType.COUNT);
+
+        cd.addParameter(new Parameter("startDate", "Start Date", Date.class));
+        cd.addParameter(new Parameter("endDate", "End Date", Date.class));
+        cd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
+        cohortIndicator.setCohortDefinition(cd, "startDate=${startDate},locationList=${locationList},endDate=${endDate}");
+        return cohortIndicator;
+    }
 
     /**
      * indicators for Enrolled in care

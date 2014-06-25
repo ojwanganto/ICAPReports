@@ -441,10 +441,68 @@
         <comment>
             Adding reporting_end_date to the amrsreports_queued_report table
         </comment>
+
         <addColumn tableName="amrsreports_queued_report">
             <column name="reporting_end_date" type="datetime"/>
         </addColumn>
     </changeSet>
+
+    <changeSet id="amrsreports-2014-03-13g" author="aojwang">
+        <preConditions onFail="MARK_RAN">
+
+                <columnExists tableName="amrsreports_queued_report" columnName="reporting_end_date"/>
+
+        </preConditions>
+        <comment>
+            dropping reporting_end_date in amrsreports_queued_report table
+        </comment>
+
+        <dropColumn columnName="reporting_end_date" tableName="amrsreports_queued_report"/>
+
+
+    </changeSet>
+
+    <changeSet id="amrsreports-2014-03-13e" author="aojwang">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="amrsreports_queued_report" columnName="reporting_end_date"/>
+            </not>
+        </preConditions>
+        <comment>
+            Adding again reporting_end_date to the amrsreports_queued_report table
+        </comment>
+
+        <addColumn tableName="amrsreports_queued_report">
+            <column name="reporting_end_date" type="date"/>
+        </addColumn>
+    </changeSet>
+
+
+    <changeSet id="amrsreports-2014-03-13f" author="aojwang">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="amrsreports_queued_report" columnName="evaluation_date"/>
+        </preConditions>
+        <comment>
+            dropping evaluation_date in amrsreports_queued_report table
+        </comment>
+        <dropColumn columnName="evaluation_date" tableName="amrsreports_queued_report"/>
+    </changeSet>
+
+    <changeSet id="amrsreports-2014-03-13k" author="aojwang">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="amrsreports_queued_report" columnName="evaluation_date"/>
+            </not>
+        </preConditions>
+        <comment>
+            Adding again evaluation_date to the amrsreports_queued_report table
+        </comment>
+
+        <addColumn tableName="amrsreports_queued_report">
+            <column name="evaluation_date" type="date"/>
+        </addColumn>
+    </changeSet>
+
 
     <changeSet id="amrsreports-2013-04-05-a" author="jkeiper">
         <preConditions onFail="MARK_RAN">
@@ -508,7 +566,7 @@
             Changing person to patient in HIV Care Enrollment table - renaming column
         </comment>
 
-        <renameColumn tableName="amrsreports_hiv_care_enrollment" oldColumnName="person_id" newColumnName="patient_id" columnDataType="int(11)"/>
+        <renameColumn tableName="amrsreports_hiv_care_enrollment"  oldColumnName="person_id" newColumnName="patient_id" columnDataType="int(11)"/>
     </changeSet>
 
     <changeSet id="amrsreports-2013-06-07c" author="jkeiper">

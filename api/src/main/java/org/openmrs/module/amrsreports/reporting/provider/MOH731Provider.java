@@ -3,12 +3,10 @@ package org.openmrs.module.amrsreports.reporting.provider;
 import org.apache.commons.io.IOUtils;
 import org.openmrs.Location;
 import org.openmrs.api.APIException;
-import org.openmrs.module.amrsreports.reporting.CommonIndicatorLibrary;
+import org.openmrs.module.amrsreports.reporting.MOH731CohortLibrary;
 import org.openmrs.module.amrsreports.reporting.MOH731IndicatorLibrary;
-import org.openmrs.module.amrsreports.reporting.ReportUtils;
 import org.openmrs.module.amrsreports.reporting.cohort.definition.CCCPatientCohortDefinition;
-import org.openmrs.module.amrsreports.reporting.indicatorsSQLLib.BaseSQLCohortLibrary;
-import org.openmrs.module.amrsreports.reporting.indicatorsSQLLib.artCareFollowup.ArtCareSQLCohortLibrary;
+import org.openmrs.module.amrsreports.reporting.cohort.definition.CurrentlyInCareCohortDefinition;
 import org.openmrs.module.reporting.ReportingConstants;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
@@ -33,6 +31,7 @@ import java.util.Map;
 public class MOH731Provider extends ReportProvider {
 
     private MOH731IndicatorLibrary indicatorLibrary = new MOH731IndicatorLibrary();
+    private MOH731CohortLibrary cohortLibrary = new MOH731CohortLibrary();
 
 	public MOH731Provider() {
 		this.name = "MOH 731";
@@ -65,8 +64,8 @@ public class MOH731Provider extends ReportProvider {
         dsd.addParameter(ReportingConstants.END_DATE_PARAMETER);
         dsd.addParameter(facility);
 
-        dsd.addColumn("HV03-01", "Hiv Exposed Infant (Within 2 months)", new Mapped<CohortIndicator>(indicatorLibrary.infantsExposedWithin2Months(), periodMappings), "");
-        dsd.addColumn("HV03-02", "Hiv Exposed Infant (Eligible for ctx at 2 months)", new Mapped<CohortIndicator>(indicatorLibrary.infantsExposedAt2Months(), periodMappings), "");
+        //dsd.addColumn("HV03-01", "Hiv Exposed Infant (Within 2 months)", new Mapped<CohortIndicator>(indicatorLibrary.infantsExposedWithin2Months(), periodMappings), "");
+        //dsd.addColumn("HV03-02", "Hiv Exposed Infant (Eligible for ctx at 2 months)", new Mapped<CohortIndicator>(indicatorLibrary.infantsExposedAt2Months(), periodMappings), "");
         dsd.addColumn("HV03-03", "Males On CTX  Below 15", new Mapped<CohortIndicator>(indicatorLibrary.malesBelow15OnCotrimoxazole(), periodMappings), "");
         dsd.addColumn("HV03-05", "Males On CTX 15 years & older", new Mapped<CohortIndicator>(indicatorLibrary.males15AndAboveOnCotrimoxazole(), periodMappings), "");
         dsd.addColumn("HV03-04", "Females On CTX  Below 15", new Mapped<CohortIndicator>(indicatorLibrary.femalesBelow15OnCotrimoxazole(), periodMappings), "");
@@ -78,11 +77,11 @@ public class MOH731Provider extends ReportProvider {
         dsd.addColumn("HV03-10", "Females Enrolled in Care: < 15 yrs", new Mapped<CohortIndicator>(indicatorLibrary.femalesBelow15EnrolledInCare(), periodMappings), "");
         dsd.addColumn("HV03-12", "Females Enrolled in Care: >= 15 yrs old", new Mapped<CohortIndicator>(indicatorLibrary.females15AndAboveEnrolledInCare(), periodMappings), "");
 
-        dsd.addColumn("HV03-14", "Currently in Care: < 1 yr", new Mapped<CohortIndicator>(indicatorLibrary.infantsCurrentlyEnrolledInCare(), periodMappings), "");
-        dsd.addColumn("HV03-15", "Males Currently in Care: < 15 yrs", new Mapped<CohortIndicator>(indicatorLibrary.malesBelow15CurrentlyEnrolledInCare(), periodMappings), "");
-        dsd.addColumn("HV03-17", "Males Currently in Care: >= 15 yrs old", new Mapped<CohortIndicator>(indicatorLibrary.males15AndAboveCurrentlyEnrolledInCare(), periodMappings), "");
-        dsd.addColumn("HV03-16", "Females Currently in Care: < 15 yrs", new Mapped<CohortIndicator>(indicatorLibrary.femalesBelow15CurrentlyEnrolledInCare(), periodMappings), "");
-        dsd.addColumn("HV03-18", "Females Currently in Care: >= 15 yrs old", new Mapped<CohortIndicator>(indicatorLibrary.females15AndAboveCurrentlyEnrolledInCare(), periodMappings), "");
+        dsd.addColumn("HV03-14", "Currently in Care: < 1 yr", new Mapped<CohortIndicator>(indicatorLibrary.cohortIndicatorCount("infants in care",cohortLibrary.infantsCurrentlyInCare()), periodMappings), "");
+        dsd.addColumn("HV03-15", "Males Currently in Care: < 15 yrs", new Mapped<CohortIndicator>(indicatorLibrary.cohortIndicatorCount("Males Below 15 in care",cohortLibrary.malesAgedAtMostXCurrentlyInCare(14)), periodMappings), "");
+        dsd.addColumn("HV03-17", "Males Currently in Care: >= 15 yrs old", new Mapped<CohortIndicator>(indicatorLibrary.cohortIndicatorCount("Males 15 and older in care",cohortLibrary.malesAgedAtLeastXCurrentlyInCare(15)), periodMappings), "");
+        dsd.addColumn("HV03-16", "Females Currently in Care: < 15 yrs", new Mapped<CohortIndicator>(indicatorLibrary.cohortIndicatorCount("Females below 15 in care",cohortLibrary.femalesAgedAtMostXCurrentlyInCare(14)), periodMappings), "");
+        dsd.addColumn("HV03-18", "Females Currently in Care: >= 15 yrs old", new Mapped<CohortIndicator>(indicatorLibrary.cohortIndicatorCount("Females 15 and above in care",cohortLibrary.femalesAgedAtLeastXCurrentlyInCare(15)), periodMappings), "");
 
         dsd.addColumn("HV03-20", "Starting ART: < 1 yr", new Mapped<CohortIndicator>(indicatorLibrary.infantsStartingART(), periodMappings), "");
         dsd.addColumn("HV03-21", "Males Starting ART: < 15 yrs", new Mapped<CohortIndicator>(indicatorLibrary.malesBelow15StartingART(), periodMappings), "");
@@ -100,12 +99,12 @@ public class MOH731Provider extends ReportProvider {
         dsd.addColumn("HV03-32", "Female Revisits on ART: >= 15 yrs old", new Mapped<CohortIndicator>(indicatorLibrary.females15AndAboveWithARTRevisits(), periodMappings), "");
 
         //Currently on ART
-        dsd.addColumn("HV03-34", "Currently on ART: < 1 yr", new Mapped<CohortIndicator>(indicatorLibrary.infantsCurrentlyOnART(), periodMappings), "");
-        dsd.addColumn("HV03-35", "Males Currently on ART: < 15 yrs", new Mapped<CohortIndicator>(indicatorLibrary.malesBelow15CurrentlyOnART(), periodMappings), "");
-        dsd.addColumn("HV03-37", "Males Currently on ART: >= 15 yrs old", new Mapped<CohortIndicator>(indicatorLibrary.males15AndAboveCurrentlyOnART(), periodMappings), "");
-        dsd.addColumn("HV03-36", "Females Currently on ART: < 15 yrs", new Mapped<CohortIndicator>(indicatorLibrary.femalesBelow15CurrentlyOnART(), periodMappings), "");
-        dsd.addColumn("HV03-38", "Females Currently on ART: >= 15 yrs old", new Mapped<CohortIndicator>(indicatorLibrary.females15AndAboveCurrentlyOnART(), periodMappings), "");
-        //Cumulative Ever on ART
+        dsd.addColumn("HV03-34", "Currently on ART: < 1 yr", new Mapped<CohortIndicator>(indicatorLibrary.cohortIndicatorCount("infants Currently on ART", cohortLibrary.infantsCurrentlyOnART()), periodMappings), "");
+        dsd.addColumn("HV03-35", "Males Currently on ART: < 15 yrs", new Mapped<CohortIndicator>(indicatorLibrary.cohortIndicatorCount("Males Below 15 on ART", cohortLibrary.malesAgedAtMostXCurrentlyOnART(14)), periodMappings), "");
+        dsd.addColumn("HV03-37", "Males Currently on ART: >= 15 yrs old", new Mapped<CohortIndicator>(indicatorLibrary.cohortIndicatorCount("Males Above 15 on ART", cohortLibrary.malesAgedAtLeastXCurrentlyOnART(15)), periodMappings), "");
+        dsd.addColumn("HV03-36", "Females Currently on ART: < 15 yrs", new Mapped<CohortIndicator>(indicatorLibrary.cohortIndicatorCount("Females Below 15 on ART",cohortLibrary.femalesAgedAtMostXCurrentlyOnART(14)), periodMappings), "");
+       dsd.addColumn("HV03-38", "Females Currently on ART: >= 15 yrs old", new Mapped<CohortIndicator>(indicatorLibrary.cohortIndicatorCount("Females Above 15 on ART ", cohortLibrary.malesAgedAtLeastXCurrentlyOnART(15)), periodMappings), "");
+       /* */ //Cumulative Ever on ART
         dsd.addColumn("HV03-40", "Males Ever on ART: < 1 yr", new Mapped<CohortIndicator>(indicatorLibrary.malesBelow15EverOnCare(), periodMappings), "");
         dsd.addColumn("HV03-42", "Males Ever on ART: < 15 yrs", new Mapped<CohortIndicator>(indicatorLibrary.males15AndAboveEverOnCare(), periodMappings), "");
         dsd.addColumn("HV03-41", "Females Ever on ART: < 1 yr", new Mapped<CohortIndicator>(indicatorLibrary.femalesBelow15EverOnCare(), periodMappings), "");

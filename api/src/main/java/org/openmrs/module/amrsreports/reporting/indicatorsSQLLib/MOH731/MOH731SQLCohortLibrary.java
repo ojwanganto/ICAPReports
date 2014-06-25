@@ -121,22 +121,13 @@ public class MOH731SQLCohortLibrary {
                 "   inner join person p  " +
                 "   on p.person_id=obs.person_id   " +
                 "   where concept_id=160555  " +
-                "   and location_id in(:locationList)  " +
-                "   and obs.person_id  in ( " +
-                "      select e.patient_id from encounter e  " +
-                "      inner join obs o on o.person_id=e.patient_id  " +
-                "      group by e.patient_id  " +
-                "      having max(e.encounter_datetime) between (:endDate) and date_add(:endDate,INTERVAL -93 DAY)  " +
-                "        union select o.person_id from obs o  " +
-                "            inner join person p  " +
-                "            on p.person_id=o.person_id  " +
-                "            where o.voided=0  " +
-                "            and concept_id=5096  " +
-                "            and value_datetime is not null  " +
-                "            and value_datetime >=(:endDate) " +
-                "   ) " +
-                "   and concept_id not in (160649,1543) " +
-                "   and value_datetime <= (:endDate) ";
+                "   and location_id in (:locationList)  " +
+                "   and obs.person_id not in ( select person_id from person where dead=1 ) " +
+                "   and obs.person_id not in ( select person_id from obs where concept_id in (1543,160649) and value_datetime <= (:endDate) ) " +
+                "   and obs.person_id not in ( select o.person_id from obs o where concept_id = 5096 and value_datetime >= (:endDate) ) " +
+                "   and obs.person_id not in ( select e.patient_id from encounter e group by e.patient_id having max(e.encounter_datetime) between date_add((:endDate),INTERVAL -93 DAY) and (:endDate) ) " +
+                "   and value_datetime between (:startDate) and (:endDate)  " ;
+
 
         return sql;
     }
@@ -146,22 +137,12 @@ public class MOH731SQLCohortLibrary {
                 "   inner join person p  " +
                 "   on p.person_id=obs.person_id   " +
                 "   where concept_id=160555  " +
-                "   and location_id in(:locationList)  " +
-                "   and obs.person_id  in ( " +
-                "      select e.patient_id from encounter e  " +
-                "      inner join obs o on o.person_id=e.patient_id  " +
-                "      group by e.patient_id  " +
-                "      having max(e.encounter_datetime) between (:endDate) and date_add(:endDate,INTERVAL -93 DAY)  " +
-                "        union select o.person_id from obs o  " +
-                "            inner join person p  " +
-                "            on p.person_id=o.person_id  " +
-                "            where o.voided=0  " +
-                "            and concept_id=5096  " +
-                "            and value_datetime is not null  " +
-                "            and value_datetime >=(:endDate) " +
-                "   ) " +
-                "   and concept_id not in (160649,1543) " +
-                "   and value_datetime <= (:endDate) " +
+                "   and location_id in (:locationList)  " +
+                "   and obs.person_id not in ( select person_id from person where dead=1 ) " +
+                "   and obs.person_id not in ( select person_id from obs where concept_id in (1543,160649) and value_datetime <= (:endDate) ) " +
+                "   and obs.person_id not in ( select o.person_id from obs o where concept_id = 5096 and value_datetime >= (:endDate) ) " +
+                "   and obs.person_id not in ( select e.patient_id from encounter e group by e.patient_id having max(e.encounter_datetime) between date_add((:endDate),INTERVAL -93 DAY) and (:endDate) ) " +
+                "   and value_datetime between (:startDate) and (:endDate)  " +
                 "   and gender='M' " ;
 
         return sql;
@@ -172,22 +153,12 @@ public class MOH731SQLCohortLibrary {
                 "   inner join person p  " +
                 "   on p.person_id=obs.person_id   " +
                 "   where concept_id=160555  " +
-                "   and location_id in(:locationList)  " +
-                "   and obs.person_id  in ( " +
-                "      select e.patient_id from encounter e  " +
-                "      inner join obs o on o.person_id=e.patient_id  " +
-                "      group by e.patient_id  " +
-                "      having max(e.encounter_datetime) between (:endDate) and date_add(:endDate,INTERVAL -93 DAY)  " +
-                "        union select o.person_id from obs o  " +
-                "            inner join person p  " +
-                "            on p.person_id=o.person_id  " +
-                "            where o.voided=0  " +
-                "            and concept_id=5096  " +
-                "            and value_datetime is not null  " +
-                "            and value_datetime >=(:endDate) " +
-                "   ) " +
-                "   and concept_id not in (160649,1543) " +
-                "   and value_datetime <= (:endDate) " +
+                "   and location_id in (:locationList)  " +
+                "   and obs.person_id not in ( select person_id from person where dead=1 ) " +
+                "   and obs.person_id not in ( select person_id from obs where concept_id in (1543,160649) and value_datetime <= (:endDate) ) " +
+                "   and obs.person_id not in ( select o.person_id from obs o where concept_id = 5096 and value_datetime >= (:endDate) ) " +
+                "   and obs.person_id not in ( select e.patient_id from encounter e group by e.patient_id having max(e.encounter_datetime) between date_add((:endDate),INTERVAL -93 DAY) and (:endDate) ) " +
+                "   and value_datetime between (:startDate) and (:endDate)  " +
                 "   and gender='F' " ;
 
         return sql;
@@ -200,22 +171,12 @@ public class MOH731SQLCohortLibrary {
                 "   inner join person p  " +
                 "   on p.person_id=obs.person_id   " +
                 "   where concept_id=160555  " +
-                "   and location_id in(:locationList)  " +
-                "   and obs.person_id  in ( " +
-                "      select e.patient_id from encounter e  " +
-                "      inner join obs o on o.person_id=e.patient_id  " +
-                "      group by e.patient_id  " +
-                "      having max(e.encounter_datetime) between (:endDate) and date_add(:endDate,INTERVAL -93 DAY)  " +
-                "        union select o.person_id from obs o  " +
-                "            inner join person p  " +
-                "            on p.person_id=o.person_id  " +
-                "            where o.voided=0  " +
-                "            and concept_id=5096  " +
-                "            and value_datetime is not null  " +
-                "            and value_datetime >=(:endDate) " +
-                "   ) " +
-                "   and concept_id not in (160649,1543) " +
-                "   and value_datetime <= (:endDate) " +
+                "   and location_id in (:locationList)  " +
+                "   and obs.person_id not in ( select person_id from person where dead=1 ) " +
+                "   and obs.person_id not in ( select person_id from obs where concept_id in (1543,160649) and value_datetime <= (:startDate) ) " +
+                "   and obs.person_id not in ( select o.person_id from obs o where concept_id = 5096 and value_datetime >= (:startDate) ) " +
+                "   and obs.person_id not in ( select e.patient_id from encounter e group by e.patient_id having max(e.encounter_datetime) between date_add((:startDate),INTERVAL -93 DAY) and (:startDate) ) " +
+                "   and value_datetime <= (:endDate)  " +
                 "   and gender='M' " ;
 
         return sql;
@@ -226,53 +187,16 @@ public class MOH731SQLCohortLibrary {
                 "   inner join person p  " +
                 "   on p.person_id=obs.person_id   " +
                 "   where concept_id=160555  " +
-                "   and location_id in(:locationList)  " +
-                "   and obs.person_id  in ( " +
-                "      select e.patient_id from encounter e  " +
-                "      inner join obs o on o.person_id=e.patient_id  " +
-                "      group by e.patient_id  " +
-                "      having max(e.encounter_datetime) between (:endDate) and date_add(:endDate,INTERVAL -93 DAY)  " +
-                "        union select o.person_id from obs o  " +
-                "            inner join person p  " +
-                "            on p.person_id=o.person_id  " +
-                "            where o.voided=0  " +
-                "            and concept_id=5096  " +
-                "            and value_datetime is not null  " +
-                "            and value_datetime >=(:endDate) " +
-                "   ) " +
-                "   and concept_id not in (160649,1543) " +
-                "   and value_datetime <= (:endDate) "+
+                "   and location_id in (:locationList)  " +
+                "   and obs.person_id not in ( select person_id from person where dead=1 ) " +
+                "   and obs.person_id not in ( select person_id from obs where concept_id in (1543,160649) and value_datetime <= (:startDate) ) " +
+                "   and obs.person_id not in ( select o.person_id from obs o where concept_id = 5096 and value_datetime >= (:startDate) ) " +
+                "   and obs.person_id not in ( select e.patient_id from encounter e group by e.patient_id having max(e.encounter_datetime) between date_add((:startDate),INTERVAL -93 DAY) and (:startDate) ) " +
+                "   and value_datetime <= (:endDate)  " +
                 "   and gender='F' " ;
 
         return sql;
     }
-
-    public String cumulativeInfantsCurrentlyInCare(){
-        String sql ="select obs.person_id from obs  " +
-                "   inner join person p  " +
-                "   on p.person_id=obs.person_id   " +
-                "   where concept_id=160555  " +
-                "   and location_id in(:locationList)  " +
-                "   and obs.person_id  in ( " +
-                "      select e.patient_id from encounter e  " +
-                "      inner join obs o on o.person_id=e.patient_id  " +
-                "      group by e.patient_id  " +
-                "      having max(e.encounter_datetime) between (:endDate) and date_add(:endDate,INTERVAL -93 DAY)  " +
-                "        union select o.person_id from obs o  " +
-                "            inner join person p  " +
-                "            on p.person_id=o.person_id  " +
-                "            where o.voided=0  " +
-                "            and concept_id=5096  " +
-                "            and value_datetime is not null  " +
-                "            and value_datetime >=(:endDate) " +
-                "   ) " +
-                "   and concept_id not in (160649,1543) " +
-                "   and value_datetime <= (:endDate) ";
-
-        return sql;
-    }
-
-
     /**
      * Define Queries for Cotrimoxazole
      * 162229 for Q and 1065 for YES answer
@@ -389,22 +313,13 @@ public class MOH731SQLCohortLibrary {
                 "   inner join person p  " +
                 "   on p.person_id=obs.person_id   " +
                 "   where concept_id=160555  " +
-                "   and location_id in(:locationList)  " +
-                "   and obs.person_id  in ( " +
-                "      select e.patient_id from encounter e  " +
-                "      inner join obs o on o.person_id=e.patient_id  " +
-                "      group by e.patient_id  " +
-                "      having max(e.encounter_datetime) between (:endDate) and date_add(:endDate,INTERVAL -93 DAY)  " +
-                "        union select o.person_id from obs o  " +
-                "            inner join person p  " +
-                "            on p.person_id=o.person_id  " +
-                "            where o.voided=0  " +
-                "            and concept_id=5096  " +
-                "            and value_datetime is not null  " +
-                "            and value_datetime >=(:endDate) " +
-                "   ) " +
-                "  and concept_id not in (160649,1543) " +
-                "  and (concept_id = 159599 and value_datetime between (:startDate) and (:endDate)) " ;
+                "   and location_id in (:locationList)  " +
+                "   and obs.person_id not in ( select person_id from person where dead=1 ) " +
+                "   and obs.person_id not in ( select person_id from obs where concept_id in (1543,160649) and value_datetime <= (:endDate) ) " +
+                "   and obs.person_id not in ( select o.person_id from obs o where concept_id = 5096 and value_datetime >= (:endDate) ) " +
+                "   and obs.person_id not in ( select e.patient_id from encounter e group by e.patient_id having max(e.encounter_datetime) between date_add((:endDate),INTERVAL -93 DAY) and (:endDate) ) " +
+                "   and value_datetime between (:startDate) and (:endDate)  " +
+                "   and obs.person_id in (select person_id from obs where concept_id = 159599 and value_datetime <= (:endDate)) " ;
 
         return sql;
     }
@@ -414,23 +329,14 @@ public class MOH731SQLCohortLibrary {
                 "   inner join person p  " +
                 "   on p.person_id=obs.person_id   " +
                 "   where concept_id=160555  " +
-                "   and location_id in(:locationList)  " +
-                "   and obs.person_id  in ( " +
-                "      select e.patient_id from encounter e  " +
-                "      inner join obs o on o.person_id=e.patient_id  " +
-                "      group by e.patient_id  " +
-                "      having max(e.encounter_datetime) between (:endDate) and date_add(:endDate,INTERVAL -93 DAY)  " +
-                "        union select o.person_id from obs o  " +
-                "            inner join person p  " +
-                "            on p.person_id=o.person_id  " +
-                "            where o.voided=0  " +
-                "            and concept_id=5096  " +
-                "            and value_datetime is not null  " +
-                "            and value_datetime >=(:endDate) " +
-                "   ) " +
-                "  and concept_id not in (160649,1543) " +
-                "  and (concept_id = 159599 and value_datetime between (:startDate) and (:endDate)) " +
-                "  and gender='M' " ;
+                "   and location_id in (:locationList)  " +
+                "   and obs.person_id not in ( select person_id from person where dead=1 ) " +
+                "   and obs.person_id not in ( select person_id from obs where concept_id in (1543,160649) and value_datetime <= (:endDate) ) " +
+                "   and obs.person_id not in ( select o.person_id from obs o where concept_id = 5096 and value_datetime >= (:endDate) ) " +
+                "   and obs.person_id not in ( select e.patient_id from encounter e group by e.patient_id having max(e.encounter_datetime) between date_add((:endDate),INTERVAL -93 DAY) and (:endDate) ) " +
+                "   and value_datetime between (:startDate) and (:endDate)  " +
+                "   and obs.person_id in (select person_id from obs where concept_id = 159599 and value_datetime <= (:endDate)) "  +
+                "   and gender='M' " ;
 
         return sql;
     }
@@ -440,107 +346,17 @@ public class MOH731SQLCohortLibrary {
                 "   inner join person p  " +
                 "   on p.person_id=obs.person_id   " +
                 "   where concept_id=160555  " +
-                "   and location_id in(:locationList)  " +
-                "   and obs.person_id  in ( " +
-                "      select e.patient_id from encounter e  " +
-                "      inner join obs o on o.person_id=e.patient_id  " +
-                "      group by e.patient_id  " +
-                "      having max(e.encounter_datetime) between (:endDate) and date_add(:endDate,INTERVAL -93 DAY)  " +
-                "        union select o.person_id from obs o  " +
-                "            inner join person p  " +
-                "            on p.person_id=o.person_id  " +
-                "            where o.voided=0  " +
-                "            and concept_id=5096  " +
-                "            and value_datetime is not null  " +
-                "            and value_datetime >=(:endDate) " +
-                "   ) " +
-                "  and concept_id not in (160649,1543) " +
-                "  and (concept_id = 159599 and value_datetime between (:startDate) and (:endDate)) " +
-                "  and gender='F' " ;
+                "   and location_id in (:locationList)  " +
+                "   and obs.person_id not in ( select person_id from person where dead=1 ) " +
+                "   and obs.person_id not in ( select person_id from obs where concept_id in (1543,160649) and value_datetime <= (:endDate) ) " +
+                "   and obs.person_id not in ( select o.person_id from obs o where concept_id = 5096 and value_datetime >= (:endDate) ) " +
+                "   and obs.person_id not in ( select e.patient_id from encounter e group by e.patient_id having max(e.encounter_datetime) between date_add((:endDate),INTERVAL -93 DAY) and (:endDate) ) " +
+                "   and value_datetime between (:startDate) and (:endDate)  " +
+                "   and obs.person_id in (select person_id from obs where concept_id = 159599 and value_datetime <= (:endDate)) "  +
+                "   and gender='F' " ;
 
         return sql;
     }
-
-
-
-    public String cumulativeMalesCurrentlyOnART(){
-        String sql ="select obs.person_id from obs  " +
-                "   inner join person p  " +
-                "   on p.person_id=obs.person_id   " +
-                "   where concept_id=160555  " +
-                "   and location_id in(:locationList)  " +
-                "   and obs.person_id  in ( " +
-                "      select e.patient_id from encounter e  " +
-                "      inner join obs o on o.person_id=e.patient_id  " +
-                "      group by e.patient_id  " +
-                "      having max(e.encounter_datetime) between (:endDate) and date_add(:endDate,INTERVAL -93 DAY)  " +
-                "        union select o.person_id from obs o  " +
-                "            inner join person p  " +
-                "            on p.person_id=o.person_id  " +
-                "            where o.voided=0  " +
-                "            and concept_id=5096  " +
-                "            and value_datetime is not null  " +
-                "            and value_datetime >=(:endDate) " +
-                "   ) " +
-                "  and concept_id not in (160649,1543) " +
-                "  and (concept_id = 159599 and value_datetime <= (:endDate)) " +
-                "  and gender='M' " ;
-
-        return sql;
-    }
-
-    public String cumulativeFemalesCurrentlyOnART(){
-        String sql ="select obs.person_id from obs  " +
-                "   inner join person p  " +
-                "   on p.person_id=obs.person_id   " +
-                "   where concept_id=160555  " +
-                "   and location_id in(:locationList)  " +
-                "   and obs.person_id  in ( " +
-                "      select e.patient_id from encounter e  " +
-                "      inner join obs o on o.person_id=e.patient_id  " +
-                "      group by e.patient_id  " +
-                "      having max(e.encounter_datetime) between (:endDate) and date_add(:endDate,INTERVAL -93 DAY)  " +
-                "        union select o.person_id from obs o  " +
-                "            inner join person p  " +
-                "            on p.person_id=o.person_id  " +
-                "            where o.voided=0  " +
-                "            and concept_id=5096  " +
-                "            and value_datetime is not null  " +
-                "            and value_datetime >=(:endDate) " +
-                "   ) " +
-                "  and concept_id not in (160649,1543) " +
-                "  and (concept_id = 159599 and value_datetime <= (:endDate)) " +
-                "  and gender='F' " ;
-
-        return sql;
-    }
-
-    public String cumulativeInfantsCurrentlyOnART(){
-        String sql ="select obs.person_id from obs  " +
-                "   inner join person p  " +
-                "   on p.person_id=obs.person_id   " +
-                "   where concept_id=160555  " +
-                "   and location_id in(:locationList)  " +
-                "   and obs.person_id  in ( " +
-                "      select e.patient_id from encounter e  " +
-                "      inner join obs o on o.person_id=e.patient_id  " +
-                "      group by e.patient_id  " +
-                "      having max(e.encounter_datetime) between (:endDate) and date_add(:endDate,INTERVAL -93 DAY)  " +
-                "        union select o.person_id from obs o  " +
-                "            inner join person p  " +
-                "            on p.person_id=o.person_id  " +
-                "            where o.voided=0  " +
-                "            and concept_id=5096  " +
-                "            and value_datetime is not null  " +
-                "            and value_datetime >=(:endDate) " +
-                "   ) " +
-                "  and concept_id not in (160649,1543) " +
-                "  and (concept_id = 159599 and value_datetime <= (:endDate)) ";
-
-        return sql;
-    }
-
-
     //======================================================================
 
     /**

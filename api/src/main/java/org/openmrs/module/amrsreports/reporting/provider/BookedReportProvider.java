@@ -5,6 +5,9 @@ import org.openmrs.Location;
 import org.openmrs.api.APIException;
 import org.openmrs.module.amrsreports.reporting.converter.DecimalAgeConverter;
 import org.openmrs.module.amrsreports.reporting.data.AgeAtEvaluationDateDataDefinition;
+import org.openmrs.module.amrsreports.reporting.data.ICAPCCCNoDataDefinition;
+import org.openmrs.module.amrsreports.reporting.data.ICAPCD4CountDataDefinition;
+import org.openmrs.module.amrsreports.reporting.data.ICAPMaritalStatusDataDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.common.SortCriteria;
@@ -47,13 +50,15 @@ public class BookedReportProvider extends ReportProvider {
 		PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 		dsd.setName("booked");
 
-		dsd.addSortCriteria("id", SortCriteria.SortDirection.ASC);
-		dsd.addColumn("id", new PatientIdDataDefinition(), nullString);
+        dsd.addSortCriteria("id", SortCriteria.SortDirection.ASC);
+        dsd.addColumn("id", new ICAPCCCNoDataDefinition(), nullString);
 		dsd.addColumn("name", new PreferredNameDataDefinition(), nullString, new ObjectFormatter());
 		dsd.addColumn("sex", new GenderDataDefinition(), nullString);
 
 		AgeAtEvaluationDateDataDefinition add = new AgeAtEvaluationDateDataDefinition();
 		dsd.addColumn("age", add, nullString, new DecimalAgeConverter(0));
+        dsd.addColumn("cd4", new ICAPCD4CountDataDefinition(), nullString);
+        dsd.addColumn("maritalStatus", new ICAPMaritalStatusDataDefinition(), nullString);
 
 		report.addDataSetDefinition(dsd,null);
 

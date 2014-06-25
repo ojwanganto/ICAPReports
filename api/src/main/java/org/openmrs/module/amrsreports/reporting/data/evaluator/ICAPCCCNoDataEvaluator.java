@@ -24,7 +24,6 @@ import org.openmrs.module.reporting.data.person.evaluator.PersonDataEvaluator;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +31,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 /**
- * evaluator for CtxStartDataDefinition
+ * evaluator for CCC Number
  */
 @Handler(supports = ICAPCCCNoDataDefinition.class, order = 50)
 public class ICAPCCCNoDataEvaluator implements PersonDataEvaluator {
@@ -44,11 +43,11 @@ public class ICAPCCCNoDataEvaluator implements PersonDataEvaluator {
 		if (context.getBaseCohort().isEmpty())
 			return data;
 
-		String hql = "select personId, valueText" +
-				"	from Obs" +
+		String hql = "select patient.id, identifier" +
+				"	from PatientIdentifier" +
 				" 	where voided = false" +
-				"   	and personId in (:patientIds)" +
-				"   	and concept.id = 160752 ";
+				"   	and patient.patientId in (:patientIds)" +
+				"   	and identifierType.patientIdentifierTypeId = 3 ";
 
 		Map<String, Object> m = new HashMap<String, Object>();
 		m.put("patientIds", context.getBaseCohort());

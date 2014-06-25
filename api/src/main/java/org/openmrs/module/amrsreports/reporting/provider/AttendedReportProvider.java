@@ -4,7 +4,10 @@ import org.apache.commons.io.IOUtils;
 import org.openmrs.Location;
 import org.openmrs.api.APIException;
 import org.openmrs.module.amrsreports.reporting.converter.DecimalAgeConverter;
+import org.openmrs.module.amrsreports.reporting.converter.ICAPVisitTypeConverter;
 import org.openmrs.module.amrsreports.reporting.data.AgeAtEvaluationDateDataDefinition;
+import org.openmrs.module.amrsreports.reporting.data.ICAPCCCNoDataDefinition;
+import org.openmrs.module.amrsreports.reporting.data.ICAPVisitTypeDataDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.common.SortCriteria;
@@ -24,6 +27,8 @@ import org.openmrs.util.OpenmrsClassLoader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -44,18 +49,39 @@ public class AttendedReportProvider extends ReportProvider {
 		ReportDefinition report = new PeriodIndicatorReportDefinition();
 		report.setName("attended");
 
+        report.addParameter(new Parameter("startDate", "Report Date", Date.class));
+        report.addParameter(new Parameter("endDate", "End Reporting Date", Date.class));
+        report.addParameter(new Parameter("locationList", "List of Locations", Location.class));
+
+        Map<String, Object> periodMappings = new HashMap<String, Object>();
+        periodMappings.put("startDate", "${startDate}");
+        periodMappings.put("endDate", "${endDate}");
+        periodMappings.put("locationList", "${locationList}");
+
 		PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 		dsd.setName("attended");
 
+        dsd.addParameter(new Parameter("startDate", "Report Date", Date.class));
+        dsd.addParameter(new Parameter("endDate", "End Reporting Date", Date.class));
+        dsd.addParameter(new Parameter("locationList", "List of Locations", Location.class));
+
 		dsd.addSortCriteria("id", SortCriteria.SortDirection.ASC);
-		dsd.addColumn("id", new PatientIdDataDefinition(), nullString);
+        dsd.addColumn("id", new ICAPCCCNoDataDefinition(), nullString);
 		dsd.addColumn("name", new PreferredNameDataDefinition(), nullString, new ObjectFormatter());
 		dsd.addColumn("sex", new GenderDataDefinition(), nullString);
 
 		AgeAtEvaluationDateDataDefinition add = new AgeAtEvaluationDateDataDefinition();
 		dsd.addColumn("age", add, nullString, new DecimalAgeConverter(0));
 
-		report.addDataSetDefinition(dsd,null);
+        ICAPVisitTypeDataDefinition type = new ICAPVisitTypeDataDefinition();
+
+        type.addParameter(new Parameter("startDate", "Report Date", Date.class));
+        type.addParameter(new Parameter("endDate", "End Reporting Date", Date.class));
+        type.addParameter(new Parameter("locationList", "List of Locations", Location.class));
+
+        dsd.addColumn("visit", type, periodMappings, new ICAPVisitTypeConverter());
+
+		report.addDataSetDefinition(dsd,periodMappings);
 
 		return report;
 	}

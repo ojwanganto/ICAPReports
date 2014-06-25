@@ -69,20 +69,11 @@ public class EligibleButNotOnARVReportProvider extends ReportProvider {
                 "    where o.voided = 0  " +
                 "    and p.voided=0   " +
                 "    and (o.concept_id = 162227 and value_datetime between (:startDate) and (:endDate))  " +
-                "    and concept_id<>159599 " +
+                "    and o.person_id not in (select person_id from obs where concept_id = 159599) " +
                 "    and o.location_id in ( :locationList ) ";
 
-        String hsql ="select  o.person_id  " +
-                "  from obs o  " +
-                "  inner join person p  " +
-                "  on p.person_id=o.person_id   " +
-                "    where o.voided = 0  " +
-                "    and p.voided=0   " +
-                "    and (o.concept_id = 162227 and value_datetime between (:startDate) and (:endDate))  " +
 
-                "    and o.location_id in ( :locationList ) ";
-
-        CohortDefinition generalCOhort = new SqlCohortDefinition(hsql);
+        CohortDefinition generalCOhort = new SqlCohortDefinition(sql);
         generalCOhort.setName("Eligible and not on ARV Within a given period of time");
 
         generalCOhort.addParameter(new Parameter("startDate", "Report Date", Date.class));

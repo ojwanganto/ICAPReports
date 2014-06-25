@@ -58,10 +58,10 @@ public class MOH711SQLCohortLibrary {
                 "  inner join person p " +
                 "  on p.person_id=obs.person_id  " +
                 "  where concept_id=160555 " +
-                "  and (concept_id=160540 and value_coded=160538) " +
+                "  and obs.person_id in ( select person_id from obs where concept_id=160540 and value_coded=160538 and obs_datetime between (:startDate) AND (:endDate)) " +
                 "  and gender='M' " +
                 "  and location_id in(:locationList) " +
-                "  and value_datetime between (:startDate) and (:endDate) ";
+                "  and obs_datetime between (:startDate) and (:endDate) ";
 
         return sql;
     }
@@ -71,10 +71,10 @@ public class MOH711SQLCohortLibrary {
                 "  inner join person p " +
                 "  on p.person_id=obs.person_id  " +
                 "  where concept_id=160555 " +
-                "  and (concept_id=160540 and value_coded=160538) " +
+                "  and obs.person_id in ( select person_id from obs where concept_id=160540 and value_coded=160538 and obs_datetime between (:startDate) AND (:endDate)) " +
                 "  and gender='F' " +
                 "  and location_id in(:locationList) " +
-                "  and value_datetime between (:startDate) and (:endDate) ";
+                "  and obs_datetime between (:startDate) and (:endDate) ";
 
         return sql;
     }
@@ -85,10 +85,10 @@ public class MOH711SQLCohortLibrary {
                 "  inner join person p " +
                 "  on p.person_id=obs.person_id  " +
                 "  where concept_id=160555 " +
-                "  and (concept_id=160540 and value_coded=160539) " +
+                "  and obs.person_id in ( select person_id from obs where concept_id=160540 and value_coded=160539 and obs_datetime between (:startDate) AND (:endDate)) " +
                 "  and gender='M' " +
                 "  and location_id in(:locationList) " +
-                "  and value_datetime between (:startDate) and (:endDate) ";
+                "  and obs_datetime between (:startDate) and (:endDate) ";
 
         return sql;
     }
@@ -98,10 +98,10 @@ public class MOH711SQLCohortLibrary {
                 "  inner join person p " +
                 "  on p.person_id=obs.person_id  " +
                 "  where concept_id=160555 " +
-                "  and (concept_id=160540 and value_coded=160539) " +
+                "  and obs.person_id in ( select person_id from obs where concept_id=160540 and value_coded=160539 and obs_datetime between (:startDate) AND (:endDate)) " +
                 "  and gender='F' " +
                 "  and location_id in(:locationList) " +
-                "  and value_datetime between (:startDate) and (:endDate) ";
+                "  and obs_datetime between (:startDate) and (:endDate) ";
 
         return sql;
     }
@@ -112,10 +112,10 @@ public class MOH711SQLCohortLibrary {
                 "  inner join person p " +
                 "  on p.person_id=obs.person_id  " +
                 "  where concept_id=160555 " +
-                "  and (concept_id=160540 and value_coded=160541) " +
+                "  and obs.person_id in ( select person_id from obs where concept_id=160540 and value_coded=160541 and obs_datetime between (:startDate) AND (:endDate)) " +
                 "  and gender='M' " +
                 "  and location_id in(:locationList) " +
-                "  and value_datetime between (:startDate) and (:endDate) ";
+                "  and obs_datetime between (:startDate) and (:endDate) ";
 
         return sql;
     }
@@ -125,10 +125,10 @@ public class MOH711SQLCohortLibrary {
                 "  inner join person p " +
                 "  on p.person_id=obs.person_id  " +
                 "  where concept_id=160555 " +
-                "  and (concept_id=160540 and value_coded=160541) " +
+                "  and obs.person_id in ( select person_id from obs where concept_id=160540 and value_coded=160541 and obs_datetime between (:startDate) AND (:endDate)) " +
                 "  and gender='F' " +
                 "  and location_id in(:locationList) " +
-                "  and value_datetime between (:startDate) and (:endDate) ";
+                "  and obs_datetime between (:startDate) and (:endDate) ";
 
         return sql;
     }
@@ -138,10 +138,10 @@ public class MOH711SQLCohortLibrary {
                 "  inner join person p " +
                 "  on p.person_id=obs.person_id  " +
                 "  where concept_id=160555 " +
-                "  and (concept_id=160540 and value_coded=160536) " +
+                "  and obs.person_id in ( select person_id from obs where concept_id=160540 and value_coded=160536 and obs_datetime between (:startDate) AND (:endDate)) " +
                 "  and gender='M' " +
                 "  and location_id in(:locationList) " +
-                "  and value_datetime between (:startDate) and (:endDate) ";
+                "  and obs_datetime between (:startDate) and (:endDate) ";
 
         return sql;
     }
@@ -151,10 +151,10 @@ public class MOH711SQLCohortLibrary {
                 "  inner join person p " +
                 "  on p.person_id=obs.person_id  " +
                 "  where concept_id=160555 " +
-                "  and (concept_id=160540 and value_coded=160536) " +
+                "  and obs.person_id in ( select person_id from obs where concept_id=160540 and value_coded=160536 and obs_datetime between (:startDate) AND (:endDate)) " +
                 "  and gender='F' " +
                 "  and location_id in(:locationList) " +
-                "  and value_datetime between (:startDate) and (:endDate) ";
+                "  and obs_datetime between (:startDate) and (:endDate) ";
 
         return sql;
     }
@@ -188,10 +188,10 @@ public class MOH711SQLCohortLibrary {
                 "  inner join person p " +
                 "  on p.person_id=obs.person_id  " +
                 "  where concept_id=160555 " +
-                "  and (concept_id=160540 and value_coded=5622) " +
+                "  and obs.person_id in ( select person_id from obs where concept_id=160540 and value_coded=5622 and obs_datetime between (:startDate) AND (:endDate)) " +
                 "  and gender='M' " +
                 "  and location_id in(:locationList) " +
-                "  and value_datetime between (:startDate) and (:endDate) ";
+                "  and obs_datetime between (:startDate) and (:endDate) ";
 
         return sql;
     }
@@ -201,10 +201,10 @@ public class MOH711SQLCohortLibrary {
                 "  inner join person p " +
                 "  on p.person_id=obs.person_id  " +
                 "  where concept_id=160555 " +
-                "  and (concept_id=160540 and value_coded=5622) " +
+                "  and obs.person_id in ( select person_id from obs where concept_id=160540 and value_coded=5622 and obs_datetime between (:startDate) AND (:endDate)) " +
                 "  and gender='F' " +
                 "  and location_id in(:locationList) " +
-                "  and value_datetime between (:startDate) and (:endDate) ";
+                "  and obs_datetime between (:startDate) and (:endDate) ";
 
         return sql;
     }
@@ -255,7 +255,7 @@ public class MOH711SQLCohortLibrary {
                 " inner join person p ON o.person_id=p.person_id   " +
                 " WHERE o.concept_id=159599   " +
                 " AND o.location_id IN(:locationList)   " +
-                " and (concept_id=5356 and value_coded=1204) " +
+                " and o.person_id in ( select person_id from obs where concept_id=5356 and value_coded=1204 and obs_datetime between (:startDate) AND (:endDate)) " +
                 " AND o.value_datetime BETWEEN (:startDate) AND (:endDate)   " +
                 " AND p.gender='M' ";
 
@@ -267,7 +267,7 @@ public class MOH711SQLCohortLibrary {
                 " inner join person p ON o.person_id=p.person_id   " +
                 " WHERE o.concept_id=159599   " +
                 " AND o.location_id IN(:locationList)   " +
-                " and (concept_id=5356 and value_coded=1204) " +
+                " and o.person_id in ( select person_id from obs where concept_id=5356 and value_coded=1204 and obs_datetime between (:startDate) AND (:endDate)) " +
                 " AND o.value_datetime BETWEEN (:startDate) AND (:endDate)   " +
                 " AND p.gender='F' ";
 
@@ -279,7 +279,7 @@ public class MOH711SQLCohortLibrary {
                 " inner join person p ON o.person_id=p.person_id   " +
                 " WHERE o.concept_id=159599   " +
                 " AND o.location_id IN(:locationList)   " +
-                " and (concept_id=5356 and value_coded=1205) " +
+                " and o.person_id in ( select person_id from obs where concept_id=5356 and value_coded=1205 and obs_datetime between (:startDate) AND (:endDate)) " +
                 " AND o.value_datetime BETWEEN (:startDate) AND (:endDate)   " +
                 " AND p.gender='M' ";
 
@@ -291,7 +291,7 @@ public class MOH711SQLCohortLibrary {
                 " inner join person p ON o.person_id=p.person_id   " +
                 " WHERE o.concept_id=159599   " +
                 " AND o.location_id IN(:locationList)   " +
-                " and (concept_id=5356 and value_coded=1205) " +
+                " and o.person_id in ( select person_id from obs where concept_id=5356 and value_coded=1205 and obs_datetime between (:startDate) AND (:endDate)) " +
                 " AND o.value_datetime BETWEEN (:startDate) AND (:endDate)   " +
                 " AND p.gender='F' ";
 
@@ -303,7 +303,7 @@ public class MOH711SQLCohortLibrary {
                 " inner join person p ON o.person_id=p.person_id   " +
                 " WHERE o.concept_id=159599   " +
                 " AND o.location_id IN(:locationList)   " +
-                " and (concept_id=5356 and value_coded=1206) " +
+                " and o.person_id in ( select person_id from obs where concept_id=5356 and value_coded=1206 and obs_datetime between (:startDate) AND (:endDate)) " +
                 " AND o.value_datetime BETWEEN (:startDate) AND (:endDate)   " +
                 " AND p.gender='M' ";
 
@@ -315,7 +315,7 @@ public class MOH711SQLCohortLibrary {
                 " inner join person p ON o.person_id=p.person_id   " +
                 " WHERE o.concept_id=159599   " +
                 " AND o.location_id IN(:locationList)   " +
-                " and (concept_id=5356 and value_coded=1206) " +
+                " and o.person_id in ( select person_id from obs where concept_id=5356 and value_coded=1206 and obs_datetime between (:startDate) AND (:endDate)) " +
                 " AND o.value_datetime BETWEEN (:startDate) AND (:endDate)   " +
                 " AND p.gender='F' ";
 
@@ -328,7 +328,7 @@ public class MOH711SQLCohortLibrary {
                 " inner join person p ON o.person_id=p.person_id   " +
                 " WHERE o.concept_id=159599   " +
                 " AND o.location_id IN(:locationList)   " +
-                " and (concept_id=5356 and value_coded=1207) " +
+                " and o.person_id in ( select person_id from obs where concept_id=5356 and value_coded=1207 and obs_datetime between (:startDate) AND (:endDate)) " +
                 " AND o.value_datetime BETWEEN (:startDate) AND (:endDate)   " +
                 " AND p.gender='M' ";
 
@@ -340,7 +340,7 @@ public class MOH711SQLCohortLibrary {
                 " inner join person p ON o.person_id=p.person_id   " +
                 " WHERE o.concept_id=159599   " +
                 " AND o.location_id IN(:locationList)   " +
-                " and (concept_id=5356 and value_coded=1207) " +
+                " and o.person_id in ( select person_id from obs where concept_id=5356 and value_coded=1207 and obs_datetime between (:startDate) AND (:endDate)) " +
                 " AND o.value_datetime BETWEEN (:startDate) AND (:endDate)   " +
                 " AND p.gender='F' ";
 

@@ -43,6 +43,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.lang.IllegalStateException;
+
 
 /**
  * Implementation of {@link QueuedReportService}
@@ -256,9 +258,11 @@ public class QueuedReportServiceImpl implements QueuedReportService {
                 Context.getService(QueuedReportService.class).saveQueuedReport(newQueuedReport);
             }
 
-        }   catch (EvaluationException ee){
+        }   catch (EvaluationException e){
 
-            ee.printStackTrace();
+            queuedReport.setStatus(QueuedReport.STATUS_ERROR);
+            Context.getService(QueuedReportService.class).saveQueuedReport(queuedReport);
+            e.printStackTrace();
 
         } catch (FileNotFoundException e) {
 
@@ -275,9 +279,14 @@ public class QueuedReportServiceImpl implements QueuedReportService {
 
     }
 
-    private void runRegisters(QueuedReport queuedReport) throws EvaluationException, IOException {
+    private void runRegisters(QueuedReport queuedReport) {
+
+        try{
 
 
+        Parameter facility = new Parameter();
+        facility.setName("locationList");
+        facility.setType(Location.class);
         // find the report provider
         ReportProvider reportProvider = ReportProviderRegistrar.getInstance().getReportProviderByName(queuedReport.getReportName());
 
@@ -285,7 +294,9 @@ public class QueuedReportServiceImpl implements QueuedReportService {
         cohortDefinition.addParameter(new Parameter("locationList", "List of Locations", Location.class));
 
         ReportDefinition reportDefinition = reportProvider.getReportDefinition();
-        //reportDefinition.addParameter(new Parameter("locationList", "List of Locations", Location.class));
+        reportDefinition.addParameter(ReportingConstants.START_DATE_PARAMETER);
+        reportDefinition.addParameter(ReportingConstants.END_DATE_PARAMETER);
+        reportDefinition.addParameter(facility);
 
         EvaluationContext evaluationContext = new EvaluationContext();
         evaluationContext.addParameterValue(ReportingConstants.START_DATE_PARAMETER.getName(), queuedReport.getEvaluationDate());
@@ -296,7 +307,7 @@ public class QueuedReportServiceImpl implements QueuedReportService {
         evaluationContext.setEvaluationDate(queuedReport.getEvaluationDate());
 
         // set up evaluation context values
-        evaluationContext.addParameterValue("facility", queuedReport.getFacility());
+        //evaluationContext.addParameterValue("facility", queuedReport.getFacility());
         evaluationContext.setEvaluationDate(queuedReport.getEvaluationDate());
 
         StopWatch timer = new StopWatch();
@@ -376,10 +387,10 @@ public class QueuedReportServiceImpl implements QueuedReportService {
 
         //Mark original QueuedReport as complete and save status
         queuedReport.setStatus(QueuedReport.STATUS_COMPLETE);
-        Context.getService(QueuedReportService.class).saveQueuedReport(queuedReport);
+        //Context.getService(QueuedReportService.class).saveQueuedReport(queuedReport);
 
 
-        if (queuedReport.getRepeatInterval() != null && queuedReport.getRepeatInterval() > 0) {
+        /*if (queuedReport.getRepeatInterval() != null && queuedReport.getRepeatInterval() > 0) {
 
             //create a new QueuedReport borrowing some values from the run report
             QueuedReport newQueuedReport = new QueuedReport();
@@ -401,6 +412,46 @@ public class QueuedReportServiceImpl implements QueuedReportService {
             newQueuedReport.setRepeatInterval(queuedReport.getRepeatInterval());
 
             Context.getService(QueuedReportService.class).saveQueuedReport(newQueuedReport);
+        }*/
+        }  catch (Exception e){
+            queuedReport.setStatus(QueuedReport.STATUS_ERROR);
+            throw new RuntimeException("There was a problem running this report!!!!");
+            //Context.getService(QueuedReportService.class).saveQueuedReport(queuedReport);
+            //log.info(e.getCause());
+        }
+        finally {
+            if(QueuedReport.STATUS_COMPLETE.equals(queuedReport.getStatus())){
+
+                Context.getService(QueuedReportService.class).saveQueuedReport(queuedReport);
+
+                if (queuedReport.getRepeatInterval() != null && queuedReport.getRepeatInterval() > 0) {
+
+                    //create a new QueuedReport borrowing some values from the run report
+                    QueuedReport newQueuedReport = new QueuedReport();
+                    newQueuedReport.setFacility(queuedReport.getFacility());
+                    newQueuedReport.setReportName(queuedReport.getReportName());
+
+
+                    //compute date for next schedule
+                    Calendar newScheduleDate = Calendar.getInstance();
+                    newScheduleDate.setTime(queuedReport.getDateScheduled());
+                    newScheduleDate.add(Calendar.SECOND, newScheduleDate.get(Calendar.SECOND) + queuedReport.getRepeatInterval());
+                    Date nextSchedule = newScheduleDate.getTime();
+
+                    //set date for next schedule
+                    newQueuedReport.setDateScheduled(nextSchedule);
+                    newQueuedReport.setEvaluationDate(nextSchedule);
+
+                    newQueuedReport.setStatus(QueuedReport.STATUS_NEW);
+                    newQueuedReport.setRepeatInterval(queuedReport.getRepeatInterval());
+
+                    Context.getService(QueuedReportService.class).saveQueuedReport(newQueuedReport);
+                }
+
+
+            } else {
+                Context.getService(QueuedReportService.class).saveQueuedReport(queuedReport);
+            }
         }
     }
 

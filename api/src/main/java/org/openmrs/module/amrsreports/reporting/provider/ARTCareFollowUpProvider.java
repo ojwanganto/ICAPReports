@@ -53,40 +53,40 @@ public class ARTCareFollowUpProvider extends ReportProvider {
 
         //define general cohorts
 
-        CohortDefinition malesZeroTo14Cohort = baseSQLCohortLibrary.compositionAgeCohort(0,14,sqlQueries.malesWhoStoppedArtBetweenDatesQry());
-        CohortDefinition malesAbove15Cohort = baseSQLCohortLibrary.compositionAgeCohort(15,200,sqlQueries.malesWhoStoppedArtBetweenDatesQry());
-        CohortDefinition femalesZeroTo14Cohort = baseSQLCohortLibrary.compositionAgeCohort(0,14,sqlQueries.femalesWhoStoppedArtBetweenDatesQry());
-        CohortDefinition femalesAbove15Cohort = baseSQLCohortLibrary.compositionAgeCohort(15, 200, sqlQueries.femalesWhoStoppedArtBetweenDatesQry());
-        CohortDefinition pedsMalesZeroTo1Cohort = baseSQLCohortLibrary.compositionAgeCohort(0, 1, sqlQueries.malesWhoStoppedArtBetweenDatesQry());
-        CohortDefinition pedsFemalesZeroTo1Cohort = baseSQLCohortLibrary.compositionAgeCohort(0, 1, sqlQueries.femalesWhoStoppedArtBetweenDatesQry());
+        CohortDefinition malesZeroTo14Cohort = baseSQLCohortLibrary.compositionMaxAgeCohort(14,sqlQueries.malesWhoStoppedArtBetweenDatesQry());
+        CohortDefinition malesAbove15Cohort = baseSQLCohortLibrary.compositionMinAgeCohort(15, sqlQueries.malesWhoStoppedArtBetweenDatesQry());
+        CohortDefinition femalesZeroTo14Cohort = baseSQLCohortLibrary.compositionMaxAgeCohort(14,sqlQueries.femalesWhoStoppedArtBetweenDatesQry());
+        CohortDefinition femalesAbove15Cohort = baseSQLCohortLibrary.compositionMinAgeCohort(15, sqlQueries.femalesWhoStoppedArtBetweenDatesQry());
+        CohortDefinition pedsMalesZeroTo1Cohort = baseSQLCohortLibrary.compositionMaxAgeCohort(1, sqlQueries.malesWhoStoppedArtBetweenDatesQry());
+        CohortDefinition pedsFemalesZeroTo1Cohort = baseSQLCohortLibrary.compositionMaxAgeCohort(1, sqlQueries.femalesWhoStoppedArtBetweenDatesQry());
         CohortDefinition pedsmales2To4Cohort = baseSQLCohortLibrary.compositionAgeCohort(2, 4, sqlQueries.malesWhoStoppedArtBetweenDatesQry());
         CohortDefinition pedsFemales2To4Cohort = baseSQLCohortLibrary.compositionAgeCohort(2, 4, sqlQueries.femalesWhoStoppedArtBetweenDatesQry());
         CohortDefinition pedsmales5To14Cohort = baseSQLCohortLibrary.compositionAgeCohort(5, 14, sqlQueries.malesWhoStoppedArtBetweenDatesQry());
         CohortDefinition pedsFemales5To14Cohort = baseSQLCohortLibrary.compositionAgeCohort(5, 14, sqlQueries.femalesWhoStoppedArtBetweenDatesQry());
 
         //add cohorts for transfer out
-        CohortDefinition malesZeroTo14TCohort = baseSQLCohortLibrary.compositionAgeCohort(0, 14, sqlQueries.malesWhoTOBetweenDatesQry());
-        CohortDefinition malesAbove15TCohort = baseSQLCohortLibrary.compositionAgeCohort(15,200,sqlQueries.malesWhoTOBetweenDatesQry());
-        CohortDefinition femalesZeroTo14TCohort = baseSQLCohortLibrary.compositionAgeCohort(0, 14, sqlQueries.femalesWhoTOBetweenDatesQry());
-        CohortDefinition femalesAbove15TCohort = baseSQLCohortLibrary.compositionAgeCohort(15, 200, sqlQueries.femalesWhoTOBetweenDatesQry());
-        CohortDefinition pedsMalesZeroTo1TCohort = baseSQLCohortLibrary.compositionAgeCohort(0, 1, sqlQueries.malesWhoTOBetweenDatesQry());
-        CohortDefinition pedsFemalesZeroTo1TCohort = baseSQLCohortLibrary.compositionAgeCohort(0, 1, sqlQueries.femalesWhoTOBetweenDatesQry());
+        CohortDefinition malesZeroTo14TCohort = baseSQLCohortLibrary.compositionMaxAgeCohort(14, sqlQueries.malesWhoTOBetweenDatesQry());
+        CohortDefinition malesAbove15TCohort = baseSQLCohortLibrary.compositionMinAgeCohort(15,sqlQueries.malesWhoTOBetweenDatesQry());
+        CohortDefinition femalesZeroTo14TCohort = baseSQLCohortLibrary.compositionMaxAgeCohort(14, sqlQueries.femalesWhoTOBetweenDatesQry());
+        CohortDefinition femalesAbove15TCohort = baseSQLCohortLibrary.compositionMinAgeCohort(15,sqlQueries.femalesWhoTOBetweenDatesQry());
+        CohortDefinition pedsMalesZeroTo1TCohort = baseSQLCohortLibrary.compositionMaxAgeCohort(1, sqlQueries.malesWhoTOBetweenDatesQry());
+        CohortDefinition pedsFemalesZeroTo1TCohort = baseSQLCohortLibrary.compositionMaxAgeCohort(1, sqlQueries.femalesWhoTOBetweenDatesQry());
         CohortDefinition pedsmales2To4TCohort = baseSQLCohortLibrary.compositionAgeCohort(2, 4, sqlQueries.malesWhoTOBetweenDatesQry());
         CohortDefinition pedsFemales2To4TCohort = baseSQLCohortLibrary.compositionAgeCohort(2, 4, sqlQueries.femalesWhoTOBetweenDatesQry());
         CohortDefinition pedsmales5To14TCohort = baseSQLCohortLibrary.compositionAgeCohort(5, 14, sqlQueries.malesWhoTOBetweenDatesQry());
         CohortDefinition pedsFemales5To14TCohort = baseSQLCohortLibrary.compositionAgeCohort(5, 14, sqlQueries.femalesWhoTOBetweenDatesQry());
 
         //Define cohort for the dead
-        CohortDefinition malesZeroTo14DCohort = baseSQLCohortLibrary.compositionAgeCohort(0, 14, sqlQueries.malesWhoDEADBetweenDatesQry());
-        CohortDefinition malesAbove15DCohort = baseSQLCohortLibrary.compositionAgeCohort(0,14,sqlQueries.malesWhoDEADBetweenDatesQry());
-        CohortDefinition femalesZeroTo14DCohort = baseSQLCohortLibrary.compositionAgeCohort(0, 14, sqlQueries.malesWhoDEADBetweenDatesQry());
-        CohortDefinition femalesAbove15DCohort = baseSQLCohortLibrary.compositionAgeCohort(0, 14, sqlQueries.malesWhoDEADBetweenDatesQry());
-        CohortDefinition pedsMalesZeroTo1DCohort = baseSQLCohortLibrary.compositionAgeCohort(0, 14, sqlQueries.malesWhoDEADBetweenDatesQry());
-        CohortDefinition pedsFemalesZeroTo1DCohort = baseSQLCohortLibrary.compositionAgeCohort(0, 14, sqlQueries.malesWhoDEADBetweenDatesQry());
-        CohortDefinition pedsmales2To4DCohort = baseSQLCohortLibrary.compositionAgeCohort(0, 14, sqlQueries.malesWhoDEADBetweenDatesQry());
-        CohortDefinition pedsFemales2To4DCohort = baseSQLCohortLibrary.compositionAgeCohort(0, 14, sqlQueries.malesWhoDEADBetweenDatesQry());
-        CohortDefinition pedsmales5To14DCohort = baseSQLCohortLibrary.compositionAgeCohort(0, 14, sqlQueries.malesWhoDEADBetweenDatesQry());
-        CohortDefinition pedsFemales5To14DCohort = baseSQLCohortLibrary.compositionAgeCohort(0, 14, sqlQueries.malesWhoDEADBetweenDatesQry());
+        CohortDefinition malesZeroTo14DCohort = baseSQLCohortLibrary.compositionMaxAgeCohort(14, sqlQueries.malesWhoDEADBetweenDatesQry());
+        CohortDefinition malesAbove15DCohort = baseSQLCohortLibrary.compositionMinAgeCohort(15,sqlQueries.malesWhoDEADBetweenDatesQry());
+        CohortDefinition femalesZeroTo14DCohort = baseSQLCohortLibrary.compositionMaxAgeCohort(14, sqlQueries.femalesWhoDEADBetweenDatesQry());
+        CohortDefinition femalesAbove15DCohort = baseSQLCohortLibrary.compositionMinAgeCohort(15, sqlQueries.femalesWhoDEADBetweenDatesQry());
+        CohortDefinition pedsMalesZeroTo1DCohort = baseSQLCohortLibrary.compositionMaxAgeCohort(1, sqlQueries.malesWhoDEADBetweenDatesQry());
+        CohortDefinition pedsFemalesZeroTo1DCohort = baseSQLCohortLibrary.compositionMaxAgeCohort(1, sqlQueries.femalesWhoDEADBetweenDatesQry());
+        CohortDefinition pedsmales2To4DCohort = baseSQLCohortLibrary.compositionAgeCohort(2, 4, sqlQueries.malesWhoDEADBetweenDatesQry());
+        CohortDefinition pedsFemales2To4DCohort = baseSQLCohortLibrary.compositionAgeCohort(2, 4, sqlQueries.femalesWhoDEADBetweenDatesQry());
+        CohortDefinition pedsmales5To14DCohort = baseSQLCohortLibrary.compositionAgeCohort(5, 14, sqlQueries.malesWhoDEADBetweenDatesQry());
+        CohortDefinition pedsFemales5To14DCohort = baseSQLCohortLibrary.compositionAgeCohort(5, 14, sqlQueries.femalesWhoDEADBetweenDatesQry());
 
 
         CohortIndicator malesZeroTo14ind = CommonIndicatorLibrary.createCohortIndicator("malesZeroTo14CohortIndicator",ReportUtils.map(malesZeroTo14Cohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));

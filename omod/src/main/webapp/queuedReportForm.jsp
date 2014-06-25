@@ -37,53 +37,15 @@
 
     $j(document).ready(function () {
 
-        reportDate = $j("#evaluationDate").datepicker({
-            dateFormat: "dd/mm/yy" ,
-            defaultDate: new Date(),
-            setDate: new Date(),
-            showOtherMonths: true,
-            selectOtherMonths: true,
-            changeYear:true,
-            changeMonth: true,
-            gotoCurrent: true
+        reportDate = new DatePicker("<openmrs:datePattern/>", "evaluationDate", {});
+        reportDate.setDate(new Date());
 
-        });
-        scheduleDate = $j("#dateScheduled").datepicker({
-            dateFormat: "dd/mm/yy" ,
-            defaultDate: new Date(),
-            setDate: new Date(),
-            showOtherMonths: true,
-            selectOtherMonths: true,
-            changeYear:true,
-            changeMonth: true,
-            gotoCurrent: true
-        });
-        evaluationEndDate = $j("#reportingEndDate").datepicker({
-            dateFormat: "dd/mm/yy" ,
-            defaultDate: new Date(),
-            setDate: new Date(),
-            showOtherMonths: true,
-            selectOtherMonths: true,
-            changeYear:true,
-            changeMonth: true,
-            gotoCurrent: true
-        });
+        scheduleDate = new DatePicker("<openmrs:datePattern/>", "dateScheduled", {});
+        scheduleDate.setDate(new Date());
 
-       /* reportDate = new DatePicker("<openmrs:datePattern/>", "evaluationDate", {
-//            defaultDate: new Date()
-        });
-        reportDate.setDate(new Date());*/
+        evaluationEndDate = new DatePicker("<openmrs:datePattern/>", "reportingEndDate", { });
+        evaluationEndDate.setDate(new Date());
 
-       /* scheduleDate = new DateTimePicker("<openmrs:datePattern/>", "h:mm TT", "dateScheduled", {
-            hourGrid: 6,
-            minuteGrid: 10,
-            stepMinute: 5
-        });
-
-        evaluationEndDate = new DatePicker("<openmrs:datePattern/>", "reportingEndDate", {
-//            defaultDate: new Date()
-        });
-        evaluationEndDate.setDate(new Date());*/
     });
 
 </script>

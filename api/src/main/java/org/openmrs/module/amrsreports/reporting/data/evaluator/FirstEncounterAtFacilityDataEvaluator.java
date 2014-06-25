@@ -3,11 +3,13 @@ package org.openmrs.module.amrsreports.reporting.data.evaluator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
+import org.openmrs.Location;
 import org.openmrs.annotation.Handler;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.amrsreports.AmrsReportsConstants;
 import org.openmrs.module.amrsreports.MOHFacility;
 import org.openmrs.module.amrsreports.reporting.data.FirstEncounterAtFacilityDataDefinition;
+import org.openmrs.module.amrsreports.service.MohCoreService;
 import org.openmrs.module.reporting.common.ListMap;
 import org.openmrs.module.reporting.data.person.EvaluatedPersonData;
 import org.openmrs.module.reporting.data.person.definition.PersonDataDefinition;
@@ -15,65 +17,74 @@ import org.openmrs.module.reporting.data.person.evaluator.PersonDataEvaluator;
 import org.openmrs.module.reporting.dataset.query.service.DataSetQueryService;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
+import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Handler for last encounter at facility
  */
 @Handler(supports = FirstEncounterAtFacilityDataDefinition.class, order = 50)
-public class FirstEncounterAtFacilityDataEvaluator implements PersonDataEvaluator {
+public class FirstEncounterAtFacilityDataEvaluator extends DrugStartStopDataEvaluator {
 
 	private final Log log = LogFactory.getLog(getClass());
 
-	@Override
-	public EvaluatedPersonData evaluate(PersonDataDefinition definition, EvaluationContext context) throws EvaluationException {
+    @Override
+    public EvaluatedPersonData evaluate(final PersonDataDefinition definition, final EvaluationContext context) throws EvaluationException {
+        EvaluatedPersonData data = new EvaluatedPersonData(definition, context);
 
-		FirstEncounterAtFacilityDataDefinition def = (FirstEncounterAtFacilityDataDefinition) definition;
-		EvaluatedPersonData c = new EvaluatedPersonData(def, context);
+        if (context.getBaseCohort().isEmpty())
+            return data;
 
-		if (context.getBaseCohort() == null || context.getBaseCohort().isEmpty()) {
-			return c;
-		}
+        String hql = "select patientId, min(nullif(encounterDatetime,'0000-00-00 00:00:00')) " +
+                "	from Encounter" +
+                " 	where voided = false " +
+                "   	and patientId in (:patientIds)" +
+                "   	GROUP BY patientId " ;
 
-		// find the facility number
-		MOHFacility facility = (MOHFacility) context.getParameterValue("facility");
+        Map<String, Object> m = new HashMap<String, Object>();
+        m.put("patientIds", context.getBaseCohort());
 
-		// fail quickly if the facility does not exist
-		if (facility == null) {
-			log.warn("No facility provided; returning empty data.");
-			return c;
-		}
+        ListMap<Integer, Date> mappedStartDates = makeDatesMapFromHQL(hql, m);
 
-		// use HQL to do our bidding
-		String hql = "from Encounter" +
-				" where voided=false" +
-				" and patientId in (:patientIds)" +
-				" and location in (:locationList)" +
-				" and encounterDatetime <= :onOrBefore" +
-				" order by encounterDatetime asc";
+        for (Integer memberId : context.getBaseCohort().getMemberIds()) {
 
-		Map<String, Object> m = new HashMap<String, Object>();
-		m.put("patientIds", context.getBaseCohort());
-		m.put("locationList", facility.getLocations());
-		m.put("onOrBefore", context.getEvaluationDate());
+            Set<Date> startDates = safeFind(mappedStartDates, memberId);
+            data.addData(memberId, startDates);
+        }
 
-		DataSetQueryService qs = Context.getService(DataSetQueryService.class);
-		List<Object> queryResult = qs.executeHqlQuery(hql, m);
+        return data;
+    }
 
-		ListMap<Integer, Encounter> encForPatients = new ListMap<Integer, Encounter>();
-		for (Object o : queryResult) {
-			Encounter enc = (Encounter) o;
-			encForPatients.putInList(enc.getPatientId(), enc);
-		}
+    /**
+     * replaces reportDate and personIds with data from private variables before generating a date map
+     */
+    private ListMap<Integer, Date> makeDatesMapFromHQL(final String query, final Map<String, Object> substitutions) {
+        MohCoreService mcs = Context.getService(MohCoreService.class);
+        List<Object> queryResult = mcs.executeScrollingHqlQuery(query, substitutions);
 
-		for (Integer pId : encForPatients.keySet()) {
-			List<Encounter> l = encForPatients.get(pId);
-			c.addData(pId, l.get(0));
-		}
+        ListMap<Integer, Date> dateListMap = new ListMap<Integer, Date>();
+        for (Object o : queryResult) {
+            Object[] parts = (Object[]) o;
+            if (parts.length == 2) {
+                Integer pId = (Integer) parts[0];
+                Date date = null;
+                try{
 
-		return c;
-	}
+                    date = (Date) parts[1];
+                    dateListMap.putInList(pId, date);
+                } catch (Exception e){
+
+                    dateListMap.putInList(pId, date);
+                }
+
+            }
+        }
+
+        return dateListMap;
+    }
 }

@@ -3,12 +3,15 @@ package org.openmrs.module.amrsreports.reporting.provider;
 import org.apache.commons.io.IOUtils;
 import org.openmrs.Location;
 import org.openmrs.api.APIException;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.amrsreports.reporting.converter.DateListCustomConverter;
 import org.openmrs.module.amrsreports.reporting.converter.DecimalAgeConverter;
+import org.openmrs.module.amrsreports.reporting.converter.ICAPTBStatusConverter;
 import org.openmrs.module.amrsreports.reporting.data.AgeAtEvaluationDateDataDefinition;
 import org.openmrs.module.amrsreports.reporting.data.ICAPCCCNoDataDefinition;
 import org.openmrs.module.amrsreports.reporting.data.ICAPEnrollmentDateDataDefinition;
 import org.openmrs.module.amrsreports.reporting.data.ICAPLastAppointmentDataDefinition;
+import org.openmrs.module.amrsreports.reporting.data.ICAPTBStatusDataDefinition;
 import org.openmrs.module.amrsreports.util.MOHReportUtil;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
@@ -16,6 +19,7 @@ import org.openmrs.module.reporting.common.SortCriteria;
 import org.openmrs.module.reporting.data.converter.BirthdateConverter;
 import org.openmrs.module.reporting.data.converter.ObjectFormatter;
 import org.openmrs.module.reporting.data.patient.definition.PatientIdDataDefinition;
+import org.openmrs.module.reporting.data.patient.definition.PatientIdentifierDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.GenderDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PreferredNameDataDefinition;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
@@ -53,12 +57,13 @@ public class LFTUReportProvider extends ReportProvider {
 		PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 		dsd.setName("LTFU");
 
-		dsd.addSortCriteria("PatientCCC", SortCriteria.SortDirection.ASC);
+		dsd.addSortCriteria("enrollmentDate", SortCriteria.SortDirection.ASC);
 		dsd.addColumn("PatientCCC", new ICAPCCCNoDataDefinition(), nullString);
         dsd.addColumn("lastAppointment", new ICAPLastAppointmentDataDefinition(), nullString,new DateListCustomConverter("yyyy-MM-dd"));
         dsd.addColumn("name", new PreferredNameDataDefinition(), nullString, new ObjectFormatter());
         dsd.addColumn("enrollmentDate", new ICAPEnrollmentDateDataDefinition(), nullString,new DateListCustomConverter("yyyy-MM-dd"));
-        dsd.addColumn("tbstatus", new PreferredNameDataDefinition(), nullString);
+        dsd.addColumn("tbstatus", new ICAPTBStatusDataDefinition(), nullString,new ICAPTBStatusConverter());
+        dsd.addColumn("cohort", new ICAPEnrollmentDateDataDefinition(), nullString,new DateListCustomConverter("MM-yyyy"));
 
 		report.addDataSetDefinition(dsd,null);
 
@@ -67,26 +72,18 @@ public class LFTUReportProvider extends ReportProvider {
 
 	@Override
 	public CohortDefinition getCohortDefinition() {
+
         String sql ="select obs.person_id from obs  " +
                 "   inner join person p  " +
                 "   on p.person_id=obs.person_id   " +
                 "   where concept_id=160555  " +
                 "   and location_id in (:locationList)  " +
-                "   and obs.person_id not in ( " +
-                "      select e.patient_id from encounter e  " +
-                "      inner join obs o on o.person_id=e.patient_id  " +
-                "      group by e.patient_id  " +
-                "      having max(e.encounter_datetime) between (:endDate) and date_add(:endDate,INTERVAL -93 DAY)  " +
-                "        union select o.person_id from obs o  " +
-                "            inner join person p  " +
-                "            on p.person_id=o.person_id  " +
-                "            where o.voided=0  " +
-                "            and concept_id=5096  " +
-                "            and value_datetime is not null  " +
-                "            and value_datetime >=(:endDate) " +
-                "   ) " +
-                "   and concept_id not in (160649,1543) " +
+                "   and obs.person_id not in ( select person_id from person where dead=1 ) " +
+                "   and obs.person_id not in ( select person_id from obs where concept_id in (1543,160649) and value_datetime between (:startDate) and (:endDate) ) " +
+                "   and obs.person_id not in ( select o.person_id from obs o where concept_id = 5096 and value_datetime between (:startDate) and (:endDate) ) " +
+                "   and obs.person_id not in ( select e.patient_id from encounter e group by e.patient_id having max(e.encounter_datetime) between date_add((:endDate),INTERVAL -93 DAY) and (:endDate) ) " +
                 "   and value_datetime between (:startDate) and (:endDate) ";
+
 
         CohortDefinition generalCOhort = new SqlCohortDefinition(sql);
         generalCOhort.setName("LTFU and Unknown");

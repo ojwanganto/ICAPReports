@@ -58,7 +58,7 @@ public class LastHIVEncounterDataEvaluator extends BatchedExecutionDataEvaluator
 	protected String getHQL() {
 		return "select new map(" +
 				"   e.patientId as personId," +
-				"   e.encounterDatetime as encounterDatetime," +
+				"   nullif(encounterDatetime,'0000-00-00 00:00:00') as encounterDatetime," +
 				"	e.location.name as locationName" +
 				" )" +
 				" from Encounter e" +

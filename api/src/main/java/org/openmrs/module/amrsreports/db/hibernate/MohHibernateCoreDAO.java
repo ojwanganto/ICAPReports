@@ -361,8 +361,8 @@ public class MohHibernateCoreDAO implements MohCoreDAO {
 
 	@Override
 	public List<Object> executeScrollingHqlQuery(String query, Map<String, Object> substitutions) {
-		Query q = sessionFactory.openStatelessSession().createQuery(query);
 
+        Query q = sessionFactory.getCurrentSession().createQuery(query);
 		applySubstitutions(q, substitutions);
 
 		// optimizations go here
@@ -399,8 +399,6 @@ public class MohHibernateCoreDAO implements MohCoreDAO {
 	@Override
 	public List<Object> executeSqlQuery(String query, Map<String, Object> substitutions) {
 
-//		StatelessSession s = sessionFactory.openStatelessSession();
-//		SQLQuery q = s.createSQLQuery(query);
 		SQLQuery q = sessionFactory.getCurrentSession().createSQLQuery(query);
 
 		for (Map.Entry<String, Object> e : substitutions.entrySet()) {
@@ -422,15 +420,12 @@ public class MohHibernateCoreDAO implements MohCoreDAO {
 		q.setReadOnly(true);
 
 		List<Object> r = q.list();
-
-//		s.close();
-
 		return r;
 	}
 
 	@Override
 	public List<Object> executeHqlQuery(String query, Map<String, Object> substitutions) {
-		Query q = sessionFactory.openStatelessSession().createQuery(query);
+        Query q = sessionFactory.getCurrentSession().createQuery(query);
 
 		applySubstitutions(q, substitutions);
 

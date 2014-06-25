@@ -41,8 +41,8 @@ public class ReportQueueProcessor {
 
 		try {
 			Context.getService(QueuedReportService.class).processQueuedReport(queuedReport);
-		} catch (Throwable e) {
-			log.error("Unable to process amrs reports queue!", e);
+		} catch (Exception e) {
+			log.error("Unable to process ICAP reports queue!", e);
             queuedReport.setStatus(QueuedReport.STATUS_ERROR);
             Context.getService(QueuedReportService.class).saveQueuedReport(queuedReport);
 		}

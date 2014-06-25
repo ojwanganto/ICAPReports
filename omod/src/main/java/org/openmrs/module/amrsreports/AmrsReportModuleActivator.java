@@ -18,15 +18,24 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.Activator;
 import org.openmrs.module.amrsreports.reporting.provider.ARTCareFollowUpProvider;
 import org.openmrs.module.amrsreports.reporting.provider.ARTCareProvider;
+import org.openmrs.module.amrsreports.reporting.provider.AdolescentOnCareAndARTCareProvider;
 import org.openmrs.module.amrsreports.reporting.provider.AttendedReportProvider;
 import org.openmrs.module.amrsreports.reporting.provider.BookedAndAttendedReportProvider;
 import org.openmrs.module.amrsreports.reporting.provider.BookedReportProvider;
+import org.openmrs.module.amrsreports.reporting.provider.DailyAttendanceProvider;
+import org.openmrs.module.amrsreports.reporting.provider.DifferentCohortAnalysisReportProvider;
+import org.openmrs.module.amrsreports.reporting.provider.EMTCTReportProvider;
 import org.openmrs.module.amrsreports.reporting.provider.EligibleButNotOnARVReportProvider;
 import org.openmrs.module.amrsreports.reporting.provider.HIVPalliativeCareProvider;
+import org.openmrs.module.amrsreports.reporting.provider.ICAPMOH361AReportProvider;
+import org.openmrs.module.amrsreports.reporting.provider.ICAPMOH361BReportProvider;
 import org.openmrs.module.amrsreports.reporting.provider.LFTUReportProvider;
 import org.openmrs.module.amrsreports.reporting.provider.MOH711Provider;
 import org.openmrs.module.amrsreports.reporting.provider.MOH731Provider;
+import org.openmrs.module.amrsreports.reporting.provider.PreventionWithPositiveProvider;
 import org.openmrs.module.amrsreports.reporting.provider.RegimensProvider;
+import org.openmrs.module.amrsreports.reporting.provider.SameCohortAnalysisReportProvider;
+import org.openmrs.module.amrsreports.reporting.provider.TBScreeningReportProvider;
 import org.openmrs.module.amrsreports.service.ReportProviderRegistrar;
 import org.openmrs.module.amrsreports.util.TaskRunnerThread;
 
@@ -57,6 +66,15 @@ public class AmrsReportModuleActivator implements Activator {
         ReportProviderRegistrar.getInstance().registerReportProvider(new BookedAndAttendedReportProvider());
         ReportProviderRegistrar.getInstance().registerReportProvider(new LFTUReportProvider());
         ReportProviderRegistrar.getInstance().registerReportProvider(new AttendedReportProvider());
+        ReportProviderRegistrar.getInstance().registerReportProvider(new EMTCTReportProvider());
+        ReportProviderRegistrar.getInstance().registerReportProvider(new DifferentCohortAnalysisReportProvider());
+        ReportProviderRegistrar.getInstance().registerReportProvider(new SameCohortAnalysisReportProvider());
+        ReportProviderRegistrar.getInstance().registerReportProvider(new TBScreeningReportProvider());
+        ReportProviderRegistrar.getInstance().registerReportProvider(new PreventionWithPositiveProvider());
+        ReportProviderRegistrar.getInstance().registerReportProvider(new ICAPMOH361AReportProvider());
+        ReportProviderRegistrar.getInstance().registerReportProvider(new ICAPMOH361BReportProvider());
+        ReportProviderRegistrar.getInstance().registerReportProvider(new AdolescentOnCareAndARTCareProvider());
+        ReportProviderRegistrar.getInstance().registerReportProvider(new DailyAttendanceProvider());
 
 	}
 

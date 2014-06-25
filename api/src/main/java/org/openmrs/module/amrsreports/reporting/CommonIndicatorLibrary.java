@@ -87,6 +87,7 @@ public class CommonIndicatorLibrary {
         ind.setCohortDefinition(mappedCohort);
         return ind;
     }
+
     public static CohortIndicator createSQLCohortIndicator(String description, Mapped<CohortDefinition> mappedCohort) {
         CohortIndicator ind = new CohortIndicator(description);
         ind.addParameter(new Parameter("reportDate", "Report Date", Date.class));

@@ -87,6 +87,20 @@ public class HIVPalliativeCareProvider extends ReportProvider {
         CohortDefinition pedsmales5To14EndCohort = baseSQLCohortLibrary.compositionAgeCohort(5, 14, sqlQueries.malesEnrolledBetweenDatesQry());
         CohortDefinition pedsFemales5To14EndCohort = baseSQLCohortLibrary.compositionAgeCohort(5, 14, sqlQueries.femalesEnrolledBetweenDatesQry());
 
+        // Cumulative cohort
+
+        CohortDefinition cumulativeMalesAgedBelow15Cohort = baseSQLCohortLibrary.compositionMaxAgeCohort(14, sqlQueries.cumulativeMalesInCare());
+        CohortDefinition cumulativeMalesAbove15Cohort = baseSQLCohortLibrary.compositionMinAgeCohort(15, sqlQueries.cumulativeMalesInCare());
+        CohortDefinition cumulativeFemalesBelow15Cohort = baseSQLCohortLibrary.compositionMaxAgeCohort(14, sqlQueries.cumulativeFemalesInCare());
+        CohortDefinition cumulativeFemalesAbove15Cohort = baseSQLCohortLibrary.compositionMinAgeCohort(15, sqlQueries.cumulativeFemalesInCare());
+
+        CohortDefinition cumulativePedsMalesZeroTo1Cohort = baseSQLCohortLibrary.compositionAgeCohort(0, 1, sqlQueries.cumulativeMalesInCare());
+        CohortDefinition cumulativePedsfemalesZeroTo1Cohort = baseSQLCohortLibrary.compositionAgeCohort(0, 1, sqlQueries.cumulativeFemalesInCare());
+        CohortDefinition cumulativePedsmales2To4Cohort = baseSQLCohortLibrary.compositionAgeCohort(2, 4, sqlQueries.cumulativeMalesInCare());
+        CohortDefinition cumulativePedsfemales2To4Cohort = baseSQLCohortLibrary.compositionAgeCohort(2, 4, sqlQueries.cumulativeFemalesInCare());
+        CohortDefinition cumulativePedsmales5To14Cohort = baseSQLCohortLibrary.compositionAgeCohort(5, 14, sqlQueries.cumulativeMalesInCare());
+        CohortDefinition cumulativePedsFemales5To14Cohort = baseSQLCohortLibrary.compositionAgeCohort(5, 14, sqlQueries.cumulativeFemalesInCare());;
+
 
         //Cohorts for drugs
 
@@ -154,6 +168,18 @@ public class HIVPalliativeCareProvider extends ReportProvider {
         CohortIndicator pedsFemales5To14OnMedCohortIndi = CommonIndicatorLibrary.createCohortIndicator("pedsFemales5To14CohortIndicator",ReportUtils.map(pedsFemales5To14onMedCohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
 
 
+        //indicators for cumulative cohort
+        CohortIndicator cumulativeMalesAgedBelow15CohortInd = CommonIndicatorLibrary.createCohortIndicator("malesBelow15CumCohortIndicator",ReportUtils.map(cumulativeMalesAgedBelow15Cohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator cumulativeMalesAbove15CohortInd = CommonIndicatorLibrary.createCohortIndicator("malesAbove15CumCohortIndicator",ReportUtils.map(cumulativeMalesAbove15Cohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator cumulativeFemalesBelow15CohortInd = CommonIndicatorLibrary.createCohortIndicator("femalesBelow15CumCohortIndicator",ReportUtils.map(cumulativeFemalesBelow15Cohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator cumulativeFemalesAbove15CohortInd = CommonIndicatorLibrary.createCohortIndicator("femalesAbove15CumCohortIndicator",ReportUtils.map(cumulativeFemalesAbove15Cohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator cumulativePedsMalesZeroTo1CohortInd = CommonIndicatorLibrary.createCohortIndicator("malesZeroTo14CumCohortIndicator",ReportUtils.map(cumulativePedsMalesZeroTo1Cohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator cumulativePedsfemalesZeroTo1CohortInd = CommonIndicatorLibrary.createCohortIndicator("pedsMalesZeroTo1CumCohortIndicator",ReportUtils.map(cumulativePedsfemalesZeroTo1Cohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator cumulativePedsmales2To4CohortInd = CommonIndicatorLibrary.createCohortIndicator("pedsmales2To4CumCohortIndicator",ReportUtils.map(cumulativePedsmales2To4Cohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator cumulativePedsfemales2To4CohortInd = CommonIndicatorLibrary.createCohortIndicator("pedsFemales2To4CumCohortIndicator",ReportUtils.map(cumulativePedsfemales2To4Cohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator cumulativePedsmales5To14CohortInd = CommonIndicatorLibrary.createCohortIndicator("pedsmales5To14CumCohortIndicator",ReportUtils.map(cumulativePedsmales5To14Cohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+        CohortIndicator cumulativePedsFemales5To14CohortInd = CommonIndicatorLibrary.createCohortIndicator("pedsFemales5To14CumCohortIndicator",ReportUtils.map(cumulativePedsFemales5To14Cohort,"startDate=${startDate},locationList=${locationList},endDate=${endDate}"));
+
 
         Map<String, Object> periodMappings = new HashMap<String, Object>();
         periodMappings.put("startDate", "${startDate}");
@@ -209,7 +235,21 @@ public class HIVPalliativeCareProvider extends ReportProvider {
         dsd.addColumn("malesPedsBtw5n14onMedication", "Males 15+ on Medication", new Mapped<CohortIndicator>(pedsmales5To14OnMedCohortIndi, periodMappings), "");
         dsd.addColumn("femalesPedsBtw5n14onMedication", "Males 15+ on Medication", new Mapped<CohortIndicator>(pedsFemales5To14OnMedCohortIndi, periodMappings), "");
 
-		report.addDataSetDefinition(dsd, periodMappings);
+
+        //add columns for medication
+        dsd.addColumn("malesBelow15Cum", "Males below 15 on Medication", new Mapped<CohortIndicator>(cumulativeMalesAgedBelow15CohortInd, periodMappings), "");
+        dsd.addColumn("malesAbove15Cum", "Males 15+ on Medication", new Mapped<CohortIndicator>(cumulativeMalesAbove15CohortInd, periodMappings), "");
+        dsd.addColumn("femalesBelow15Cum", "FeMales 15+ on Medication", new Mapped<CohortIndicator>(cumulativeFemalesBelow15CohortInd, periodMappings), "");
+        dsd.addColumn("femalesAbove15Cum", "FeMales below 15 on Medication", new Mapped<CohortIndicator>(cumulativeFemalesAbove15CohortInd, periodMappings), "");
+
+        /*dsd.addColumn("malesPedsAt1Cum", "peds below 2 on Medication", new Mapped<CohortIndicator>(cumulativePedsMalesZeroTo1CohortInd, periodMappings), "");
+        dsd.addColumn("femalesPedsAt1Cum", "Males 15+ on Medication", new Mapped<CohortIndicator>(cumulativePedsfemalesZeroTo1CohortInd, periodMappings), "");
+        dsd.addColumn("malesPedsBtw2n4Cum", "Males 15+ on Medication", new Mapped<CohortIndicator>(cumulativePedsmales2To4CohortInd, periodMappings), "");
+        dsd.addColumn("femalesPedsBtw2n4Cum", "Males 15+ on Medication", new Mapped<CohortIndicator>(cumulativePedsfemales2To4CohortInd, periodMappings), "");
+        dsd.addColumn("malesPedsBtw5n14Cum", "Males 15+ on Medication", new Mapped<CohortIndicator>(cumulativePedsmales5To14CohortInd, periodMappings), "");
+        dsd.addColumn("femalesPedsBtw5n14Cum", "Males 15+ on Medication", new Mapped<CohortIndicator>(cumulativePedsFemales5To14CohortInd, periodMappings), "");*/
+
+        report.addDataSetDefinition(dsd, periodMappings);
 
 		return report;
 	}
